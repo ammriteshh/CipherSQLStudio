@@ -1,0 +1,83 @@
+@import '../styles/variables';
+@import '../styles/mixins';
+
+.auth {
+  @include flex-center;
+  min-height: calc(100vh - 200px);
+  padding: $spacing-lg;
+
+  &__container {
+    width: 100%;
+    max-width: 400px;
+    @include card;
+  }
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $color-gray-900;
+    text-align: center;
+    margin-bottom: $spacing-xl;
+  }
+
+  &__form {
+    @include flex-column;
+    gap: $spacing-lg;
+  }
+
+  &__field {
+    @include flex-column;
+    gap: $spacing-sm;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-gray-700;
+  }
+
+  &__input {
+    @include input-base;
+  }
+
+  &__error {
+    padding: $spacing-md;
+    background-color: rgba($color-error, 0.1);
+    border: 1px solid rgba($color-error, 0.2);
+    border-radius: $border-radius-md;
+    color: $color-error;
+    font-size: $font-size-sm;
+  }
+
+  &__btn {
+    @include button-base;
+    width: 100%;
+
+    &--primary {
+      background-color: $color-primary;
+      color: $color-white;
+
+      &:hover:not(:disabled) {
+        background-color: $color-primary-dark;
+      }
+    }
+  }
+
+  &__footer {
+    margin-top: $spacing-lg;
+    text-align: center;
+    font-size: $font-size-sm;
+    color: $color-gray-600;
+  }
+
+  &__link {
+    color: $color-primary;
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+

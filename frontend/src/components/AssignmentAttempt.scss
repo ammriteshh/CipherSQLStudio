@@ -1,0 +1,316 @@
+@import '../styles/variables';
+@import '../styles/mixins';
+
+.assignment-attempt {
+  width: 100%;
+
+  &__header {
+    margin-bottom: $spacing-xl;
+    @include flex-column;
+    gap: $spacing-md;
+
+    @include respond-to(md) {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  &__back-btn {
+    @include button-base;
+    background-color: transparent;
+    color: $color-primary;
+    border: none;
+    padding: $spacing-sm;
+    align-self: flex-start;
+
+    &:hover {
+      background-color: $color-gray-100;
+    }
+  }
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $color-gray-900;
+    flex: 1;
+
+    @include respond-to(md) {
+      font-size: $font-size-3xl;
+    }
+  }
+
+  &__difficulty {
+    padding: $spacing-xs $spacing-md;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    &--beginner {
+      background-color: rgba($color-difficulty-beginner, 0.1);
+      color: $color-difficulty-beginner;
+    }
+
+    &--intermediate {
+      background-color: rgba($color-difficulty-intermediate, 0.1);
+      color: $color-difficulty-intermediate;
+    }
+
+    &--advanced {
+      background-color: rgba($color-difficulty-advanced, 0.1);
+      color: $color-difficulty-advanced;
+    }
+  }
+
+  &__container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+
+    @include respond-to(lg) {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: auto auto;
+    }
+  }
+
+  &__panel {
+    @include card;
+    @include flex-column;
+
+    &--question {
+      @include respond-to(lg) {
+        grid-column: 1;
+        grid-row: 1;
+      }
+    }
+
+    &--data {
+      @include respond-to(lg) {
+        grid-column: 2;
+        grid-row: 1;
+      }
+    }
+
+    &--editor {
+      @include respond-to(lg) {
+        grid-column: 1;
+        grid-row: 2;
+      }
+    }
+
+    &--results {
+      @include respond-to(lg) {
+        grid-column: 2;
+        grid-row: 2;
+      }
+    }
+  }
+
+  &__panel-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-900;
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-sm;
+    border-bottom: 2px solid $color-gray-200;
+  }
+
+  &__question-content {
+    color: $color-gray-700;
+    line-height: $line-height-relaxed;
+    font-size: $font-size-base;
+
+    @include respond-to(md) {
+      font-size: $font-size-lg;
+    }
+
+    p {
+      margin-bottom: $spacing-md;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &__data-content {
+    @include custom-scrollbar;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  &__editor-content {
+    @include flex-column;
+    gap: $spacing-md;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-md;
+    flex-wrap: wrap;
+  }
+
+  &__btn {
+    @include button-base;
+    flex: 1;
+    min-width: 120px;
+
+    &--primary {
+      background-color: $color-primary;
+      color: $color-white;
+
+      &:hover:not(:disabled) {
+        background-color: $color-primary-dark;
+      }
+    }
+
+    &--secondary {
+      background-color: $color-white;
+      color: $color-primary;
+      border-color: $color-primary;
+
+      &:hover:not(:disabled) {
+        background-color: $color-primary;
+        color: $color-white;
+      }
+    }
+  }
+
+  &__results-content {
+    @include custom-scrollbar;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  &__loading,
+  &__error {
+    text-align: center;
+    padding: $spacing-xl;
+    font-size: $font-size-lg;
+    color: $color-gray-600;
+  }
+
+  &__error {
+    color: $color-error;
+    background-color: rgba($color-error, 0.1);
+    border-radius: $border-radius-md;
+    border: 1px solid rgba($color-error, 0.2);
+  }
+}
+
+.data-viewer {
+  margin-bottom: $spacing-xl;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__table-name {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-900;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__description {
+    font-size: $font-size-sm;
+    color: $color-gray-600;
+    margin-bottom: $spacing-md;
+  }
+
+  &__table-container {
+    @include custom-scrollbar;
+    overflow-x: auto;
+  }
+}
+
+.results-panel {
+  &__error {
+    padding: $spacing-md;
+    background-color: rgba($color-error, 0.1);
+    border-left: 4px solid $color-error;
+    border-radius: $border-radius-md;
+    color: $color-error;
+    margin-bottom: $spacing-md;
+  }
+
+  &__hint {
+    padding: $spacing-md;
+    background-color: rgba($color-info, 0.1);
+    border-left: 4px solid $color-info;
+    border-radius: $border-radius-md;
+    color: $color-gray-800;
+    margin-bottom: $spacing-md;
+
+    strong {
+      color: $color-info;
+    }
+  }
+
+  &__success {
+    & .results-panel__meta {
+      padding: $spacing-sm $spacing-md;
+      background-color: rgba($color-success, 0.1);
+      color: $color-success;
+      font-weight: $font-weight-medium;
+      margin-bottom: $spacing-md;
+      border-radius: $border-radius-sm;
+    }
+  }
+
+  &__placeholder {
+    text-align: center;
+    padding: $spacing-2xl;
+    color: $color-gray-400;
+    font-style: italic;
+  }
+
+  &__table-container {
+    @include custom-scrollbar;
+    overflow-x: auto;
+    border: $border-width solid $border-color;
+    border-radius: $border-radius-md;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: $font-size-sm;
+
+    @include respond-to(md) {
+      font-size: $font-size-base;
+    }
+  }
+
+  &__th {
+    background-color: $color-gray-100;
+    padding: $spacing-sm $spacing-md;
+    text-align: left;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-900;
+    border-bottom: 2px solid $border-color;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  &__tr {
+    border-bottom: $border-width solid $border-color;
+
+    &:hover {
+      background-color: $color-gray-50;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__td {
+    padding: $spacing-sm $spacing-md;
+    color: $color-gray-700;
+    word-break: break-word;
+  }
+}
+

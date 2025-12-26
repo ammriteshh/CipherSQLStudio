@@ -1,0 +1,156 @@
+@import './variables';
+@import './mixins';
+
+// Reset and Base Styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-gray-900;
+  background-color: $color-gray-50;
+}
+
+code {
+  font-family: $font-family-mono;
+}
+
+// App Container
+.app {
+  min-height: 100vh;
+  @include flex-column;
+}
+
+.app__loading {
+  @include flex-center;
+  min-height: 100vh;
+  font-size: $font-size-lg;
+  color: $color-gray-600;
+}
+
+// Header
+.app__header {
+  background-color: $color-white;
+  border-bottom: $border-width solid $border-color;
+  box-shadow: $shadow-sm;
+  position: sticky;
+  top: 0;
+  z-index: $z-index-sticky;
+}
+
+.app__header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $spacing-md;
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+
+  @include respond-to(md) {
+    padding: $spacing-md $spacing-lg;
+  }
+}
+
+.app__logo {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  margin: 0;
+
+  @include respond-to(md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.app__nav {
+  @include flex-center;
+  gap: $spacing-md;
+}
+
+.app__user {
+  color: $color-gray-700;
+  font-size: $font-size-sm;
+
+  @include respond-to(md) {
+    font-size: $font-size-base;
+  }
+}
+
+.app__link {
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-sm;
+  transition: background-color $transition-base;
+  min-height: 44px;
+  @include flex-center;
+
+  &:hover {
+    background-color: $color-gray-100;
+  }
+}
+
+.app__btn {
+  @include button-base;
+
+  &--primary {
+    background-color: $color-primary;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background-color: $color-primary-dark;
+    }
+  }
+
+  &--secondary {
+    background-color: $color-white;
+    color: $color-primary;
+    border-color: $color-primary;
+
+    &:hover:not(:disabled) {
+      background-color: $color-primary;
+      color: $color-white;
+    }
+  }
+}
+
+// Main Content
+.app__main {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: $spacing-md;
+
+  @include respond-to(md) {
+    padding: $spacing-lg;
+  }
+
+  @include respond-to(lg) {
+    padding: $spacing-xl;
+  }
+}
+
+// Footer
+.app__footer {
+  background-color: $color-white;
+  border-top: $border-width solid $border-color;
+  padding: $spacing-md;
+  text-align: center;
+  color: $color-gray-600;
+  font-size: $font-size-sm;
+  margin-top: auto;
+}
+
