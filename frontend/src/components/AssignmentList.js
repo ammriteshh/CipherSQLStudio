@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import './AssignmentList.scss';
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const AssignmentList = () => {
   const [assignments, setAssignments] = useState([]);
@@ -18,11 +16,12 @@ const AssignmentList = () => {
   const fetchAssignments = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/assignments`);
+      const response = await api.get('/assignments');
       setAssignments(response.data);
       setError(null);
     } catch (err) {
-      setError('Failed to load assignments. Please try again later.');
+      const statusText = err.response ? ` (${err.response.status} ${err.response.statusText})` : ` (${err.message})`;
+      setError('Failed to load assignments. Please try again later.' + statusText);
       console.error('Error fetching assignments:', err);
     } finally {
       setLoading(false);

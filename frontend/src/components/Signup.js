@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import './Auth.scss';
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const Signup = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -19,7 +17,7 @@ const Signup = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/register`, {
+      const response = await api.post('/auth/register', {
         username,
         email,
         password,
@@ -30,7 +28,7 @@ const Signup = ({ onLogin }) => {
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Signup failed. Please try again.');
+      setError(err.response?.data?.error || `Signup failed. Please try again. (${err.message})`);
     } finally {
       setLoading(false);
     }

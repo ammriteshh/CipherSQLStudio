@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
-import axios from 'axios';
+import api from '../services/api';
 import './AssignmentAttempt.scss';
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const AssignmentAttempt = ({ user }) => {
   const { id } = useParams();
@@ -26,16 +24,17 @@ const AssignmentAttempt = ({ user }) => {
   const fetchAssignment = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/assignments/${id}`);
+      const response = await api.get(`/assignments/${id}`);
       setAssignment(response.data);
       setError(null);
     } catch (err) {
-      setError('Failed to load assignment. Please try again later.');
+      const statusText = err.response ? ` (${err.response.status} ${err.response.statusText})` : ` (${err.message})`;
+      setError('Failed to load assignment. Please try again later.' + statusText);
       console.error('Error fetching assignment:', err);
     } finally {
       setLoading(false);
     }
-  };
+  };"
 
   const handleExecuteQuery = async () => {
     if (!sqlQuery.trim()) {
@@ -48,8 +47,8 @@ const AssignmentAttempt = ({ user }) => {
       setError(null);
       setQueryResult(null);
 
-      const response = await axios.post(
-        `${API_BASE_URL}/assignments/${id}/execute`,
+      const response = await api.post(
+        `/assignments/${id}/execute`,
         {
           query: sqlQuery,
           userId: user?.id || 'guest',
@@ -79,8 +78,8 @@ const AssignmentAttempt = ({ user }) => {
       setLoadingHint(true);
       setHint(null);
 
-      const response = await axios.post(
-        `${API_BASE_URL}/assignments/${id}/hint`,
+      const response = await api.post(
+        `/assignments/${id}/hint`,
         {
           userQuery: sqlQuery || undefined,
         }

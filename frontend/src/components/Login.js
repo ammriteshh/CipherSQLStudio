@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import './Auth.scss';
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -18,7 +16,7 @@ const Login = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+      const response = await api.post('/auth/login', {
         email,
         password,
       });
@@ -28,7 +26,7 @@ const Login = ({ onLogin }) => {
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
+      setError(err.response?.data?.error || `Login failed. Please try again. (${err.message})`);
     } finally {
       setLoading(false);
     }
