@@ -32,24 +32,31 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Response interceptor to log real backend errors for debugging
+// Global response interceptor: add a user-friendly message for UI and log details
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  (err) => {
     try {
-      const info = {
-        url: error.config && error.config.url ? `${error.config.baseURL || ''}${error.config.url}` : undefined,
-        method: error.config && error.config.method,
-        status: error.response && error.response.status,
-        data: error.response && error.response.data,
-        message: error.message,
-      };
-      console.error('API Error:', info);
+      // Attach a standardized customMessage for UI consumption
+      if (!err.response) {
+        err.customMessage = 'Cannot reach server / backend is down. Please check the backend service and CORS settings.';
+      } else {
+        err.customMessage = `Error ${err.response.status}: ${err.response.data?.message || 'Request failed'}`;
+      }
+
+      // Structured logging for debugging
+      console.error('API ERROR:', {
+        url: err.config?.url,
+        method: err.config?.method,
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message,
+      });
     } catch (e) {
-      console.error('API Error (failed to log details):', e);
+      console.error('API interceptor logging error:', e);
     }
 
-    return Promise.reject(error);
+    return Promise.reject(err);
   }
 );
 

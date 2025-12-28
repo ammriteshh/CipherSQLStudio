@@ -26,11 +26,8 @@ const Login = ({ onLogin }) => {
         navigate('/');
       }
     } catch (err) {
-      if (err && err.response) {
-        setError(err.response.data?.error || `Login failed (${err.response.status})`);
-      } else {
-        setError('Cannot reach server / backend is down. Please check the backend and CORS settings.');
-      }
+      const msg = err?.customMessage || (!err?.response ? 'Cannot reach server / backend is down. Please check the backend and CORS settings.' : `Error ${err.response.status}: ${err.response.data?.message || 'Request failed'}`);
+      setError(msg);
     } finally {
       setLoading(false);
     }

@@ -28,18 +28,13 @@ const AssignmentAttempt = ({ user }) => {
       setAssignment(response.data);
       setError(null);
     } catch (err) {
-      if (err && err.response) {
-        const status = err.response.status;
-        const message = err.response.data && err.response.data.error ? err.response.data.error : err.response.statusText || 'Error from server';
-        setError(`Failed to load assignment. Server responded with ${status}: ${message}`);
-      } else {
-        setError('Cannot reach server / backend is down. Please check the backend and CORS settings.');
-      }
+      const msg = err?.customMessage || (!err?.response ? 'Cannot reach server / backend is down. Please check the backend and CORS settings.' : `Error ${err.response.status}: ${err.response.data?.message || 'Request failed'}`);
+      setError(msg);
       console.error('Error fetching assignment:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }; 
 
   const handleExecuteQuery = async () => {
     if (!sqlQuery.trim()) {
@@ -71,11 +66,8 @@ const AssignmentAttempt = ({ user }) => {
         setError(response.data.error || 'Query execution failed');
       }
     } catch (err) {
-      if (err && err.response) {
-        setError(err.response.data?.error || `Query execution failed (${err.response.status})`);
-      } else {
-        setError('Cannot reach server / backend is down. Please check the backend and CORS settings.');
-      }
+      const msg = err?.customMessage || (!err?.response ? 'Cannot reach server / backend is down. Please check the backend and CORS settings.' : (err.response.data?.error || `Query execution failed (${err.response.status})`));
+      setError(msg);
       console.error('Error executing query:', err);
     } finally {
       setExecuting(false);
@@ -100,11 +92,8 @@ const AssignmentAttempt = ({ user }) => {
         setError(response.data.error || 'Failed to get hint');
       }
     } catch (err) {
-      if (err && err.response) {
-        setError(err.response.data?.error || `Failed to get hint (${err.response.status})`);
-      } else {
-        setError('Cannot reach server / backend is down. Please check the backend and CORS settings.');
-      }
+      const msg = err?.customMessage || (!err?.response ? 'Cannot reach server / backend is down. Please check the backend and CORS settings.' : (err.response.data?.error || `Failed to get hint (${err.response.status})`));
+      setError(msg);
       console.error('Error getting hint:', err);
     } finally {
       setLoadingHint(false);

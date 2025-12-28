@@ -31,14 +31,8 @@ const AssignmentList = () => {
         setAssignments(response2.data);
         setError(null);
       } catch (err2) {
-        // Distinguish between network errors (no response) and HTTP errors
-        if (err2 && err2.response) {
-          const status = err2.response.status;
-          const message = err2.response.data && err2.response.data.error ? err2.response.data.error : err2.response.statusText || 'Error from server';
-          setError(`Failed to load assignments. Server responded with ${status}: ${message}`);
-        } else {
-          setError('Cannot reach server / backend is down. Please check the backend service and CORS settings.');
-        }
+        const msg = err2?.customMessage || (!err2?.response ? 'Cannot reach server / backend is down. Please check the backend service and CORS settings.' : `Error ${err2.response.status}: ${err2.response.data?.message || 'Request failed'}`);
+        setError(msg);
         console.error('Error fetching assignments after retry:', err2);
       }
     } finally {
