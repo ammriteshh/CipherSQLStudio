@@ -1,8 +1,5 @@
 const Assignment = require('../models/Assignment');
 
-/**
- * Get all assignments
- */
 const getAllAssignments = async (req, res, next) => {
   try {
     const assignments = await Assignment.find({})

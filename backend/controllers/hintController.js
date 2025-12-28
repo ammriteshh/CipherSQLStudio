@@ -2,7 +2,7 @@ const Assignment = require('../models/Assignment');
 const OpenAI = require('openai');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// Initialize LLM client (prioritize OpenAI, fallback to Google AI)
+// Initialize LLM client
 let llmClient = null;
 let llmType = null;
 

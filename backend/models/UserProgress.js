@@ -42,7 +42,6 @@ userProgressSchema.pre('save', function(next) {
   next();
 });
 
-// Compound index to ensure one progress record per user-assignment pair
 userProgressSchema.index({ userId: 1, assignmentId: 1 }, { unique: true });
 
 module.exports = mongoose.model('UserProgress', userProgressSchema);

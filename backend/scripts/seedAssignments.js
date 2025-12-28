@@ -29,27 +29,27 @@ const sampleAssignments = [
         sampleData: [
           {
             id: 1,
-            first_name: 'John',
-            last_name: 'Doe',
-            email: 'john.doe@example.com',
+            first_name: 'Amritesh',
+            last_name: 'Singh',
+            email: 'amriteshsingh@gmail.com',
             department: 'Engineering',
             salary: 75000.00,
             hire_date: '2022-01-15'
           },
           {
             id: 2,
-            first_name: 'Jane',
-            last_name: 'Smith',
-            email: 'jane.smith@example.com',
+            first_name: 'Pranav',
+            last_name: 'Gupta',
+            email: 'pranav.gupta@gmail.com',
             department: 'Marketing',
             salary: 65000.00,
             hire_date: '2022-03-20'
           },
           {
             id: 3,
-            first_name: 'Bob',
-            last_name: 'Johnson',
-            email: 'bob.johnson@example.com',
+            first_name: 'Iram',
+            last_name: 'Khan',
+            email: 'mohit.arora@gmail.com',
             department: 'Engineering',
             salary: 80000.00,
             hire_date: '2021-11-10'
@@ -81,27 +81,27 @@ const sampleAssignments = [
         sampleData: [
           {
             id: 1,
-            first_name: 'John',
-            last_name: 'Doe',
-            email: 'john.doe@example.com',
+            first_name: 'Ravi',
+            last_name: 'Kant',
+            email: 'ravi.kant@gmail.com',
             department: 'Engineering',
             salary: 75000.00,
             hire_date: '2022-01-15'
           },
           {
             id: 2,
-            first_name: 'Jane',
-            last_name: 'Smith',
-            email: 'jane.smith@example.com',
+            first_name: 'Desham',
+            last_name: 'Seth',
+            email: 'desham.seth@gmail.com',
             department: 'Marketing',
             salary: 65000.00,
             hire_date: '2022-03-20'
           },
           {
             id: 3,
-            first_name: 'Bob',
-            last_name: 'Johnson',
-            email: 'bob.johnson@example.com',
+            first_name: 'Tushar',
+            last_name: 'Joshi',
+            email: 'tushar.joshi@gmail.com',
             department: 'Engineering',
             salary: 80000.00,
             hire_date: '2021-11-10'

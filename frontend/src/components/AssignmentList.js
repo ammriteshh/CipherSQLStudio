@@ -17,14 +17,12 @@ const AssignmentList = () => {
     try {
       setLoading(true);
 
-      // First attempt with current api.defaults.baseURL
       let response = await api.get('/assignments');
       setAssignments(response.data);
       setError(null);
     } catch (err) {
       console.warn('Initial assignments fetch failed:', err && err.message ? err.message : err);
 
-      // Try to detect a working base and retry once
       try {
         await import('../services/api').then(m => m.detectApiBase && m.detectApiBase());
         const response2 = await api.get('/assignments');
