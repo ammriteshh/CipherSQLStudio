@@ -14,22 +14,18 @@ function App() {
   const [showApiBanner, setShowApiBanner] = useState(true);
 
   useEffect(() => {
-    // Check for saved auth token
     const token = localStorage.getItem('authToken');
     if (token) {
-      // Optionally validate token with backend
       setUser({ token });
     }
     setLoading(false);
 
-    // Probe for API base and show it in a temporary banner
     (async () => {
       try {
         const base = await detectApiBase();
         if (base) setDetectedApiBase(base);
         else if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
       } catch (err) {
-        // ignore; detection also runs in the api module
         if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
       }
     })();
@@ -111,9 +107,9 @@ function App() {
           </Routes>
         </main>
 
-        <footer className="app__footer">
-          <p>&copy; 2024 CipherSQLStudio. All rights reserved.</p>
-        </footer>
+        {/* <footer className="app__footer">
+          <p>CipherSQLStudio</p>
+        </footer> */}
       </div>
     </Router>
   );
