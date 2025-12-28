@@ -42,72 +42,6 @@ CipherSQLStudio/
 └── README.md
 ```
 
-## Setup Instructions
-
-### Prerequisites
-
-- Node.js (v16 or higher)
-- PostgreSQL (v12 or higher)
-- MongoDB Atlas account (or local MongoDB)
-
-### Backend Setup
-
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Create `.env` file in the backend directory:
-   ```bash
-   cd backend
-   copy .env.example .env  # Windows
-   # OR
-   cp .env.example .env    # Mac/Linux
-   ```
-   
-   **📖 For detailed instructions on obtaining and configuring all API keys, see [API_KEYS_SETUP.md](API_KEYS_SETUP.md)**
-   
-   The `.env` file needs:
-   - MongoDB Atlas connection string
-   - PostgreSQL credentials  
-   - OpenAI or Google AI API key
-   - JWT secret
-
-4. Set up PostgreSQL schema:
-   - The application will create isolated schemas per user/session automatically
-   - Ensure PostgreSQL is running and accessible
-
-5. Start the backend server:
-   ```bash
-   npm start
-   # or for development
-   npm run dev
-   ```
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm start
-   ```
-
-4. The application will open at `http://localhost:3000`
-
 ## Environment Variables
 
 ### Backend (.env)
@@ -153,8 +87,4 @@ CipherSQLStudio/
 - Frontend uses Create React App
 - SCSS compilation handled by React scripts
 - Hot reload enabled in development mode
-
-## License
-
-MIT
 
