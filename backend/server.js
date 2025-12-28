@@ -10,9 +10,22 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+const allowedOrigins = corsOrigin.split(',').map(s => s.trim());
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow non-browser requests (e.g., curl, server-side requests) when origin is undefined
+    if (!origin) return callback(null, true);
+    // Allow when wildcard is set
+    if (allowedOrigins.includes('*')) return callback(null, true);
+    // Allow matching origins
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Otherwise block
+    console.warn(`Blocked CORS request from origin: ${origin}`);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
