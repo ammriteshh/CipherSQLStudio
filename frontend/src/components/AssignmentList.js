@@ -16,13 +16,25 @@ const AssignmentList = () => {
   const fetchAssignments = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/assignments');
+
+      // First attempt with current api.defaults.baseURL
+      let response = await api.get('/assignments');
       setAssignments(response.data);
       setError(null);
     } catch (err) {
-      const statusText = err.response ? ` (${err.response.status} ${err.response.statusText})` : ` (${err.message})`;
-      setError('Failed to load assignments. Please try again later.' + statusText);
-      console.error('Error fetching assignments:', err);
+      console.warn('Initial assignments fetch failed:', err && err.message ? err.message : err);
+
+      // Try to detect a working base and retry once
+      try {
+        await import('../services/api').then(m => m.detectApiBase && m.detectApiBase());
+        const response2 = await api.get('/assignments');
+        setAssignments(response2.data);
+        setError(null);
+      } catch (err2) {
+        const statusText = err2.response ? ` (${err2.response.status} ${err2.response.statusText})` : ` (${err2.message || 'Network Error'})`;
+        setError('Failed to load assignments. Please try again later.' + statusText + '\nIf the problem persists, check backend CORS_ORIGIN and REACT_APP_API_URL on the server.');
+        console.error('Error fetching assignments after retry:', err2);
+      }
     } finally {
       setLoading(false);
     }
