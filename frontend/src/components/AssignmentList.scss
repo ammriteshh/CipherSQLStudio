@@ -12,7 +12,7 @@
   &__title {
     font-size: $font-size-2xl;
     font-weight: $font-weight-bold;
-    color: $color-gray-900;
+    color: var(--text-color);
     margin-bottom: $spacing-sm;
 
     @include respond-to(md) {
@@ -22,7 +22,7 @@
 
   &__subtitle {
     font-size: $font-size-base;
-    color: $color-gray-600;
+    color: var(--muted);
     margin-bottom: $spacing-xl;
   }
 
@@ -46,17 +46,93 @@
     text-align: center;
     padding: $spacing-2xl;
     font-size: $font-size-lg;
-    color: $color-gray-600;
+    color: var(--muted);
   }
 
   &__error {
-    color: $color-error;
-    background-color: rgba($color-error, 0.1);
+    color: var(--error);
+    background-color: rgba(var(--error-rgb), 0.08);
     border-radius: $border-radius-md;
-    border: 1px solid rgba($color-error, 0.2);
+    border: 1px solid rgba(var(--error-rgb), 0.18);
   }
 }
 
+.assignment-card {
+  @include card;
+  cursor: pointer;
+  transition: transform $transition-base, box-shadow $transition-base;
+  @include flex-column;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &__header {
+    @include flex-between;
+    margin-bottom: $spacing-md;
+    gap: $spacing-sm;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: var(--text-color);
+    flex: 1;
+  }
+
+  &__difficulty {
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    &--beginner {
+      background-color: rgba(var(--diff-beginner-rgb), 0.1);
+      color: var(--diff-beginner);
+    }
+
+    &--intermediate {
+      background-color: rgba(var(--diff-intermediate-rgb), 0.1);
+      color: var(--diff-intermediate);
+    }
+
+    &--advanced {
+      background-color: rgba(var(--diff-advanced-rgb), 0.1);
+      color: var(--diff-advanced);
+    }
+  }
+
+  &__description {
+    color: var(--muted);
+    font-size: $font-size-sm;
+    line-height: $line-height-relaxed;
+    margin-bottom: $spacing-lg;
+    flex: 1;
+    @include line-clamp(3);
+  }
+
+  &__footer {
+    margin-top: auto;
+  }
+
+  &__btn {
+    @include button-base;
+    width: 100%;
+    background-color: var(--primary);
+    color: var(--surface);
+
+    &:hover {
+      background-color: var(--primary-dark);
+    }
+  }
+}
 .assignment-card {
   @include card;
   cursor: pointer;

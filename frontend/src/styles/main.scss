@@ -1,6 +1,56 @@
 @import './variables';
 @import './mixins';
 
+/* Theme variables (light by default). Toggle `.dark-theme` on `<html>` to switch. */
+:root {
+  --color-bg: #f9fafb; /* $color-gray-50 */
+  --surface: #ffffff; /* $color-white */
+  --surface-variant: #f3f4f6; /* $color-gray-100 */
+  --text-color: #111827; /* $color-gray-900 */
+  --muted-text: #374151; /* $color-gray-700 */
+  --muted: #6b7280; /* $color-gray-600 */
+  --border-color: #e5e7eb; /* $border-color */
+
+  --primary: #2563eb; /* $color-primary */
+  --primary-dark: #1e40af; /* $color-primary-dark */
+  --primary-light: #3b82f6; /* $color-primary-light */
+  --primary-rgb: 37,99,235;
+
+  --error: #ef4444;
+  --error-rgb: 239,68,68;
+  --success: #10b981;
+  --info: #3b82f6;
+
+  --diff-beginner: #10b981;
+  --diff-intermediate: #f59e0b;
+  --diff-advanced: #ef4444;
+  --diff-beginner-rgb: 16,185,129;
+  --diff-intermediate-rgb: 245,158,11;
+  --diff-advanced-rgb: 239,68,68;
+
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.dark-theme {
+  --color-bg: #111827; /* $color-gray-900 */
+  --surface: #111827; /* slightly darker surface */
+  --surface-variant: #1f2937; /* $color-gray-800 */
+  --text-color: #f3f4f6; /* $color-gray-100 */
+  --muted-text: #cbd5e1; /* lighter muted */
+  --muted: #9ca3af;
+  --border-color: #374151; /* $color-gray-700 */
+
+  --primary: #3b82f6; /* use lighter primary on dark bg */
+  --primary-dark: #2563eb;
+  --primary-light: #60a5fa;
+  --primary-rgb: 59,130,246;
+
+  --error: #ef4444;
+  --error-rgb: 239,68,68;
+  --success: #10b981;
+  --info: #60a5fa;
+}
+
 // Reset and Base Styles
 * {
   margin: 0;
@@ -18,8 +68,8 @@ body {
   font-family: $font-family-base;
   font-size: $font-size-base;
   line-height: $line-height-normal;
-  color: $color-gray-900;
-  background-color: $color-gray-50;
+  color: var(--text-color);
+  background-color: var(--color-bg);
 }
 
 code {
@@ -36,13 +86,13 @@ code {
   @include flex-center;
   min-height: 100vh;
   font-size: $font-size-lg;
-  color: $color-gray-600;
+  color: var(--muted);
 }
 
 // Header
 .app__header {
-  background-color: $color-white;
-  border-bottom: $border-width solid $border-color;
+  background-color: var(--surface);
+  border-bottom: $border-width solid var(--border-color);
   box-shadow: $shadow-sm;
   position: sticky;
   top: 0;
@@ -65,7 +115,7 @@ code {
 .app__logo {
   font-size: $font-size-xl;
   font-weight: $font-weight-bold;
-  color: $color-primary;
+  color: var(--primary);
   margin: 0;
 
   @include respond-to(md) {
@@ -79,7 +129,7 @@ code {
 }
 
 .app__user {
-  color: $color-gray-700;
+  color: var(--muted-text);
   font-size: $font-size-sm;
 
   @include respond-to(md) {
@@ -88,7 +138,7 @@ code {
 }
 
 .app__link {
-  color: $color-primary;
+  color: var(--primary);
   text-decoration: none;
   font-weight: $font-weight-medium;
   padding: $spacing-xs $spacing-sm;
@@ -98,7 +148,7 @@ code {
   @include flex-center;
 
   &:hover {
-    background-color: $color-gray-100;
+    background-color: var(--surface-variant);
   }
 }
 
@@ -106,22 +156,22 @@ code {
   @include button-base;
 
   &--primary {
-    background-color: $color-primary;
-    color: $color-white;
+    background-color: var(--primary);
+    color: var(--surface);
 
     &:hover:not(:disabled) {
-      background-color: $color-primary-dark;
+      background-color: var(--primary-dark);
     }
   }
 
   &--secondary {
-    background-color: $color-white;
-    color: $color-primary;
-    border-color: $color-primary;
+    background-color: var(--surface);
+    color: var(--primary);
+    border-color: var(--primary);
 
     &:hover:not(:disabled) {
-      background-color: $color-primary;
-      color: $color-white;
+      background-color: var(--primary);
+      color: var(--surface);
     }
   }
 }
@@ -145,11 +195,11 @@ code {
 
 // Footer
 .app__footer {
-  background-color: $color-white;
-  border-top: $border-width solid $border-color;
+  background-color: var(--surface);
+  border-top: $border-width solid var(--border-color);
   padding: $spacing-md;
   text-align: center;
-  color: $color-gray-600;
+  color: var(--muted);
   font-size: $font-size-sm;
   margin-top: auto;
 }

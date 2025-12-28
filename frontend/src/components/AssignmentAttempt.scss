@@ -18,20 +18,20 @@
   &__back-btn {
     @include button-base;
     background-color: transparent;
-    color: $color-primary;
+    color: var(--primary);
     border: none;
     padding: $spacing-sm;
     align-self: flex-start;
 
     &:hover {
-      background-color: $color-gray-100;
+      background-color: var(--surface-variant);
     }
   }
 
   &__title {
     font-size: $font-size-2xl;
     font-weight: $font-weight-bold;
-    color: $color-gray-900;
+    color: var(--text-color);
     flex: 1;
 
     @include respond-to(md) {
@@ -48,20 +48,19 @@
     white-space: nowrap;
 
     &--beginner {
-      background-color: rgba($color-difficulty-beginner, 0.1);
-      color: $color-difficulty-beginner;
+      background-color: rgba(var(--diff-beginner-rgb), 0.1);
+      color: var(--diff-beginner);
     }
 
     &--intermediate {
-      background-color: rgba($color-difficulty-intermediate, 0.1);
-      color: $color-difficulty-intermediate;
+      background-color: rgba(var(--diff-intermediate-rgb), 0.1);
+      color: var(--diff-intermediate);
     }
 
     &--advanced {
-      background-color: rgba($color-difficulty-advanced, 0.1);
-      color: $color-difficulty-advanced;
+      background-color: rgba(var(--diff-advanced-rgb), 0.1);
+      color: var(--diff-advanced);
     }
-  }
 
   &__container {
     display: grid;
@@ -110,14 +109,14 @@
   &__panel-title {
     font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
-    color: $color-gray-900;
+    color: var(--text-color);
     margin-bottom: $spacing-md;
     padding-bottom: $spacing-sm;
-    border-bottom: 2px solid $color-gray-200;
+    border-bottom: 2px solid var(--border-color);
   }
 
   &__question-content {
-    color: $color-gray-700;
+    color: var(--muted-text);
     line-height: $line-height-relaxed;
     font-size: $font-size-base;
 
@@ -188,14 +187,58 @@
     text-align: center;
     padding: $spacing-xl;
     font-size: $font-size-lg;
-    color: $color-gray-600;
+    color: var(--muted);
   }
 
   &__error {
-    color: $color-error;
-    background-color: rgba($color-error, 0.1);
+    color: var(--error);
+    background-color: rgba(var(--error-rgb), 0.08);
     border-radius: $border-radius-md;
-    border: 1px solid rgba($color-error, 0.2);
+    border: 1px solid rgba(var(--error-rgb), 0.18);
+  }
+
+  &__placeholder {
+    text-align: center;
+    padding: $spacing-2xl;
+    color: $color-gray-400;
+    font-style: italic;
+  }
+
+  &__table-container {
+    @include custom-scrollbar;
+    overflow-x: auto;
+    border: $border-width solid var(--border-color);
+    border-radius: $border-radius-md;
+  }
+
+  &__th {
+    background-color: var(--surface-variant);
+    padding: $spacing-sm $spacing-md;
+    text-align: left;
+    font-weight: $font-weight-semibold;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  &__tr {
+    border-bottom: $border-width solid var(--border-color);
+
+    &:hover {
+      background-color: var(--color-bg);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__td {
+    padding: $spacing-sm $spacing-md;
+    color: var(--muted-text);
+    word-break: break-word;
   }
 }
 

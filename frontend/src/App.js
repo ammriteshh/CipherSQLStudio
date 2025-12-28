@@ -13,6 +13,23 @@ function App() {
   const [detectedApiBase, setDetectedApiBase] = useState(null);
   const [showApiBanner, setShowApiBanner] = useState(true);
 
+  // Theme: 'light' | 'dark'
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved;
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+    } catch (e) {}
+    return 'light';
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (e) {}
+    document.documentElement.classList.toggle('dark-theme', theme === 'dark');
+  }, [theme]);
+
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
@@ -75,6 +92,17 @@ function App() {
             )}
 
             <nav className="app__nav">
+              {/* Theme toggle */}
+              <button
+                className="app__btn app__btn--secondary"
+                aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+                style={{padding:8, minWidth:44}}
+              >
+                {theme === 'dark' ? '☀️' : '🌙'}
+              </button>
+
               {user ? (
                 <>
                   <span className="app__user">Welcome, {user.username || 'User'}</span>

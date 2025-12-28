@@ -61,15 +61,15 @@
   }
 
   &:focus {
-    outline: 2px solid $color-primary;
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
 }
 
 // Card styles
 @mixin card {
-  background-color: $color-white;
-  border: $border-width solid $border-color;
+  background-color: var(--surface);
+  border: $border-width solid var(--border-color);
   border-radius: $border-radius-lg;
   box-shadow: $shadow-sm;
   padding: $spacing-lg;
@@ -82,17 +82,17 @@
   font-size: $font-size-base;
   font-family: $font-family-base;
   line-height: $line-height-normal;
-  color: $color-gray-900;
-  background-color: $color-white;
-  border: $border-width solid $border-color;
+  color: var(--text-color);
+  background-color: var(--surface);
+  border: $border-width solid var(--border-color);
   border-radius: $border-radius-md;
   transition: border-color $transition-base, box-shadow $transition-base;
   min-height: 44px; // Touch-friendly
 
   &:focus {
     outline: none;
-    border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
   }
 
   &::placeholder {
@@ -108,11 +108,11 @@
   }
 
   &::-webkit-scrollbar-track {
-    background: $color-gray-100;
+    background: var(--surface-variant);
   }
 
   &::-webkit-scrollbar-thumb {
-    background: $color-gray-400;
+    background: var(--muted);
     border-radius: $border-radius-sm;
 
     &:hover {
