@@ -3,17 +3,14 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-// Default CORS origins include the frontend UI domain and backend domain for convenience.
-// For production, set CORS_ORIGIN explicitly in your deployment environment variables.
 const corsOrigin = process.env.CORS_ORIGIN ||
   'http://localhost:3000,https://cipher-sql-studio-ui.onrender.com,https://cipher-sql-studio-0zlp.onrender.com';
+
 
 
 
