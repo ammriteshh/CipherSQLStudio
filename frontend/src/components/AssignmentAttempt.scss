@@ -156,22 +156,22 @@
     min-width: 120px;
 
     &--primary {
-      background-color: $color-primary;
-      color: $color-white;
+      background-color: var(--primary);
+      color: var(--surface);
 
       &:hover:not(:disabled) {
-        background-color: $color-primary-dark;
+        background-color: var(--primary-dark);
       }
     }
 
     &--secondary {
-      background-color: $color-white;
-      color: $color-primary;
-      border-color: $color-primary;
+      background-color: var(--surface);
+      color: var(--primary);
+      border-color: var(--primary);
 
       &:hover:not(:disabled) {
-        background-color: $color-primary;
-        color: $color-white;
+        background-color: var(--primary);
+        color: var(--surface);
       }
     }
   }
@@ -200,7 +200,7 @@
   &__placeholder {
     text-align: center;
     padding: $spacing-2xl;
-    color: $color-gray-400;
+    color: var(--muted);
     font-style: italic;
   }
 
@@ -252,13 +252,13 @@
   &__table-name {
     font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
-    color: $color-gray-900;
+    color: var(--text-color);
     margin-bottom: $spacing-sm;
   }
 
   &__description {
     font-size: $font-size-sm;
-    color: $color-gray-600;
+    color: var(--muted);
     margin-bottom: $spacing-md;
   }
 
@@ -271,31 +271,31 @@
 .results-panel {
   &__error {
     padding: $spacing-md;
-    background-color: rgba($color-error, 0.1);
-    border-left: 4px solid $color-error;
+    background-color: rgba(var(--error-rgb), 0.08);
+    border-left: 4px solid var(--error);
     border-radius: $border-radius-md;
-    color: $color-error;
+    color: var(--error);
     margin-bottom: $spacing-md;
   }
 
   &__hint {
     padding: $spacing-md;
-    background-color: rgba($color-info, 0.1);
-    border-left: 4px solid $color-info;
+    background-color: rgba(var(--info-rgb), 0.08);
+    border-left: 4px solid var(--info);
     border-radius: $border-radius-md;
-    color: $color-gray-800;
+    color: var(--text-color);
     margin-bottom: $spacing-md;
 
     strong {
-      color: $color-info;
+      color: var(--info);
     }
   }
 
   &__success {
     & .results-panel__meta {
       padding: $spacing-sm $spacing-md;
-      background-color: rgba($color-success, 0.1);
-      color: $color-success;
+      background-color: rgba(var(--success-rgb), 0.08);
+      color: var(--success);
       font-weight: $font-weight-medium;
       margin-bottom: $spacing-md;
       border-radius: $border-radius-sm;
@@ -305,7 +305,7 @@
   &__placeholder {
     text-align: center;
     padding: $spacing-2xl;
-    color: $color-gray-400;
+    color: var(--muted);
     font-style: italic;
   }
 
