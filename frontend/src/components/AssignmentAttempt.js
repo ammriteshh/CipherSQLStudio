@@ -28,8 +28,13 @@ const AssignmentAttempt = ({ user }) => {
       setAssignment(response.data);
       setError(null);
     } catch (err) {
-      const statusText = err.response ? ` (${err.response.status} ${err.response.statusText})` : ` (${err.message})`;
-      setError('Failed to load assignment. Please try again later.' + statusText);
+      if (err && err.response) {
+        const status = err.response.status;
+        const message = err.response.data && err.response.data.error ? err.response.data.error : err.response.statusText || 'Error from server';
+        setError(`Failed to load assignment. Server responded with ${status}: ${message}`);
+      } else {
+        setError('Cannot reach server / backend is down. Please check the backend and CORS settings.');
+      }
       console.error('Error fetching assignment:', err);
     } finally {
       setLoading(false);
@@ -66,7 +71,11 @@ const AssignmentAttempt = ({ user }) => {
         setError(response.data.error || 'Query execution failed');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to execute query. Please try again.');
+      if (err && err.response) {
+        setError(err.response.data?.error || `Query execution failed (${err.response.status})`);
+      } else {
+        setError('Cannot reach server / backend is down. Please check the backend and CORS settings.');
+      }
       console.error('Error executing query:', err);
     } finally {
       setExecuting(false);
@@ -91,7 +100,11 @@ const AssignmentAttempt = ({ user }) => {
         setError(response.data.error || 'Failed to get hint');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to get hint. Please try again.');
+      if (err && err.response) {
+        setError(err.response.data?.error || `Failed to get hint (${err.response.status})`);
+      } else {
+        setError('Cannot reach server / backend is down. Please check the backend and CORS settings.');
+      }
       console.error('Error getting hint:', err);
     } finally {
       setLoadingHint(false);

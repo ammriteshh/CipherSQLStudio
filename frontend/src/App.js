@@ -6,8 +6,6 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import api, { detectApiBase } from './services/api';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
 
 function App() {
   const [user, setUser] = useState(null);
@@ -29,8 +27,10 @@ function App() {
       try {
         const base = await detectApiBase();
         if (base) setDetectedApiBase(base);
+        else if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
       } catch (err) {
         // ignore; detection also runs in the api module
+        if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
       }
     })();
   }, []);

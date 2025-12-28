@@ -1,28 +1,57 @@
 import axios from 'axios';
 
-// Initial candidates for backend base (may include or omit '/api')
+// Candidates and detection policy
 const candidates = [];
-if (process.env.REACT_APP_API_URL) candidates.push(process.env.REACT_APP_API_URL);
+const envUrl = process.env.REACT_APP_API_URL ? String(process.env.REACT_APP_API_URL).trim() : '';
+if (envUrl) candidates.push(envUrl.replace(/\/+$/, ''));
+
+const isProd = process.env.NODE_ENV === 'production';
 if (typeof window !== 'undefined' && window.location) {
-  candidates.push(`${window.location.origin}/api`);
-  candidates.push(window.location.origin);
+  candidates.push(`${window.location.origin}/api`.replace(/\/+$/, ''));
+  candidates.push(`${window.location.origin}`.replace(/\/+$/, ''));
 }
-// Known deployed backend host (added as a fallback)
-candidates.push('https://cipher-sql-studio-0zlp.onrender.com/api');
-candidates.push('https://cipher-sql-studio-0zlp.onrender.com');
+if (!isProd) {
+  candidates.push('http://localhost:5000/api');
+}
 
-// Normalize helper
-const normalize = (s) => s ? s.replace(/\/+$/'', '') : s;
+const normalize = (s) => s ? s.replace(/\/+$/, '') : s;
 
-let API_BASE_URL = process.env.REACT_APP_API_URL || (typeof window !== 'undefined' ? `${window.location.origin}/api` : 'http://localhost:5000/api');
-// don't force /api here anymore; detection will decide exact value
-if (API_BASE_URL && API_BASE_URL.endsWith('/')) API_BASE_URL = API_BASE_URL.replace(/\/+$/, '');
+// Resolve initial API base
+let API_BASE_URL = '';
+if (envUrl) {
+  API_BASE_URL = normalize(envUrl);
+} else if (isProd && typeof window !== 'undefined' && window.location) {
+  API_BASE_URL = normalize(`${window.location.origin}/api`);
+} else if (!isProd) {
+  API_BASE_URL = 'http://localhost:5000/api';
+}
 
-// create axios instance with a safe default
+// create axios instance with the initial base (may be empty in rare cases)
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL || undefined,
   withCredentials: true,
 });
+
+// Response interceptor to log real backend errors for debugging
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    try {
+      const info = {
+        url: error.config && error.config.url ? `${error.config.baseURL || ''}${error.config.url}` : undefined,
+        method: error.config && error.config.method,
+        status: error.response && error.response.status,
+        data: error.response && error.response.data,
+        message: error.message,
+      };
+      console.error('API Error:', info);
+    } catch (e) {
+      console.error('API Error (failed to log details):', e);
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 // Async probe to detect which candidate (with or without /api) works.
 export async function detectApiBase(timeout = 5000) {

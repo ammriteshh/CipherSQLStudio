@@ -10,7 +10,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-const corsOrigin = process.env.CORS_ORIGIN || 'https://cipher-sql-studio-backend.onrender.com';
+// Default CORS origins include the frontend UI domain and backend domain for convenience.
+// For production, set CORS_ORIGIN explicitly in your deployment environment variables.
+const corsOrigin = process.env.CORS_ORIGIN || 'https://cipher-sql-studio-backend.onrender.com,https://cipher-sql-studio-ui.onrender.com';
 const allowedOrigins = corsOrigin.split(',').map(s => s.trim());
 
 app.use(cors({
