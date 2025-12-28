@@ -2,10 +2,6 @@ const { Pool } = require('pg');
 
 let pool = null;
 
-/**
- * Attempt to connect to PostgreSQL. If it fails (e.g., network timeout),
- * we log the error and keep `pool` as null so the app can continue running.
- */
 const connectPostgreSQL = async () => {
   try {
     pool = new Pool({
@@ -28,11 +24,10 @@ const connectPostgreSQL = async () => {
 
     pool.on('error', (err) => {
       console.error('Unexpected PostgreSQL error', err);
-      // Do not exit process here; allow app to handle runtime reconnects
     });
   } catch (error) {
     console.error('PostgreSQL connection failed:', error.message || error);
-    pool = null; // mark as unavailable
+    pool = null;
   }
 };
 
@@ -43,9 +38,7 @@ const ensurePool = () => {
   return pool;
 };
 
-/**
- * Create schema and tables for an assignment if they don't exist.
- */
+
 const setupAssignmentSchema = async (schemaName, tableDefinitions = []) => {
   const pool = ensurePool();
   const client = await pool.connect();
@@ -55,7 +48,6 @@ const setupAssignmentSchema = async (schemaName, tableDefinitions = []) => {
 
     for (const table of tableDefinitions) {
       if (table.createTableSQL) {
-        // Replace the table name in the CREATE TABLE with a namespaced schema.table
         const replaced = table.createTableSQL.replace(/CREATE\s+TABLE\s+[`"']?([a-zA-Z0-9_]+)[`"']?/i, `CREATE TABLE IF NOT EXISTS "${schemaName}"."${table.name}"`);
         await client.query(replaced);
       }
@@ -77,9 +69,6 @@ const setupAssignmentSchema = async (schemaName, tableDefinitions = []) => {
   }
 };
 
-/**
- * Execute a SQL query inside a specific schema by setting the search_path
- */
 const executeQueryInSchema = async (schemaName, sql) => {
   const pool = ensurePool();
   const client = await pool.connect();
