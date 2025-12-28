@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+const corsOrigin = process.env.CORS_ORIGIN || 'https://cipher-sql-studio-backend.onrender.com';
 const allowedOrigins = corsOrigin.split(',').map(s => s.trim());
 
 app.use(cors({
