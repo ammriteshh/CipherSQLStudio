@@ -34,7 +34,7 @@ const AssignmentAttempt = ({ user }) => {
     } finally {
       setLoading(false);
     }
-  };"
+  };
 
   const handleExecuteQuery = async () => {
     if (!sqlQuery.trim()) {

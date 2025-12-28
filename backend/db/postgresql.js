@@ -93,8 +93,11 @@ const executeQueryInSchema = async (schemaName, sql) => {
   }
 };
 
+const isPostgresAvailable = () => !!pool;
+
 module.exports = {
   connectPostgreSQL,
   setupAssignmentSchema,
   executeQueryInSchema,
+  isPostgresAvailable,
 };

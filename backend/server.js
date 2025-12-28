@@ -31,10 +31,13 @@ app.use('/api/auth', authRoutes);
 app.use('/api/progress', progressRoutes);
 
 // Health check endpoint
+const { isPostgresAvailable } = require('./db/postgresql');
+
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    postgresql: isPostgresAvailable() ? 'connected' : 'unavailable',
     timestamp: new Date().toISOString()
   });
 });
