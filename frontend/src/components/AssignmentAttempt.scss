@@ -61,6 +61,7 @@
       background-color: rgba(var(--diff-advanced-rgb), 0.1);
       color: var(--diff-advanced);
     }
+  }
 
   &__container {
     display: grid;
@@ -292,7 +293,7 @@
   }
 
   &__success {
-    & .results-panel__meta {
+    .results-panel__meta {
       padding: $spacing-sm $spacing-md;
       background-color: rgba(var(--success-rgb), 0.08);
       color: var(--success);
@@ -356,4 +357,3 @@
     word-break: break-word;
   }
 }
-
