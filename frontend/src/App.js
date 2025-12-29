@@ -4,7 +4,6 @@ import AssignmentList from './components/AssignmentList';
 import AssignmentAttempt from './components/AssignmentAttempt';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import api, { detectApiBase } from './services/api';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -15,8 +14,9 @@ function App() {
     try {
       const saved = localStorage.getItem('theme');
       if (saved) return saved;
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         return 'dark';
+      }
     } catch (e) {}
     return 'light';
   });
@@ -34,14 +34,6 @@ function App() {
       setUser({ token });
     }
     setLoading(false);
-
-    (async () => {
-      try {
-        if (process.env.NODE_ENV === 'development') {
-          await detectApiBase();
-        }
-      } catch {}
-    })();
   }, []);
 
   const handleLogin = (userData, token) => {
@@ -86,12 +78,8 @@ function App() {
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="app__link">
-                    Login
-                  </Link>
-                  <Link to="/signup" className="app__link">
-                    Signup
-                  </Link>
+                  <Link to="/login" className="app__link">Login</Link>
+                  <Link to="/signup" className="app__link">Signup</Link>
                 </>
               )}
             </nav>
@@ -102,14 +90,8 @@ function App() {
           <Routes>
             <Route path="/" element={<AssignmentList />} />
             <Route path="/assignments/:id" element={<AssignmentAttempt user={user} />} />
-            <Route
-              path="/login"
-              element={user ? <Navigate to="/" /> : <Login onLogin={handleLogin} />}
-            />
-            <Route
-              path="/signup"
-              element={user ? <Navigate to="/" /> : <Signup onLogin={handleLogin} />}
-            />
+            <Route path="/login" element={user ? <Navigate to="/" /> : <Login onLogin={handleLogin} />} />
+            <Route path="/signup" element={user ? <Navigate to="/" /> : <Signup onLogin={handleLogin} />} />
           </Routes>
         </main>
       </div>
