@@ -6,19 +6,17 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import api, { detectApiBase } from './services/api';
 
-
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [detectedApiBase, setDetectedApiBase] = useState(null);
-  const [showApiBanner, setShowApiBanner] = useState(process.env.NODE_ENV === 'development');
 
   // Theme: 'light' | 'dark'
   const [theme, setTheme] = useState(() => {
     try {
       const saved = localStorage.getItem('theme');
       if (saved) return saved;
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        return 'dark';
     } catch (e) {}
     return 'light';
   });
@@ -40,15 +38,9 @@ function App() {
     (async () => {
       try {
         if (process.env.NODE_ENV === 'development') {
-          const base = await detectApiBase();
-          if (base) setDetectedApiBase(base);
-          else if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
-        } else {
-          if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
+          await detectApiBase();
         }
-      } catch (err) {
-        if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
-      }
+      } catch {}
     })();
   }, []);
 
@@ -73,28 +65,6 @@ function App() {
           <div className="app__header-content">
             <h1 className="app__logo">CipherSQLStudio</h1>
 
-            {/* Temporary API banner (dev only) */}
-            {process.env.NODE_ENV === 'development' && detectedApiBase && showApiBanner && (
-              <div style={{
-                background: '#fff8c6',
-                border: '1px solid #f2e08f',
-                padding: '6px 10px',
-                borderRadius: 4,
-                margin: '8px 0',
-                fontSize: 12,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 10,
-              }}>
-                <strong style={{marginRight:6}}>Detected API:</strong>
-                <span style={{fontFamily:'monospace'}}>{detectedApiBase}</span>
-                <button
-                  style={{marginLeft:12, padding:'4px 8px', cursor:'pointer'}}
-                  onClick={() => setShowApiBanner(false)}
-                >Dismiss</button>
-              </div>
-            )}
-
             <nav className="app__nav">
               {/* Theme toggle */}
               <button
@@ -102,7 +72,7 @@ function App() {
                 aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                 title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-                style={{padding:8, minWidth:44}}
+                style={{ padding: 8, minWidth: 44 }}
               >
                 {theme === 'dark' ? '☀️' : '🌙'}
               </button>
@@ -116,8 +86,12 @@ function App() {
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="app__link">Login</Link>
-                  <Link to="/signup" className="app__link">Signup</Link>
+                  <Link to="/login" className="app__link">
+                    Login
+                  </Link>
+                  <Link to="/signup" className="app__link">
+                    Signup
+                  </Link>
                 </>
               )}
             </nav>
@@ -128,24 +102,19 @@ function App() {
           <Routes>
             <Route path="/" element={<AssignmentList />} />
             <Route path="/assignments/:id" element={<AssignmentAttempt user={user} />} />
-            <Route 
-              path="/login" 
-              element={user ? <Navigate to="/" /> : <Login onLogin={handleLogin} />} 
+            <Route
+              path="/login"
+              element={user ? <Navigate to="/" /> : <Login onLogin={handleLogin} />}
             />
-            <Route 
-              path="/signup" 
-              element={user ? <Navigate to="/" /> : <Signup onLogin={handleLogin} />} 
+            <Route
+              path="/signup"
+              element={user ? <Navigate to="/" /> : <Signup onLogin={handleLogin} />}
             />
           </Routes>
         </main>
-
-        {/* <footer className="app__footer">
-          <p>CipherSQLStudio</p>
-        </footer> */}
       </div>
     </Router>
   );
 }
 
 export default App;
-
