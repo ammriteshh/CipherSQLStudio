@@ -72,21 +72,21 @@ export async function detectApiBase(timeout = 5000) {
         clearTimeout(id);
         if (res && res.ok) {
           api.defaults.baseURL = v.replace(/\/+$/, '');
-          if (typeof window !== 'undefined' && window.console) console.info('Detected API base:', api.defaults.baseURL);
+          if (!isProd && typeof window !== 'undefined' && window.console) console.info('Detected API base:', api.defaults.baseURL);
           return api.defaults.baseURL;
         }
       } catch (err) {
-        if (typeof window !== 'undefined' && window.console) console.warn('Probe failed for', url, err && err.message ? err.message : err);
+        if (!isProd && typeof window !== 'undefined' && window.console) console.warn('Probe failed for', url, err && err.message ? err.message : err);
       }
     }
   }
 
-  if (typeof window !== 'undefined' && window.console) console.warn('No API base detected via probing; using default:', api.defaults.baseURL);
+  if (!isProd && typeof window !== 'undefined' && window.console) console.warn('No API base detected via probing; using default:', api.defaults.baseURL);
   return null;
 }
 
-if (typeof window !== 'undefined') {
-  detectApiBase().catch((e) => console.warn('Api detection error:', e && e.message ? e.message : e));
+if (typeof window !== 'undefined' && !isProd) {
+  detectApiBase().catch((e) => !isProd && console.warn('Api detection error:', e && e.message ? e.message : e));
 }
 
 export default api;

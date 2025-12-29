@@ -11,7 +11,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [detectedApiBase, setDetectedApiBase] = useState(null);
-  const [showApiBanner, setShowApiBanner] = useState(false);
+  const [showApiBanner, setShowApiBanner] = useState(process.env.NODE_ENV === 'development');
 
   // Theme: 'light' | 'dark'
   const [theme, setTheme] = useState(() => {
@@ -39,9 +39,13 @@ function App() {
 
     (async () => {
       try {
-        const base = await detectApiBase();
-        if (base) setDetectedApiBase(base);
-        else if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
+        if (process.env.NODE_ENV === 'development') {
+          const base = await detectApiBase();
+          if (base) setDetectedApiBase(base);
+          else if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
+        } else {
+          if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
+        }
       } catch (err) {
         if (api && api.defaults && api.defaults.baseURL) setDetectedApiBase(api.defaults.baseURL);
       }
@@ -69,8 +73,8 @@ function App() {
           <div className="app__header-content">
             <h1 className="app__logo">CipherSQLStudio</h1>
 
-            {/* Temporary API banner */}
-            {detectedApiBase && showApiBanner && (
+            {/* Temporary API banner (dev only) */}
+            {process.env.NODE_ENV === 'development' && detectedApiBase && showApiBanner && (
               <div style={{
                 background: '#fff8c6',
                 border: '1px solid #f2e08f',
