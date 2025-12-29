@@ -14,26 +14,28 @@ if (_rawPort && !(Number.isInteger(_parsedPort) && _parsedPort > 0)) {
   console.warn(`Invalid PORT environment variable (${_rawPort}), falling back to ${PORT}`);
 }
 
-const corsOrigin = process.env.CORS_ORIGIN ||
-  'http://localhost:3000,https://cipher-sql-studio-ui.onrender.com,https://cipher-sql-studio-0zlp.onrender.com';
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://cipher-sql-studio-ui.onrender.com"
+];
 
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true); // Postman / server-to-server
 
-const allowedOrigins = corsOrigin.split(',').map(s => s.trim());
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow non-browser requests (e.g., curl, server-side requests) when origin is undefined
-    if (!origin) return callback(null, true);
-    // Allow when wildcard is set
-    if (allowedOrigins.includes('*')) return callback(null, true);
-    // Allow matching origins
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    // Otherwise block
-    console.warn(`Blocked CORS request from origin: ${origin}`);
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-}));
+      console.warn("Blocked CORS:", origin);
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
