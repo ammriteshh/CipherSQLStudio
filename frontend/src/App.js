@@ -11,7 +11,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [detectedApiBase, setDetectedApiBase] = useState(null);
-  const [showApiBanner, setShowApiBanner] = useState(true);
+  const [showApiBanner, setShowApiBanner] = useState(false);
 
   // Theme: 'light' | 'dark'
   const [theme, setTheme] = useState(() => {
