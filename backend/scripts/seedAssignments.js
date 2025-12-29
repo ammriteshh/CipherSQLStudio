@@ -130,20 +130,20 @@ const sampleAssignments = [
         sampleData: [
           {
             customer_id: 1,
-            customer_name: 'Alice Williams',
-            email: 'alice@example.com',
+            customer_name: 'Abhinav Sharma',
+            email: 'abhinav.sharma@gmail.com',
             phone: '555-0101'
           },
           {
             customer_id: 2,
-            customer_name: 'Bob Miller',
-            email: 'bob@example.com',
+            customer_name: 'Bobby Khan',
+            email: 'bobby.khan@gmail.com',
             phone: '555-0102'
           },
           {
             customer_id: 3,
-            customer_name: 'Charlie Brown',
-            email: 'charlie@example.com',
+            customer_name: 'Mukesh Sharma',
+            email: 'mukesh.sharma@gmail.com',
             phone: '555-0103'
           },
         ],
@@ -205,27 +205,27 @@ const sampleAssignments = [
         sampleData: [
           {
             id: 1,
-            first_name: 'John',
-            last_name: 'Doe',
-            email: 'john.doe@example.com',
+            first_name: 'Sresth',
+            last_name: 'Singh',
+            email: 'sresth.singh@gmail.com',
             department: 'Engineering',
             salary: 75000.00,
             hire_date: '2022-01-15'
           },
           {
             id: 2,
-            first_name: 'Jane',
-            last_name: 'Smith',
-            email: 'jane.smith@example.com',
+            first_name: 'Vinayak',
+            last_name: 'Vaishnav',
+            email: 'vinayak.vaishnav@gmail.com',
             department: 'Marketing',
             salary: 65000.00,
             hire_date: '2022-03-20'
           },
           {
             id: 3,
-            first_name: 'Bob',
-            last_name: 'Johnson',
-            email: 'bob.johnson@example.com',
+            first_name: 'Harshit',
+            last_name: 'Raj',
+            email: 'harshit.raj@gmail.com',
             department: 'Engineering',
             salary: 80000.00,
             hire_date: '2021-11-10'
@@ -257,17 +257,17 @@ const sampleAssignments = [
         sampleData: [
           {
             id: 1,
-            first_name: 'John',
-            last_name: 'Doe',
-            email: 'john.doe@example.com',
+            first_name: 'Shabnam',
+            last_name: 'Thakur',
+            email: 'shabnam.thakur@gmail.com',
             department: 'Engineering',
             salary: 75000.00,
             hire_date: '2022-01-15'
           },
           {
             id: 2,
-            first_name: 'Jane',
-            last_name: 'Smith',
+            first_name: 'Palak',
+            last_name: 'Sinha',
             email: 'jane.smith@example.com',
             department: 'Marketing',
             salary: 65000.00,
@@ -275,18 +275,18 @@ const sampleAssignments = [
           },
           {
             id: 3,
-            first_name: 'Bob',
-            last_name: 'Johnson',
-            email: 'bob.johnson@example.com',
+            first_name: 'Jyoti',
+            last_name: 'Yadav',
+            email: 'jyoti.yadav@gmail.com',
             department: 'Engineering',
             salary: 80000.00,
             hire_date: '2021-11-10'
           },
           {
             id: 4,
-            first_name: 'Alice',
-            last_name: 'Williams',
-            email: 'alice.williams@example.com',
+            first_name: 'Prateek',
+            last_name: 'Mishra',
+            email: 'prateek.mishra@gmail.com',
             department: 'Marketing',
             salary: 70000.00,
             hire_date: '2022-05-10'
@@ -318,36 +318,36 @@ const sampleAssignments = [
         sampleData: [
           {
             id: 1,
-            first_name: 'John',
-            last_name: 'Doe',
-            email: 'john.doe@example.com',
+            first_name: 'Jayraj',
+            last_name: 'Thakur',
+            email: 'jayraj.thakur@gmail.com',
             department: 'Engineering',
             salary: 75000.00,
             hire_date: '2022-01-15'
           },
           {
             id: 2,
-            first_name: 'Jane',
-            last_name: 'Smith',
-            email: 'jane.smith@example.com',
+            first_name: 'Varad',
+            last_name: 'Patil',
+            email: 'varad.patil@gmail.com',
             department: 'Marketing',
             salary: 65000.00,
             hire_date: '2022-03-20'
           },
           {
             id: 3,
-            first_name: 'Bob',
-            last_name: 'Johnson',
-            email: 'bob.johnson@example.com',
+            first_name: 'Trishank',
+            last_name: 'Deshmukh',
+            email: 'trishank.deshmukh@gmail.com',
             department: 'Engineering',
             salary: 80000.00,
             hire_date: '2021-11-10'
           },
           {
             id: 4,
-            first_name: 'Alice',
-            last_name: 'Williams',
-            email: 'alice.williams@example.com',
+            first_name: 'Aastha',
+            last_name: 'Khanna',
+            email: 'aastha.khanna@gmail.com',
             department: 'Marketing',
             salary: 70000.00,
             hire_date: '2022-05-10'
