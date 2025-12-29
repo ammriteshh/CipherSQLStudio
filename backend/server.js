@@ -6,12 +6,16 @@ const mongoose = require('mongoose');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+// Ensure PORT is a valid numeric port (sometimes envs may mistakenly contain a URL)
+const _rawPort = process.env.PORT;
+const _parsedPort = _rawPort ? parseInt(_rawPort, 10) : NaN;
+const PORT = Number.isInteger(_parsedPort) && _parsedPort > 0 ? _parsedPort : 5000;
+if (_rawPort && !(Number.isInteger(_parsedPort) && _parsedPort > 0)) {
+  console.warn(`Invalid PORT environment variable (${_rawPort}), falling back to ${PORT}`);
+}
 
 const corsOrigin = process.env.CORS_ORIGIN ||
   'http://localhost:3000,https://cipher-sql-studio-ui.onrender.com,https://cipher-sql-studio-0zlp.onrender.com';
-
-
 
 
 const allowedOrigins = corsOrigin.split(',').map(s => s.trim());
@@ -50,10 +54,19 @@ app.use('/api/progress', progressRoutes);
 const { isPostgresAvailable } = require('./db/postgresql');
 
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-    postgresql: isPostgresAvailable() ? 'connected' : 'unavailable',
+  const mongoEnvDefined = !!process.env.MONGODB_URI;
+  const mongoState = mongoose.connection.readyState === 1 ? 'connected' : (mongoEnvDefined ? 'disconnected' : 'missing_env');
+
+  res.json({
+    status: 'ok',
+    mongodb: {
+      envConfigured: mongoEnvDefined,
+      state: mongoState,
+      readyState: mongoose.connection.readyState
+    },
+    postgresql: {
+      available: isPostgresAvailable()
+    },
     timestamp: new Date().toISOString()
   });
 });

@@ -5,7 +5,8 @@ const connectMongoDB = async () => {
     const mongoURI = process.env.MONGODB_URI;
     
     if (!mongoURI) {
-      throw new Error('MONGODB_URI is not defined in environment variables');
+      console.warn('MONGODB_URI is not defined in environment variables - starting without MongoDB (degraded mode).');
+      return; // start in degraded mode
     }
 
     await mongoose.connect(mongoURI, {
@@ -24,14 +25,17 @@ const connectMongoDB = async () => {
     });
 
     process.on('SIGINT', async () => {
-      await mongoose.connection.close();
-      console.log('MongoDB connection closed through app termination');
+      if (mongoose.connection.readyState === 1) {
+        await mongoose.connection.close();
+        console.log('MongoDB connection closed through app termination');
+      }
       process.exit(0);
     });
 
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    throw error;
+    // don't throw - allow the server to start in degraded mode
+    return;
   }
 };
 
