@@ -19,7 +19,7 @@ A browser-based SQL learning platform that provides interactive assignments with
 - **Backend**: Node.js with Express.js
 - **Sandbox Database**: PostgreSQL (for live query execution)
 - **Persistence Database**: MongoDB Atlas (for assignments and user progress)
-- **LLM Integration**: OpenAI/Google GenAI for hint generation
+- **LLM Integration**: Google Gemini API for hint generation
 
 ## Project Structure
 
@@ -42,49 +42,5 @@ CipherSQLStudio/
 └── README.md
 ```
 
-## Environment Variables
 
-### Backend (.env)
-
-- `PORT`: Express server port (default: 5000)
-- `MONGODB_URI`: MongoDB Atlas connection string
-- `POSTGRES_HOST`: PostgreSQL host
-- `POSTGRES_PORT`: PostgreSQL port (default: 5432)
-- `POSTGRES_USER`: PostgreSQL username
-- `POSTGRES_PASSWORD`: PostgreSQL password
-- `POSTGRES_DATABASE`: PostgreSQL database name
-- `OPENAI_API_KEY`: OpenAI API key for hints (optional if using Google AI)
-- `GOOGLE_AI_API_KEY`: Google AI API key for hints (optional if using OpenAI)
-- `JWT_SECRET`: Secret key for JWT token signing
-
-## API Endpoints
-
-- `GET /api/assignments` - Get all assignments
-- `GET /api/assignments/:id` - Get assignment details
-- `POST /api/assignments/:id/execute` - Execute SQL query
-- `POST /api/assignments/:id/hint` - Get AI-generated hint
-- `POST /api/auth/register` - Register new user (optional)
-- `POST /api/auth/login` - Login user (optional)
-- `GET /api/progress/:userId` - Get user progress (optional)
-
-## Security Features
-
-- Query validation to prevent DDL/DML commands on system tables
-- SQL injection prevention
-- Schema isolation using PostgreSQL's `SET search_path`
-- Input sanitization
-
-## Responsive Breakpoints
-
-- Mobile: 320px and above
-- Tablet: 641px and above
-- Desktop: 1024px and above
-- Large Desktop: 1281px and above
-
-## Development
-
-- Backend uses Express.js with CORS enabled
-- Frontend uses Create React App
-- SCSS compilation handled by React scripts
-- Hot reload enabled in development mode
 
