@@ -1,21 +1,15 @@
 const Assignment = require('../models/Assignment');
-const OpenAI = require('openai');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// Initialize LLM client
+// Initialize Google Gemini
 let llmClient = null;
-let llmType = null;
 
-if (process.env.OPENAI_API_KEY) {
-  llmClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  llmType = 'openai';
-} else if (process.env.GOOGLE_AI_API_KEY) {
+if (process.env.GOOGLE_AI_API_KEY) {
   llmClient = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
-  llmType = 'google';
-}
+} 
 
 /**
- * Generate a helpful hint using LLM without revealing the solution
+ * Generate Hint using Gemini (No solution, only guidance)
  */
 const generateHint = async (req, res, next) => {
   try {
@@ -23,8 +17,8 @@ const generateHint = async (req, res, next) => {
     const { userQuery } = req.body;
 
     if (!llmClient) {
-      return res.status(503).json({ 
-        error: 'LLM service is not configured. Please set OPENAI_API_KEY or GOOGLE_AI_API_KEY in environment variables.' 
+      return res.status(503).json({
+        error: 'LLM service is not configured. Please set GOOGLE_AI_API_KEY in environment variables.'
       });
     }
 
@@ -34,13 +28,12 @@ const generateHint = async (req, res, next) => {
       return res.status(404).json({ error: 'Assignment not found' });
     }
 
-    // Build context for the LLM
-    const tableSchemas = assignment.tableDefinitions.map(table => ({
-      name: table.name,
-      description: table.description,
-    })).map(table => `Table: ${table.name}\nDescription: ${table.description || 'N/A'}`).join('\n\n');
+    // Prepare table schema info
+    const tableSchemas = assignment.tableDefinitions
+      .map(table => `Table: ${table.name}\nDescription: ${table.description || 'N/A'}`)
+      .join('\n\n');
 
-    // Craft a prompt that encourages hints, not solutions
+    // Prompt for Gemini
     const prompt = `You are a helpful SQL tutor. A student is working on the following SQL assignment:
 
 ASSIGNMENT QUESTION:
@@ -52,7 +45,7 @@ ${tableSchemas}
 ${userQuery ? `STUDENT'S CURRENT QUERY:
 ${userQuery}
 
-` : ''}Your task is to provide a helpful hint that guides the student toward the solution WITHOUT giving away the complete or near-complete answer. 
+` : ''}Your task is to provide a helpful hint that guides the student toward the solution WITHOUT giving away the complete or near-complete answer.
 
 Guidelines:
 - Point them in the right direction
@@ -63,45 +56,28 @@ Guidelines:
 - Keep the hint concise (2-4 sentences)
 - Be encouraging and educational
 
-Provide only the hint text, no additional explanation or formatting.`;
-
-    let hint = '';
+Provide only the hint text, no extra explanation or formatting.`;
 
     try {
-      if (llmType === 'openai') {
-        const response = await llmClient.chat.completions.create({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a helpful SQL tutor who provides hints without giving complete solutions.',
-            },
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ],
-          temperature: 0.7,
-          max_tokens: 200,
-        });
-
-        hint = response.choices[0]?.message?.content?.trim() || 'Unable to generate hint.';
-      } else if (llmType === 'google') {
-        const model = llmClient.getGenerativeModel({ model: 'gemini-pro' });
-        const result = await model.generateContent(prompt);
-        hint = result.response.text().trim();
-      }
-
-      res.json({
-        success: true,
-        hint: hint || 'Unable to generate hint. Please try again.',
+      const model = llmClient.getGenerativeModel({
+        model: 'gemini-1.5-flash'
       });
+
+      const result = await model.generateContent(prompt);
+      const hint = result.response.text().trim();
+
+      return res.json({
+        success: true,
+        hint: hint || 'Unable to generate hint. Please try again.'
+      });
+
     } catch (llmError) {
       console.error('LLM API error:', llmError);
-      res.status(500).json({
-        error: 'Failed to generate hint. Please try again later.',
+      return res.status(500).json({
+        error: 'Failed to generate hint. Please try again later.'
       });
     }
+
   } catch (error) {
     next(error);
   }
@@ -110,4 +86,3 @@ Provide only the hint text, no additional explanation or formatting.`;
 module.exports = {
   generateHint,
 };
-
