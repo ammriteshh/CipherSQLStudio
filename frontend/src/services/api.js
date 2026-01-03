@@ -21,7 +21,7 @@ if (envUrl) {
 } else if (isProd && typeof window !== 'undefined' && window.location) {
   API_BASE_URL = normalize(`${window.location.origin}/api`);
 } else if (!isProd) {
-  API_BASE_URL = 'https://cipher-sql-studio-ui.onrender.com/api';
+  API_BASE_URL = 'https://cipher-sql-studio-ui.onrender.com';
 }
 
 const api = axios.create({
