@@ -6,7 +6,7 @@ let llmClient = null;
 
 if (process.env.GOOGLE_AI_API_KEY) {
   llmClient = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
-} 
+}
 
 /**
  * Generate Hint using Gemini (No solution, only guidance)
@@ -18,7 +18,8 @@ const generateHint = async (req, res, next) => {
 
     if (!llmClient) {
       return res.status(503).json({
-        error: 'LLM service is not configured. Please set GOOGLE_AI_API_KEY in environment variables.'
+        error:
+          'LLM service is not configured. Please set GOOGLE_AI_API_KEY in environment variables.',
       });
     }
 
@@ -30,7 +31,12 @@ const generateHint = async (req, res, next) => {
 
     // Prepare table schema info
     const tableSchemas = assignment.tableDefinitions
-      .map(table => `Table: ${table.name}\nDescription: ${table.description || 'N/A'}`)
+      .map(
+        (table) =>
+          `Table: ${table.name}\nDescription: ${
+            table.description || 'N/A'
+          }`
+      )
       .join('\n\n');
 
     // Prompt for Gemini
@@ -42,10 +48,14 @@ ${assignment.question}
 AVAILABLE TABLES:
 ${tableSchemas}
 
-${userQuery ? `STUDENT'S CURRENT QUERY:
+${
+  userQuery
+    ? `STUDENT'S CURRENT QUERY:
 ${userQuery}
 
-` : ''}Your task is to provide a helpful hint that guides the student toward the solution WITHOUT giving away the complete or near-complete answer.
+`
+    : ''
+}Your task is to provide a helpful hint that guides the student toward the solution WITHOUT giving away the complete or near-complete answer.
 
 Guidelines:
 - Point them in the right direction
@@ -60,7 +70,7 @@ Provide only the hint text, no extra explanation or formatting.`;
 
     try {
       const model = llmClient.getGenerativeModel({
-        model: 'gemini-1.5-flash'
+        model: 'gemini-1.5-flash-latest',   // ✅ FIXED MODEL
       });
 
       const result = await model.generateContent(prompt);
@@ -68,16 +78,14 @@ Provide only the hint text, no extra explanation or formatting.`;
 
       return res.json({
         success: true,
-        hint: hint || 'Unable to generate hint. Please try again.'
+        hint: hint || 'Unable to generate hint. Please try again.',
       });
-
     } catch (llmError) {
       console.error('LLM API error:', llmError);
-      return res.status(500).json({
-        error: 'Failed to generate hint. Please try again later.'
-      });
+      return res
+        .status(500)
+        .json({ error: 'Failed to generate hint. Please try again later.' });
     }
-
   } catch (error) {
     next(error);
   }
