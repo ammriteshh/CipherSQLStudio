@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 const candidates = [];
-const envUrl = process.env.REACT_APP_API_URL ? String(process.env.REACT_APP_API_URL).trim() : '';
+const envUrl = process.env.REACT_APP_API_URL
+  ? String(process.env.REACT_APP_API_URL).trim()
+  : "https://cipher-sql-backend.onrender.com";
+
 if (envUrl) candidates.push(envUrl.replace(/\/+$/, ''));
 
 const isProd = process.env.NODE_ENV === 'production';
