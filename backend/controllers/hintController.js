@@ -33,8 +33,7 @@ const generateHint = async (req, res, next) => {
     const tableSchemas = assignment.tableDefinitions
       .map(
         (table) =>
-          `Table: ${table.name}\nDescription: ${
-            table.description || 'N/A'
+          `Table: ${table.name}\nDescription: ${table.description || 'N/A'
           }`
       )
       .join('\n\n');
@@ -48,14 +47,13 @@ ${assignment.question}
 AVAILABLE TABLES:
 ${tableSchemas}
 
-${
-  userQuery
-    ? `STUDENT'S CURRENT QUERY:
+${userQuery
+        ? `STUDENT'S CURRENT QUERY:
 ${userQuery}
 
 `
-    : ''
-}Your task is to provide a helpful hint that guides the student toward the solution WITHOUT giving away the complete or near-complete answer.
+        : ''
+      }Your task is to provide a helpful hint that guides the student toward the solution WITHOUT giving away the complete or near-complete answer.
 
 Guidelines:
 - Point them in the right direction
@@ -70,7 +68,7 @@ Provide only the hint text, no extra explanation or formatting.`;
 
     try {
       const model = llmClient.getGenerativeModel({
-        model: 'gemini-1.5-flash-latest',   // ✅ FIXED MODEL
+        model: 'gemini-1.5-flash',
       });
 
       const result = await model.generateContent(prompt);
@@ -82,6 +80,10 @@ Provide only the hint text, no extra explanation or formatting.`;
       });
     } catch (llmError) {
       console.error('LLM API error:', llmError);
+      // Log more details if available
+      if (llmError.response) {
+        console.error('LLM Error details:', JSON.stringify(llmError.response, null, 2));
+      }
       return res
         .status(500)
         .json({ error: 'Failed to generate hint. Please try again later.' });
