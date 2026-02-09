@@ -116,9 +116,12 @@ const AssignmentAttempt = ({ user }) => {
 
     if (loadingHint) return;
 
+    // REMOVED: Confirmation dialog for cost
+    /*
     if (!window.confirm('Get a hint for 1 star?')) {
       return;
     }
+    */
 
     setLoadingHint(true);
     try {

@@ -33,6 +33,8 @@ const generateHint = async (req, res, next) => {
     }
 
     // Handle User Balance for Paid Hints (Single level = 1 star cost)
+    // REMOVED: Making hints free as per user request
+    /*
     if (userId) {
       const user = await User.findById(userId);
       if (!user) {
@@ -53,6 +55,7 @@ const generateHint = async (req, res, next) => {
       user.stars -= cost;
       await user.save();
     }
+    */
 
     // Prepare table schema info
     const tableSchemas = assignment.tableDefinitions
