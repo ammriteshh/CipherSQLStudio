@@ -15,6 +15,7 @@ function App() {
   useEffect(() => {
     const saved = localStorage.getItem('theme');
     if (saved) setTheme(saved);
+    setLoading(false);
   }, []);
 
   /* ---------- APPLY THEME + SMOOTH TRANSITION ---------- */
