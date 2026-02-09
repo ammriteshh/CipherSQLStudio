@@ -168,6 +168,80 @@ const AssignmentAttempt = ({ user }) => {
 
   if (loading) return <div className="loading-screen">Loading Workspace...</div>;
 
+  const renderAssignmentDescription = (assignment) => {
+    return (
+      <div className="formatted-description">
+        {assignment.tableDefinitions && assignment.tableDefinitions.map((table, index) => {
+          // Calculate max width for formatting
+          const nameWidth = "Column Name".length;
+          const typeWidth = "Type".length;
+          const maxNameLength = Math.max(nameWidth, ...(table.sampleData && table.sampleData.length > 0 ? Object.keys(table.sampleData[0]).map(k => k.length) : ["id".length]));
+          // Just use fixed width for type since we don't have types in sample data usually, default to varchar-like length
+
+          // Actually, we need schema which is not fully available in sampleData. 
+          // Let's infer or use a standard layout. The user wants "Column Name | Type".
+          // backend/models/Assignment.js -> tableDefinitionSchema doesn't explicitly store column types array, 
+          // but it has `createTableSQL`. We can parse that or just list columns from sampleData with "unknown" or "varchar" type for display if not available.
+
+          // BETTER APPROACH: The user example shows specific types. 
+          // Since we don't store structured column types in valid JSON in the DB (only SQL string), 
+          // we can try to parse the `createTableSQL` to extract column names and types.
+          const extractColumnsFromSQL = (sql) => {
+            try {
+              const content = sql.match(/\(([\s\S]*)\)/)[1];
+              return content.split(',').map(line => {
+                const parts = line.trim().split(/\s+/);
+                // Simple parser: first part is name, second is type
+                if (parts.length >= 2) {
+                  // Handle PRIMARY KEY or constraints
+                  const name = parts[0];
+                  let type = parts[1];
+                  if (parts.length > 2 && parts[2].toUpperCase().includes('PRIMARY')) {
+                    // type might be 'SERIAL' or 'INT'
+                  }
+                  return { name: parts[0], type: parts[1] };
+                }
+                return null;
+              }).filter(c => c && !c.name.match(/KEY|CONSTRAINT/i)); // filter out constraint lines
+            } catch (e) {
+              return Object.keys(table.sampleData[0] || {}).map(k => ({ name: k, type: 'varchar' }));
+            }
+          };
+
+          const columns = extractColumnsFromSQL(table.createTableSQL);
+
+          // Calculate formatting widths
+          const maxColLen = Math.max("Column Name".length, ...columns.map(c => c.name.length));
+          const maxTypeLen = Math.max("Type".length, ...columns.map(c => c.type.length));
+
+          const colPad = (str, len) => str + " ".repeat(len - str.length);
+          const dashLine = `+${"-".repeat(maxColLen + 2)}+${"-".repeat(maxTypeLen + 2)}+`;
+
+          return (
+            <div key={index} style={{ marginBottom: '20px' }}>
+              <p><strong>Table: {table.name}</strong></p>
+              <pre style={{ fontFamily: 'monospace', whiteSpace: 'pre' }}>
+                {dashLine}
+                | {colPad("Column Name", maxColLen)} | {colPad("Type", maxTypeLen)} |
+                {dashLine}
+                {columns.map(col => `| ${colPad(col.name, maxColLen)} | ${colPad(col.type, maxTypeLen)} |`).join('\n')}
+                {dashLine}
+              </pre>
+              <p style={{ marginTop: '5px', fontSize: '0.9em', color: '#888' }}>
+                {table.description}
+              </p>
+              <br />
+            </div>
+          );
+        })}
+
+        <p style={{ whiteSpace: 'pre-wrap' }}>{assignment.question}</p>
+
+        {/* We could also generate Example Inputs from sampleData if desired, but user focused on Schema formatting */}
+      </div>
+    );
+  };
+
   return (
     <div className="assignment-workspace">
       {/* LEFT PANEL */}
@@ -182,7 +256,7 @@ const AssignmentAttempt = ({ user }) => {
 
           <div className="problem-description glass-card">
             <h3>Task</h3>
-            <p>{assignment?.question}</p>
+            {assignment && renderAssignmentDescription(assignment)}
           </div>
         </div>
       </div>
