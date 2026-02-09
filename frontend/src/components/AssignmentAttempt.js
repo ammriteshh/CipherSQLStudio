@@ -20,9 +20,10 @@ const AssignmentAttempt = ({ user }) => {
   const [executionTime, setExecutionTime] = useState(null);
 
   // UI State
-  const [activeLeftTab, setActiveLeftTab] = useState('problem'); // 'problem' | 'database'
   const [activeRightTab, setActiveRightTab] = useState('editor'); // 'editor' | 'results'
   const [leftPanelWidth, setLeftPanelWidth] = useState(40); // Percentage
+  const [showHintModal, setShowHintModal] = useState(false);
+  const [currentHintLevel, setCurrentHintLevel] = useState(0);
 
   // Hints State
   const [hintsUnlocked, setHintsUnlocked] = useState(0);
@@ -110,7 +111,14 @@ const AssignmentAttempt = ({ user }) => {
   };
 
   const unlockHint = async (level) => {
-    if (hintsUnlocked >= level || loadingHint) return;
+    // If already unlocked, just show it
+    if (hintsUnlocked >= level) {
+      setCurrentHintLevel(level);
+      setShowHintModal(true);
+      return;
+    }
+
+    if (loadingHint) return;
 
     // Cost Logic
     const cost = level === 1 ? 0 : (level === 2 ? 1 : 2);
@@ -128,17 +136,32 @@ const AssignmentAttempt = ({ user }) => {
 
       if (response.data.success) {
         setHintsContent(prev => ({ ...prev, [level]: response.data.hint }));
-        setHintsUnlocked(Math.max(hintsUnlocked, level));
+        setHintsUnlocked(level);
+        setCurrentHintLevel(level);
+        setShowHintModal(true);
       } else {
         alert(response.data.error || 'Failed to unlock hint');
       }
     } catch (err) {
       console.error('Hint error:', err);
       // Fallback for demo
-      setHintsContent(prev => ({ ...prev, [level]: `This is a simulated hint for level ${level} because the backend might be unreachable.` }));
-      setHintsUnlocked(Math.max(hintsUnlocked, level));
+      const demoHint = `This is a simulated hint for level ${level} because the backend might be unreachable.`;
+      setHintsContent(prev => ({ ...prev, [level]: demoHint }));
+      setHintsUnlocked(level);
+      setCurrentHintLevel(level);
+      setShowHintModal(true);
     } finally {
       setLoadingHint(false);
+    }
+  };
+
+  const handleGetNextHint = () => {
+    const nextLevel = hintsUnlocked + 1;
+    if (nextLevel > 3) {
+      // Show the last hint if all unlocked
+      unlockHint(3);
+    } else {
+      unlockHint(nextLevel);
     }
   };
 
@@ -169,96 +192,18 @@ const AssignmentAttempt = ({ user }) => {
     <div className="assignment-workspace">
       {/* LEFT PANEL */}
       <div className="workspace-panel left-panel" style={{ width: `${leftPanelWidth}%` }}>
-        <div className="panel-tabs">
-          <button
-            className={`tab-btn ${activeLeftTab === 'problem' ? 'active' : ''}`}
-            onClick={() => setActiveLeftTab('problem')}
-          >
-            Problem
-          </button>
-          <button
-            className={`tab-btn ${activeLeftTab === 'database' ? 'active' : ''}`}
-            onClick={() => setActiveLeftTab('database')}
-          >
-            Database Schema
-          </button>
-        </div>
+        <div className="problem-view fade-in">
+          <div className="problem-header">
+            <h2 className="title">{assignment?.title}</h2>
+            <span className={`difficulty-badge ${assignment?.difficulty?.toLowerCase()}`}>
+              {assignment?.difficulty}
+            </span>
+          </div>
 
-        <div className="panel-content custom-scrollbar">
-          {activeLeftTab === 'problem' ? (
-            <div className="problem-view fade-in">
-              <div className="problem-header">
-                <h2 className="title">{assignment?.title}</h2>
-                <span className={`difficulty-badge ${assignment?.difficulty?.toLowerCase()}`}>
-                  {assignment?.difficulty}
-                </span>
-              </div>
-
-              <div className="problem-description glass-card">
-                <h3>Task</h3>
-                <p>{assignment?.question}</p>
-              </div>
-
-              <div className="hints-section">
-                <h3>Hints & Help</h3>
-                <div className="hint-cards">
-                  {[1, 2, 3].map((level) => (
-                    <div key={level} className={`hint-card ${hintsUnlocked >= level ? 'unlocked' : 'locked'}`}>
-                      <div className="hint-header" onClick={() => unlockHint(level)}>
-                        <span>Hint {level}</span>
-                        {level === 1 ? (
-                          <span className="cost-badge free">Free</span>
-                        ) : (
-                          <span className="cost-badge">{level === 2 ? '1 Star' : '2 Stars'}</span>
-                        )}
-                        {hintsUnlocked < level && <span className="lock-icon">🔒</span>}
-                      </div>
-                      {hintsUnlocked >= level && hintsContent[level] && (
-                        <div className="hint-body">
-                          {hintsContent[level]}
-                        </div>
-                      )}
-                      {hintsUnlocked >= level && !hintsContent[level] && (
-                        <div className="hint-body loading">Loading hint...</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="database-view fade-in">
-              {assignment?.tableDefinitions?.map((table, idx) => (
-                <div key={idx} className="table-definition glass-card">
-                  <div className="table-header">
-                    <span className="table-icon">📄</span>
-                    <h4>{table.name}</h4>
-                  </div>
-                  <div className="table-schema">
-                    {Object.keys(table.sampleData?.[0] || {}).map(col => (
-                      <span key={col} className="column-pill">{col}</span>
-                    ))}
-                  </div>
-                  <div className="table-preview">
-                    <table>
-                      <thead>
-                        <tr>
-                          {Object.keys(table.sampleData?.[0] || {}).map(col => <th key={col}>{col}</th>)}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {table.sampleData?.slice(0, 3).map((row, rIdx) => (
-                          <tr key={rIdx}>
-                            {Object.values(row).map((val, cIdx) => <td key={cIdx}>{val}</td>)}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="problem-description glass-card">
+            <h3>Task</h3>
+            <p>{assignment?.question}</p>
+          </div>
         </div>
       </div>
 
@@ -287,12 +232,7 @@ const AssignmentAttempt = ({ user }) => {
           <div className="panel-actions">
             <button
               className="btn btn-secondary hint-btn"
-              onClick={() => {
-                setActiveLeftTab('problem');
-                // Optional: Scroll to hints or expand them
-                // For now, just switching tab is a good start to "Get Hint"
-                // The user requirements say "Get Hint... Secondary button... Lightbulb... Hover tooltip"
-              }}
+              onClick={handleGetNextHint}
               title="Need help? Get a hint"
             >
               <span className="icon">💡</span> Get Hint
@@ -372,7 +312,36 @@ const AssignmentAttempt = ({ user }) => {
           </div>
         </div>
       </div>
+
+      {/* HINT MODAL */}
+      {showHintModal && (
+        <div className="modal-overlay">
+          <div className="modal-content glass-card">
+            <div className="modal-header">
+              <h3>Hint Level {currentHintLevel}</h3>
+              <button className="close-btn" onClick={() => setShowHintModal(false)}>×</button>
+            </div>
+            <div className="modal-body custom-scrollbar">
+              {hintsContent[currentHintLevel]}
+            </div>
+            <div className="modal-footer">
+              {currentHintLevel < 3 && (
+                <button
+                  className="btn btn-primary"
+                  onClick={() => {
+                    setShowHintModal(false);
+                    unlockHint(currentHintLevel + 1);
+                  }}
+                >
+                  Next Hint →
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+
   );
 };
 
