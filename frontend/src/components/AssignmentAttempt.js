@@ -23,11 +23,9 @@ const AssignmentAttempt = ({ user }) => {
   const [activeRightTab, setActiveRightTab] = useState('editor'); // 'editor' | 'results'
   const [leftPanelWidth, setLeftPanelWidth] = useState(40); // Percentage
   const [showHintModal, setShowHintModal] = useState(false);
-  const [currentHintLevel, setCurrentHintLevel] = useState(0);
 
   // Hints State
-  const [hintsUnlocked, setHintsUnlocked] = useState(0);
-  const [hintsContent, setHintsContent] = useState({ 1: null, 2: null, 3: null });
+  const [hint, setHint] = useState(null);
   const [loadingHint, setLoadingHint] = useState(false);
 
   const editorRef = useRef(null);
@@ -110,19 +108,15 @@ const AssignmentAttempt = ({ user }) => {
     }
   };
 
-  const unlockHint = async (level) => {
-    // If already unlocked, just show it
-    if (hintsUnlocked >= level) {
-      setCurrentHintLevel(level);
+  const handleGetHint = async () => {
+    if (hint) {
       setShowHintModal(true);
       return;
     }
 
     if (loadingHint) return;
 
-    // Cost Logic
-    const cost = level === 1 ? 0 : (level === 2 ? 1 : 2);
-    if (!window.confirm(level === 1 ? 'Reveal Level 1 hint?' : `Unlock Level ${level} hint for ${cost} stars?`)) {
+    if (!window.confirm('Get a hint for 1 star?')) {
       return;
     }
 
@@ -130,38 +124,21 @@ const AssignmentAttempt = ({ user }) => {
     try {
       const response = await api.post(`/assignments/${id}/hint`, {
         userQuery: sqlQuery,
-        hintLevel: level,
         userId: user?.id || user?._id
       });
 
       if (response.data.success) {
-        setHintsContent(prev => ({ ...prev, [level]: response.data.hint }));
-        setHintsUnlocked(level);
-        setCurrentHintLevel(level);
+        setHint(response.data.hint);
         setShowHintModal(true);
       } else {
-        alert(response.data.error || 'Failed to unlock hint');
+        alert(response.data.error || 'Failed to get hint');
       }
     } catch (err) {
       console.error('Hint error:', err);
-      // Fallback for demo
-      const demoHint = `This is a simulated hint for level ${level} because the backend might be unreachable.`;
-      setHintsContent(prev => ({ ...prev, [level]: demoHint }));
-      setHintsUnlocked(level);
-      setCurrentHintLevel(level);
-      setShowHintModal(true);
+      const errorMessage = err.response?.data?.error || 'Failed to connect to hint service. Please try again later.';
+      alert(errorMessage);
     } finally {
       setLoadingHint(false);
-    }
-  };
-
-  const handleGetNextHint = () => {
-    const nextLevel = hintsUnlocked + 1;
-    if (nextLevel > 3) {
-      // Show the last hint if all unlocked
-      unlockHint(3);
-    } else {
-      unlockHint(nextLevel);
     }
   };
 
@@ -232,10 +209,10 @@ const AssignmentAttempt = ({ user }) => {
           <div className="panel-actions">
             <button
               className="btn btn-secondary hint-btn"
-              onClick={handleGetNextHint}
+              onClick={handleGetHint}
               title="Need help? Get a hint"
             >
-              <span className="icon">💡</span> Get Hint
+              <span className="icon">💡</span> {loadingHint ? 'Loading...' : 'Get Hint'}
             </button>
             <div className="divider-vertical"></div>
             <button className="btn btn-primary run-btn" onClick={handleExecuteQuery} disabled={executing}>
@@ -318,24 +295,19 @@ const AssignmentAttempt = ({ user }) => {
         <div className="modal-overlay">
           <div className="modal-content glass-card">
             <div className="modal-header">
-              <h3>Hint Level {currentHintLevel}</h3>
+              <h3>Hint</h3>
               <button className="close-btn" onClick={() => setShowHintModal(false)}>×</button>
             </div>
             <div className="modal-body custom-scrollbar">
-              {hintsContent[currentHintLevel]}
+              <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}>{hint}</pre>
             </div>
             <div className="modal-footer">
-              {currentHintLevel < 3 && (
-                <button
-                  className="btn btn-primary"
-                  onClick={() => {
-                    setShowHintModal(false);
-                    unlockHint(currentHintLevel + 1);
-                  }}
-                >
-                  Next Hint →
-                </button>
-              )}
+              <button
+                className="btn btn-primary"
+                onClick={() => setShowHintModal(false)}
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>

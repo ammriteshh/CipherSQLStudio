@@ -18,7 +18,7 @@ if (process.env.GOOGLE_AI_API_KEY) {
 const generateHint = async (req, res, next) => {
   try {
     const { assignmentId } = req.params;
-    const { userQuery, hintLevel = 1, userId } = req.body;
+    const { userQuery, userId } = req.body;
 
     if (!llmClient) {
       return res.status(503).json({
@@ -32,18 +32,18 @@ const generateHint = async (req, res, next) => {
       return res.status(404).json({ error: 'Assignment not found' });
     }
 
-    // Handle User Balance for Paid Hints
-    if (hintLevel > 1 && userId) {
+    // Handle User Balance for Paid Hints (Single level = 1 star cost)
+    if (userId) {
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
 
-      const cost = hintLevel === 2 ? 1 : 2;
+      const cost = 1;
 
       if (user.stars < cost) {
         return res.status(403).json({
-          error: `Insufficient stars. You need ${cost} stars for this hint.`,
+          error: `Insufficient stars. You need ${cost} star for a hint.`,
           requiredStars: cost,
           currentStars: user.stars
         });
@@ -59,33 +59,7 @@ const generateHint = async (req, res, next) => {
       .map(t => `Table: ${t.name}\nDescription: ${t.description || 'N/A'}`)
       .join('\n\n');
 
-    // Define Prompt based on Level
-    let promptInstruction = '';
-    switch (parseInt(hintLevel)) {
-      case 2:
-        promptInstruction = `Provide a PARTIAL SOLUTION structure. 
-        - Explain the logic step-by-step.
-        - Show the skeleton of the query (e.g., SELECT ... FROM ... WHERE ...).
-        - Do not fill in the specific column names or conditions yet.
-        - Keep it under 4 sentences.`;
-        break;
-      case 3:
-        promptInstruction = `Provide a FILL-IN-THE-BLANKS query.
-        - Write the almost complete query but replace key parts (like column names, table names, or conditions) with '______'.
-        - Example: SELECT ______ FROM employees WHERE salary > ______;
-        - Do not provide the exact answer.`;
-        break;
-      case 1:
-      default:
-        promptInstruction = `Provide a GENERAL APPROACH hint.
-        - Suggest which SQL concepts to use (e.g., "Use a JOIN", "Try using GROUP BY").
-        - Mention relevant tables.
-        - Do NOT show any code or query structure.
-        - Keep it encouraging and under 3 sentences.`;
-        break;
-    }
-
-    // Construct Prompt
+    // Single Hint Prompt
     const prompt = `You are a helpful SQL tutor.
 ASSIGNMENT: ${assignment.question}
 
@@ -94,7 +68,11 @@ ${tableSchemas}
 
 ${userQuery ? `STUDENT QUERY:\n${userQuery}\n` : ''}
 
-TASK: ${promptInstruction}
+TASK: Provide a helpful hint to solve this problem.
+- Explain the logic briefly.
+- Suggest SQL keywords or concepts to use (e.g., "Use JOIN", "GROUP BY").
+- Show a skeleton of the query if helpful, but DO NOT give the exact full answer.
+- Keep it under 3 sentences.
 
 Provide ONLY the hint text. No headers, no markdown blocks.`;
 
