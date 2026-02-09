@@ -362,6 +362,101 @@ Jayraj (75k) and Trishank (80k) earn more than 72,500.`,
         ]
       }
     ]
+  },
+  {
+    title: 'Duplicate Emails',
+    description: 'Find duplicate values',
+    difficulty: 'Beginner',
+    question: `Write a SQL query to report all the duplicate emails.
+
+Return the result table in any order.
+
+The result format is in the following example.
+
+Example 1:
+
+Input: 
+Person table:
++----+---------+
+| id | email   |
++----+---------+
+| 1  | a@b.com |
+| 2  | c@d.com |
+| 3  | a@b.com |
++----+---------+
+
+Output: 
++---------+
+| email   |
++---------+
+| a@b.com |
++---------+
+Explanation: a@b.com is repeated two times.`,
+    tableDefinitions: [
+      {
+        name: 'Person',
+        description: 'Email records',
+        createTableSQL: `
+          CREATE TABLE Person (
+            id INT PRIMARY KEY,
+            email VARCHAR(255)
+          )
+        `,
+        sampleData: [
+          { id: 1, email: 'a@b.com' },
+          { id: 2, email: 'c@d.com' },
+          { id: 3, email: 'a@b.com' }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Delete Duplicate Emails',
+    description: 'Delete duplicate rows',
+    difficulty: 'Beginner',
+    question: `Write a SQL query to delete all duplicate emails, keeping only one unique email with the smallest id.
+
+Return the result table in any order.
+
+The result format is in the following example.
+
+Example 1:
+
+Input: 
+Person table:
++----+------------------+
+| id | email            |
++----+------------------+
+| 1  | john@example.com |
+| 2  | bob@example.com  |
+| 3  | john@example.com |
++----+------------------+
+
+Output: 
++----+------------------+
+| id | email            |
++----+------------------+
+| 1  | john@example.com |
+| 2  | bob@example.com  |
++----+------------------+
+Explanation: john@example.com is repeated two times. We keep the row with the smallest Id = 1.`,
+    tableDefinitions: [
+      {
+        name: 'Person',
+        description: 'Email records',
+        createTableSQL: `
+          CREATE TABLE Person (
+            id INT PRIMARY KEY,
+            email VARCHAR(255)
+          )
+        `,
+        sampleData: [
+          { id: 1, email: 'john@example.com' },
+          { id: 2, email: 'bob@example.com' },
+          { id: 3, email: 'john@example.com' }
+        ]
+      }
+    ]
   }
 ];
 

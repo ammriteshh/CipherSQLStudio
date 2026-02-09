@@ -1,80 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AssignmentCard from '../components/AssignmentCard';
+import api from '../services/api'; // Import API service
 import './AssignmentsPage.scss';
-
-// Mock Data (Replace with API call later)
-const MOCK_ASSIGNMENTS = [
-    {
-        _id: '1',
-        title: 'Basic SELECT Statements',
-        difficulty: 'Beginner',
-        estimatedTime: '10 min',
-        tags: ['SELECT', 'FROM', 'Basics'],
-        completionCurrent: 10,
-        completionTotal: 10,
-        locked: false
-    },
-    {
-        _id: '2',
-        title: 'Filtering with WHERE',
-        difficulty: 'Beginner',
-        estimatedTime: '15 min',
-        tags: ['WHERE', 'Operators', 'Filtering'],
-        completionCurrent: 5,
-        completionTotal: 10,
-        locked: false
-    },
-    {
-        _id: '3',
-        title: 'Joints and Relationships',
-        difficulty: 'Intermediate',
-        estimatedTime: '30 min',
-        tags: ['JOIN', 'Foreign Keys', 'Relations'],
-        completionCurrent: 0,
-        completionTotal: 10,
-        locked: false
-    },
-    {
-        _id: '4',
-        title: 'Aggregation Functions',
-        difficulty: 'Intermediate',
-        estimatedTime: '25 min',
-        tags: ['GROUP BY', 'HAVING', 'COUNT'],
-        completionCurrent: 0,
-        completionTotal: 10,
-        locked: true
-    },
-    {
-        _id: '5',
-        title: 'Advanced Subqueries',
-        difficulty: 'Advanced',
-        estimatedTime: '45 min',
-        tags: ['Subqueries', 'Nested', 'Complex'],
-        completionCurrent: 0,
-        completionTotal: 10,
-        locked: true
-    },
-    {
-        _id: '6',
-        title: 'Window Functions',
-        difficulty: 'Advanced',
-        estimatedTime: '50 min',
-        tags: ['OVER', 'PARTITION BY', 'RANK'],
-        completionCurrent: 0,
-        completionTotal: 10,
-        locked: true
-    }
-];
 
 const AssignmentsPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterDifficulty, setFilterDifficulty] = useState('All');
-    // eslint-disable-next-line no-unused-vars
-    const [assignments, setAssignments] = useState(MOCK_ASSIGNMENTS);
+    const [assignments, setAssignments] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchAssignments = async () => {
+            try {
+                setLoading(true);
+                const response = await api.get('/assignments');
+                setAssignments(response.data);
+                setError(null);
+            } catch (err) {
+                console.error('Failed to fetch assignments:', err);
+                setError('Failed to load assignments. Please try again in a moment.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAssignments();
+    }, []);
 
     const filteredAssignments = assignments.filter(assignment => {
-        const matchesSearch = assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            assignment.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+        const title = assignment.title || '';
+        const tags = assignment.tags || []; // Backend might not send tags yet
+
+        const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
 
         const matchesDifficulty = filterDifficulty === 'All' || assignment.difficulty === filterDifficulty;
 
@@ -97,7 +56,7 @@ const AssignmentsPage = () => {
                     <input
                         type="text"
                         className="premium-input"
-                        placeholder="Search assignments, tags..."
+                        placeholder="Search assignments..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -117,14 +76,26 @@ const AssignmentsPage = () => {
             </div>
 
             <div className="assignments-grid">
-                {filteredAssignments.length > 0 ? (
+                {loading ? (
+                    <div className="loading-state">Loading assignments...</div>
+                ) : error ? (
+                    <div className="error-state">{error}</div>
+                ) : filteredAssignments.length > 0 ? (
                     filteredAssignments.map((assignment, index) => (
                         <div
                             key={assignment._id}
                             className="grid-item animate-slide-up"
                             style={{ animationDelay: `${index * 100}ms` }}
                         >
-                            <AssignmentCard assignment={assignment} />
+                            <AssignmentCard assignment={{
+                                ...assignment,
+                                // Default values if missing from backend
+                                completionCurrent: 0,
+                                completionTotal: 10,
+                                locked: false, // Explicitly unlock everything
+                                tags: assignment.tags || ['SQL'],
+                                estimatedTime: assignment.estimatedTime || '10 min'
+                            }} />
                         </div>
                     ))
                 ) : (
