@@ -1,5 +1,4 @@
 @import '../styles/variables';
-@import '../styles/mixins';
 
 .assignments-page {
     width: 100%;
@@ -8,92 +7,86 @@
 }
 
 .assignments-page__header {
-    margin-bottom: $spacing-xl;
+    margin-bottom: $space-10;
     text-align: center;
 
     .page-title {
-        font-size: $font-size-4xl;
-        font-weight: $font-weight-bold;
-        margin-bottom: $spacing-sm;
+        font-size: $font-3xl;
+        font-weight: $font-bold;
+        margin-bottom: $space-2;
+        color: var(--text-main);
     }
 
     .page-subtitle {
-        font-size: $font-size-lg;
+        font-size: $font-lg;
         color: var(--text-muted);
     }
 }
 
 .assignments-page__controls {
-    @include flex-between;
-    gap: $spacing-md;
-    padding: $spacing-md;
-    margin-bottom: $spacing-2xl;
-    border-radius: $border-radius-lg;
-    flex-wrap: wrap;
-}
-
-.search-bar {
-    flex: 1;
-    min-width: 300px;
-    position: relative;
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    gap: $space-4;
+    margin-bottom: $space-8;
+    flex-wrap: wrap;
 
-    svg {
-        position: absolute;
-        left: 12px;
-        color: var(--text-muted);
-        pointer-events: none;
-    }
+    .search-bar {
+        flex: 1;
+        min-width: 300px;
+        position: relative;
 
-    input {
-        @include input-base;
-        padding-left: 40px;
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
 
-        &:focus {
-            background: rgba(0, 0, 0, 0.4);
-            border-color: var(--primary);
+        input {
+            padding-left: 40px;
         }
     }
-}
 
-.filter-tabs {
-    display: flex;
-    gap: $spacing-xs;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 4px;
-    border-radius: $border-radius-md;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.filter-tab {
-    padding: 8px 16px;
-    border-radius: $border-radius-sm;
-    background: transparent;
-    color: var(--text-muted);
-    border: none;
-    cursor: pointer;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    transition: all $transition-base;
-
-    &:hover {
-        color: var(--text-main);
+    .filter-tabs {
+        display: flex;
+        gap: $space-1;
+        background-color: var(--bg-card);
+        padding: 4px;
+        border-radius: $radius-md;
+        border: 1px solid var(--border);
     }
 
-    &.active {
-        background: var(--primary);
-        color: white;
-        box-shadow: 0 2px 10px rgba(var(--primary-rgb), 0.3);
+    .filter-tab {
+        padding: 6px 16px;
+        border-radius: $radius-sm;
+        font-size: $font-sm;
+        font-weight: $font-medium;
+        color: var(--text-muted);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: $transition;
+
+        &:hover {
+            color: var(--text-main);
+            background-color: var(--bg-hover);
+        }
+
+        &.active {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            box-shadow: var(--shadow-sm);
+        }
     }
 }
 
 .assignments-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: $spacing-lg;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: $space-6;
     width: 100%;
 }
 
@@ -104,40 +97,44 @@
 .no-results {
     grid-column: 1 / -1;
     text-align: center;
-    padding: $spacing-2xl;
+    padding: $space-16;
     color: var(--text-muted);
-    font-size: $font-size-lg;
+    font-size: $font-lg;
+
+    p {
+        margin-bottom: $space-4;
+    }
 
     .btn-reset {
-        margin-top: $spacing-md;
-        @include button-base;
-        background: transparent;
+        background-color: transparent;
         border: 1px solid var(--primary);
         color: var(--primary);
+        padding: 8px 16px;
+        border-radius: $radius-md;
+        font-weight: $font-medium;
+        cursor: pointer;
+        transition: $transition;
 
         &:hover {
-            background: rgba(var(--primary-rgb), 0.1);
+            background-color: rgba($primary, 0.1);
         }
     }
 }
 
-// Masonry layout using CSS columns (Optional alternative)
-/*
-.assignments-masonry {
-  column-count: 1;
-  column-gap: $spacing-lg;
-  
-  @include respond-to(md) {
-    column-count: 2;
-  }
-  
-  @include respond-to(xl) {
-    column-count: 3;
-  }
-  
-  .grid-item {
-    break-inside: avoid;
-    margin-bottom: $spacing-lg;
-  }
+// Slide Up Animation
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
-*/
+
+.animate-slide-up {
+    animation: slideUp 0.4s ease forwards;
+    opacity: 0; // Starts hidden
+}

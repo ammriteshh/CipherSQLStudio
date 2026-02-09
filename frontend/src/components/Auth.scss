@@ -2,38 +2,46 @@
 @import '../styles/mixins';
 
 .auth {
-  @include flex-center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: calc(100vh - 200px);
-  padding: $spacing-lg;
+  padding: $space-6;
 
   &__container {
     width: 100%;
     max-width: 400px;
-    @include card;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: $radius-lg;
+    padding: $space-8;
+    box-shadow: var(--shadow-lg);
   }
 
   &__title {
-    font-size: $font-size-2xl;
-    font-weight: $font-weight-bold;
-    color: var(--text-color);
+    font-size: $font-2xl;
+    font-weight: $font-bold;
+    color: var(--text-main);
     text-align: center;
-    margin-bottom: $spacing-xl;
+    margin-bottom: $space-6;
   }
 
   &__form {
-    @include flex-column;
-    gap: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
   }
 
   &__field {
-    @include flex-column;
-    gap: $spacing-sm;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
   }
 
   &__label {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: var(--muted-text);
+    font-size: $font-sm;
+    font-weight: $font-medium;
+    color: var(--text-muted);
   }
 
   &__input {
@@ -41,12 +49,12 @@
   }
 
   &__error {
-    padding: $spacing-md;
-    background-color: rgba(var(--error-rgb), 0.08);
-    border: 1px solid rgba(var(--error-rgb), 0.18);
-    border-radius: $border-radius-md;
-    color: var(--error);
-    font-size: $font-size-sm;
+    padding: $space-3;
+    background-color: rgba($danger, 0.1);
+    border: 1px solid rgba($danger, 0.2);
+    border-radius: $radius-md;
+    color: $danger;
+    font-size: $font-sm;
   }
 
   &__btn {
@@ -55,29 +63,29 @@
 
     &--primary {
       background-color: var(--primary);
-      color: var(--surface);
+      color: white;
 
       &:hover:not(:disabled) {
-        background-color: var(--primary-dark);
+        background-color: var(--primary-hover);
       }
     }
   }
 
   &__footer {
-    margin-top: $spacing-lg;
+    margin-top: $space-6;
     text-align: center;
-    font-size: $font-size-sm;
-    color: var(--muted);
+    font-size: $font-sm;
+    color: var(--text-muted);
   }
 
   &__link {
     color: var(--primary);
     text-decoration: none;
-    font-weight: $font-weight-medium;
+    font-weight: $font-medium;
+    margin-left: $space-1;
 
     &:hover {
       text-decoration: underline;
     }
   }
 }
-

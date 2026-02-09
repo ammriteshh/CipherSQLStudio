@@ -1,34 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Layout.scss';
 
 const Layout = ({ children, user, onLogout, theme, onToggleTheme }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
-    // Custom Icons
-    const HomeIcon = () => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-    );
-
-    const BookIcon = () => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-        </svg>
-    );
-
-    const HistoryIcon = () => (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
-    );
-
+    // Icons
     const SunIcon = () => (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="5" />
@@ -50,78 +28,59 @@ const Layout = ({ children, user, onLogout, theme, onToggleTheme }) => {
     );
 
     const navItems = [
-        { label: 'Home', path: '/', icon: <HomeIcon /> },
-        { label: 'Assignments', path: '/assignments', icon: <BookIcon /> },
-        { label: 'History', path: '/history', icon: <HistoryIcon /> },
+        { label: 'Home', path: '/' },
+        { label: 'Assignments', path: '/assignments' },
+        { label: 'History', path: '/history' },
     ];
 
     return (
         <div className="layout">
-            {/* Sidebar - Persistent Mini */}
-            <aside
-                className={`layout__sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}
-                onMouseEnter={() => setIsSidebarCollapsed(false)}
-                onMouseLeave={() => setIsSidebarCollapsed(true)}
-            >
-                <div className="layout__sidebar-logo">
-                    <span className="logo-icon">CS</span>
-                    <span className="logo-text text-gradient">CipherSQL</span>
-                </div>
+            <header className="navbar glass-panel">
+                <div className="navbar__container">
+                    {/* Logo */}
+                    <Link to="/" className="navbar__logo">
+                        <span className="logo-text">CipherSQL</span>
+                    </Link>
 
-                <nav className="layout__nav">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.path}
-                            to={item.path}
-                            className={`layout__nav-item ${location.pathname === item.path ? 'active' : ''}`}
-                            title={item.label}
-                        >
-                            <span className="nav-icon">{item.icon}</span>
-                            <span className="nav-label">{item.label}</span>
-                            {location.pathname === item.path && <div className="nav-indicator" />}
-                        </Link>
-                    ))}
-                </nav>
+                    {/* Navigation */}
+                    <nav className="navbar__nav">
+                        {navItems.map((item) => (
+                            <Link
+                                key={item.path}
+                                to={item.path}
+                                className={`navbar__link ${location.pathname === item.path ? 'active' : ''}`}
+                            >
+                                {item.label}
+                            </Link>
+                        ))}
+                    </nav>
 
-                <div className="layout__sidebar-footer">
-                    <button onClick={onToggleTheme} className="theme-toggle" aria-label="Toggle Theme">
-                        {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-                    </button>
-                </div>
-            </aside>
+                    {/* Actions */}
+                    <div className="navbar__actions">
+                        <button onClick={onToggleTheme} className="theme-toggle" aria-label="Toggle Theme">
+                            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+                        </button>
 
-            <div className="layout__content">
-                {/* Glass Header */}
-                <header className="layout__header glass-panel">
-                    <div className="header-breadcrumbs">
-                        <span className="text-muted">CipherSQL</span>
-                        <span className="separator">/</span>
-                        <span className="current">{location.pathname === '/' ? 'Home' : location.pathname.split('/')[1]}</span>
-                    </div>
+                        <div className="divider-vertical"></div>
 
-                    <div className="header-actions">
                         {user ? (
-                            <div className="user-profile">
-                                <div className="user-avatar gradient-bg">
-                                    {user.username ? user.username[0].toUpperCase() : 'U'}
-                                </div>
+                            <div className="user-menu">
                                 <span className="user-name">{user.username}</span>
-                                <button onClick={onLogout} className="btn-logout">Logout</button>
+                                <button onClick={onLogout} className="btn-link">Logout</button>
                             </div>
                         ) : (
                             <div className="auth-buttons">
-                                <Link to="/login" className="btn-login">Login</Link>
-                                <Link to="/signup" className="btn-signup">Sign Up</Link>
+                                <Link to="/login" className="btn btn-outline">Login</Link>
+                                <Link to="/signup" className="btn btn-primary">Sign Up</Link>
                             </div>
                         )}
                     </div>
-                </header>
+                </div>
+            </header>
 
-                {/* Main Content Area */}
-                <main className="layout__main-content">
-                    {children}
-                </main>
-            </div>
+            <main className="layout__content">
+                {children}
+            </main>
         </div>
     );
 };

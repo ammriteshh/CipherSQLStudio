@@ -285,7 +285,20 @@ const AssignmentAttempt = ({ user }) => {
           </button>
 
           <div className="panel-actions">
-            <button className="run-btn" onClick={handleExecuteQuery} disabled={executing}>
+            <button
+              className="btn btn-secondary hint-btn"
+              onClick={() => {
+                setActiveLeftTab('problem');
+                // Optional: Scroll to hints or expand them
+                // For now, just switching tab is a good start to "Get Hint"
+                // The user requirements say "Get Hint... Secondary button... Lightbulb... Hover tooltip"
+              }}
+              title="Need help? Get a hint"
+            >
+              <span className="icon">💡</span> Get Hint
+            </button>
+            <div className="divider-vertical"></div>
+            <button className="btn btn-primary run-btn" onClick={handleExecuteQuery} disabled={executing}>
               {executing ? 'Running...' : '▶ Run Query'}
             </button>
           </div>

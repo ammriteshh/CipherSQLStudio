@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AssignmentCard from '../components/AssignmentCard';
 import './AssignmentsPage.scss';
 
@@ -69,6 +69,7 @@ const MOCK_ASSIGNMENTS = [
 const AssignmentsPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterDifficulty, setFilterDifficulty] = useState('All');
+    // eslint-disable-next-line no-unused-vars
     const [assignments, setAssignments] = useState(MOCK_ASSIGNMENTS);
 
     const filteredAssignments = assignments.filter(assignment => {
@@ -83,11 +84,11 @@ const AssignmentsPage = () => {
     return (
         <div className="assignments-page">
             <div className="assignments-page__header">
-                <h1 className="page-title text-gradient">Practice SQL</h1>
+                <h1 className="page-title">Practice SQL</h1>
                 <p className="page-subtitle">Master database queries with interactive challenges.</p>
             </div>
 
-            <div className="assignments-page__controls glass-panel">
+            <div className="assignments-page__controls">
                 <div className="search-bar">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -95,6 +96,7 @@ const AssignmentsPage = () => {
                     </svg>
                     <input
                         type="text"
+                        className="premium-input"
                         placeholder="Search assignments, tags..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}

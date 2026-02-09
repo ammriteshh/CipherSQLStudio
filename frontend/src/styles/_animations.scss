@@ -1,3 +1,5 @@
+@import './variables';
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -22,15 +24,15 @@
 
 @keyframes pulse-glow {
     0% {
-        box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4);
+        box-shadow: 0 0 0 0 rgba($primary, 0.4);
     }
 
     70% {
-        box-shadow: 0 0 0 10px rgba(var(--primary-rgb), 0);
+        box-shadow: 0 0 0 10px rgba($primary, 0);
     }
 
     100% {
-        box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0);
+        box-shadow: 0 0 0 0 rgba($primary, 0);
     }
 }
 
@@ -48,26 +50,12 @@
     }
 }
 
-@keyframes gradient-shift {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
 .animate-fade-in {
-    animation: fadeIn $transition-base forwards;
+    animation: fadeIn 0.3s ease forwards;
 }
 
 .animate-slide-up {
-    animation: slideUp $transition-base forwards;
+    animation: slideUp 0.4s ease forwards;
 }
 
 .animate-float {

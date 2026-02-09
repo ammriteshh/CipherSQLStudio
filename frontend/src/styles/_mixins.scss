@@ -1,37 +1,40 @@
 @import './variables';
 
-// Glassmorphism Mixins
-@mixin glass-panel($opacity: 0.1, $blur: $blur-md) {
-  background: rgba(255, 255, 255, $opacity);
+// Glassmorphism
+@mixin glass-panel($opacity: 0.8, $blur: 12px) {
+  background: rgba(var(--bg-card), $opacity); // Fallback if bg-card is rgb
+  background: rgba(#1f2937, $opacity); // Hardcoded fallback for now if vars are hex
   backdrop-filter: blur($blur);
   -webkit-backdrop-filter: blur($blur);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: $shadow-glass;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 @mixin glass-card-hover {
-  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+  transition: all $transition;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.2);
-    background: $color-surface-glass-hover;
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-highlight);
+    background: var(--bg-hover);
   }
 }
 
-@mixin neon-text($color: $color-primary) {
-  text-shadow: 0 0 10px rgba($color, 0.5), 0 0 20px rgba($color, 0.3);
-}
-
-@mixin gradient-text($start: $color-primary, $end: $color-secondary) {
+// Text Effects
+@mixin gradient-text($start: $primary, $end: $secondary) {
   background: linear-gradient(135deg, $start, $end);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-// Responsive Breakpoints (Mobile-First)
+// Breakpoints
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
 @mixin respond-to($breakpoint) {
   @if $breakpoint ==sm {
     @media (min-width: $breakpoint-sm) {
@@ -58,7 +61,7 @@
   }
 }
 
-// Flexbox utilities
+// Flex Utilities
 @mixin flex-center {
   display: flex;
   align-items: center;
@@ -71,23 +74,18 @@
   justify-content: space-between;
 }
 
-@mixin flex-column {
-  display: flex;
-  flex-direction: column;
-}
-
-// Button base styles
+// Button Base
 @mixin button-base {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: $spacing-sm $spacing-lg;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  padding: $space-2 $space-4;
+  font-size: $font-sm;
+  font-weight: $font-medium;
   text-decoration: none;
   cursor: pointer;
-  transition: all $transition-base;
-  border-radius: $border-radius-md;
+  transition: all $transition;
+  border-radius: $radius-md;
   border: 1px solid transparent;
 
   &:disabled {
@@ -96,42 +94,34 @@
   }
 }
 
-// Card styles
-@mixin card {
-  @include glass-panel;
-  border-radius: $border-radius-xl;
-  padding: $spacing-lg;
-}
-
-// Input base styles
+// Input Base
 @mixin input-base {
   width: 100%;
-  padding: $spacing-sm $spacing-md;
-  font-size: $font-size-base;
-  font-family: $font-family-base;
-  color: var(--text-color);
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: $border-radius-md;
-  transition: all $transition-base;
+  padding: $space-2 $space-3;
+  font-size: $font-base;
+  font-family: $font-sans;
+  color: var(--text-main);
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: $radius-sm;
+  transition: all $transition;
 
   &:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
-    background: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0 2px rgba($primary, 0.2);
   }
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--text-muted);
   }
 }
 
-// Scrollbar styles
+// Scrollbar
 @mixin custom-scrollbar {
   &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
 
   &::-webkit-scrollbar-track {
@@ -139,26 +129,13 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: $border-radius-sm;
+    background: var(--border);
+    border-radius: $radius-full;
+    border: 2px solid transparent;
+    background-clip: content-box;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.2);
+      background-color: var(--text-muted);
     }
   }
-}
-
-// Truncate text
-@mixin truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-// Multi-line truncate
-@mixin line-clamp($lines: 2) {
-  display: -webkit-box;
-  -webkit-line-clamp: $lines;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
