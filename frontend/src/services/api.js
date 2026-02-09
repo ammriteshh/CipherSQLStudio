@@ -3,7 +3,7 @@ import axios from 'axios';
 const candidates = [];
 const envUrl = process.env.REACT_APP_API_URL
   ? String(process.env.REACT_APP_API_URL).trim()
-  : "https://cipher-sql-backend.onrender.com";
+  : "https://cipher-sql-backend.onrender.com/api";
 
 if (envUrl) candidates.push(envUrl.replace(/\/+$/, ''));
 
