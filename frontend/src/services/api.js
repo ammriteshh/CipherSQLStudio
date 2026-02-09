@@ -73,7 +73,8 @@ export async function detectApiBase(timeout = 5000) {
         const id = setTimeout(() => controller.abort(), timeout);
         const res = await fetch(url, { method: 'GET', credentials: 'include', signal: controller.signal });
         clearTimeout(id);
-        if (res && res.ok) {
+        const contentType = res.headers.get('content-type');
+        if (res && res.ok && contentType && contentType.includes('application/json')) {
           api.defaults.baseURL = v.replace(/\/+$/, '');
           if (!isProd && typeof window !== 'undefined' && window.console) console.info('Detected API base:', api.defaults.baseURL);
           return api.defaults.baseURL;

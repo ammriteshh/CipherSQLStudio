@@ -19,7 +19,7 @@ const AssignmentsPage = () => {
                 setError(null);
             } catch (err) {
                 console.error('Failed to fetch assignments:', err);
-                setError('Failed to load assignments. Please try again in a moment.');
+                setError(err.customMessage || err.message || 'Failed to load assignments. Please check your connection.');
             } finally {
                 setLoading(false);
             }
@@ -79,7 +79,16 @@ const AssignmentsPage = () => {
                 {loading ? (
                     <div className="loading-state">Loading assignments...</div>
                 ) : error ? (
-                    <div className="error-state">{error}</div>
+                    <div className="error-state" style={{ textAlign: 'center', padding: '40px' }}>
+                        <p style={{ color: '#ef4444', marginBottom: '16px' }}>{error}</p>
+                        <button
+                            className="btn-primary"
+                            onClick={() => window.location.reload()}
+                            style={{ padding: '8px 24px' }}
+                        >
+                            Retry Connection
+                        </button>
+                    </div>
                 ) : filteredAssignments.length > 0 ? (
                     filteredAssignments.map((assignment, index) => (
                         <div
