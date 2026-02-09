@@ -99,7 +99,7 @@ TASK: ${promptInstruction}
 Provide ONLY the hint text. No headers, no markdown blocks.`;
 
     try {
-      const model = llmClient.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = llmClient.getGenerativeModel({ model: 'gemini-flash-latest' });
       const result = await model.generateContent(prompt);
       const hint = result.response.text().trim();
 
