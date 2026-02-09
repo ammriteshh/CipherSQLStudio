@@ -1,0 +1,143 @@
+@import '../styles/variables';
+@import '../styles/mixins';
+
+.assignments-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.assignments-page__header {
+    margin-bottom: $spacing-xl;
+    text-align: center;
+
+    .page-title {
+        font-size: $font-size-4xl;
+        font-weight: $font-weight-bold;
+        margin-bottom: $spacing-sm;
+    }
+
+    .page-subtitle {
+        font-size: $font-size-lg;
+        color: var(--text-muted);
+    }
+}
+
+.assignments-page__controls {
+    @include flex-between;
+    gap: $spacing-md;
+    padding: $spacing-md;
+    margin-bottom: $spacing-2xl;
+    border-radius: $border-radius-lg;
+    flex-wrap: wrap;
+}
+
+.search-bar {
+    flex: 1;
+    min-width: 300px;
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    svg {
+        position: absolute;
+        left: 12px;
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    input {
+        @include input-base;
+        padding-left: 40px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        &:focus {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
+        }
+    }
+}
+
+.filter-tabs {
+    display: flex;
+    gap: $spacing-xs;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px;
+    border-radius: $border-radius-md;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.filter-tab {
+    padding: 8px 16px;
+    border-radius: $border-radius-sm;
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    transition: all $transition-base;
+
+    &:hover {
+        color: var(--text-main);
+    }
+
+    &.active {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 2px 10px rgba(var(--primary-rgb), 0.3);
+    }
+}
+
+.assignments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: $spacing-lg;
+    width: 100%;
+}
+
+.grid-item {
+    height: 100%;
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: $spacing-2xl;
+    color: var(--text-muted);
+    font-size: $font-size-lg;
+
+    .btn-reset {
+        margin-top: $spacing-md;
+        @include button-base;
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+
+        &:hover {
+            background: rgba(var(--primary-rgb), 0.1);
+        }
+    }
+}
+
+// Masonry layout using CSS columns (Optional alternative)
+/*
+.assignments-masonry {
+  column-count: 1;
+  column-gap: $spacing-lg;
+  
+  @include respond-to(md) {
+    column-count: 2;
+  }
+  
+  @include respond-to(xl) {
+    column-count: 3;
+  }
+  
+  .grid-item {
+    break-inside: avoid;
+    margin-bottom: $spacing-lg;
+  }
+}
+*/

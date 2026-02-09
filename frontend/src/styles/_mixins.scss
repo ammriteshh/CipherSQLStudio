@@ -1,20 +1,57 @@
 @import './variables';
 
+// Glassmorphism Mixins
+@mixin glass-panel($opacity: 0.1, $blur: $blur-md) {
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: $shadow-glass;
+}
+
+@mixin glass-card-hover {
+  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.2);
+    background: $color-surface-glass-hover;
+  }
+}
+
+@mixin neon-text($color: $color-primary) {
+  text-shadow: 0 0 10px rgba($color, 0.5), 0 0 20px rgba($color, 0.3);
+}
+
+@mixin gradient-text($start: $color-primary, $end: $color-secondary) {
+  background: linear-gradient(135deg, $start, $end);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 // Responsive Breakpoints (Mobile-First)
 @mixin respond-to($breakpoint) {
-  @if $breakpoint == sm {
+  @if $breakpoint ==sm {
     @media (min-width: $breakpoint-sm) {
       @content;
     }
-  } @else if $breakpoint == md {
+  }
+
+  @else if $breakpoint ==md {
     @media (min-width: $breakpoint-md) {
       @content;
     }
-  } @else if $breakpoint == lg {
+  }
+
+  @else if $breakpoint ==lg {
     @media (min-width: $breakpoint-lg) {
       @content;
     }
-  } @else if $breakpoint == xl {
+  }
+
+  @else if $breakpoint ==xl {
     @media (min-width: $breakpoint-xl) {
       @content;
     }
@@ -41,37 +78,28 @@
 
 // Button base styles
 @mixin button-base {
-  display: inline-block;
-  padding: $spacing-sm $spacing-md;
-  font-size: $font-size-base;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  text-align: center;
   text-decoration: none;
-  border: $border-width solid transparent;
-  border-radius: $border-radius-md;
   cursor: pointer;
   transition: all $transition-base;
-  touch-action: manipulation;
-  min-height: 44px; // Touch-friendly minimum size
-  min-width: 44px;
+  border-radius: $border-radius-md;
+  border: 1px solid transparent;
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
-
-  &:focus {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-  }
 }
 
 // Card styles
 @mixin card {
-  background-color: var(--surface);
-  border: $border-width solid var(--border-color);
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-sm;
+  @include glass-panel;
+  border-radius: $border-radius-xl;
   padding: $spacing-lg;
 }
 
@@ -81,42 +109,41 @@
   padding: $spacing-sm $spacing-md;
   font-size: $font-size-base;
   font-family: $font-family-base;
-  line-height: $line-height-normal;
   color: var(--text-color);
-  background-color: var(--surface);
-  border: $border-width solid var(--border-color);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: $border-radius-md;
-  transition: border-color $transition-base, box-shadow $transition-base;
-  min-height: 44px; // Touch-friendly
+  transition: all $transition-base;
 
   &:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+    background: rgba(0, 0, 0, 0.3);
   }
 
   &::placeholder {
-    color: var(--muted);
+    color: rgba(255, 255, 255, 0.3);
   }
 }
 
 // Scrollbar styles
 @mixin custom-scrollbar {
   &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   &::-webkit-scrollbar-track {
-    background: var(--surface-variant);
+    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--muted);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: $border-radius-sm;
 
     &:hover {
-      background: var(--muted);
+      background: rgba(255, 255, 255, 0.2);
     }
   }
 }
@@ -135,4 +162,3 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-

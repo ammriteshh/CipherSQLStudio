@@ -1,56 +1,26 @@
 @import './variables';
 @import './mixins';
+@import './animations';
 
-/* Theme variables (light by default). Toggle `.dark-theme` on `<html>` to switch. */
+/* Theme variables */
 :root {
-  --color-bg: #f9fafb; /* $color-gray-50 */
-  --surface: #ffffff; /* $color-white */
-  --surface-variant: #f3f4f6; /* $color-gray-100 */
-  --text-color: #111827; /* $color-gray-900 */
-  --muted-text: #374151; /* $color-gray-700 */
-  --muted: #6b7280; /* $color-gray-600 */
-  --border-color: #e5e7eb; /* $border-color */
+  --color-bg: #{$color-bg-dark};
+  --color-surface: #{$color-bg-darker};
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.1);
 
-  --primary: #2563eb; /* $color-primary */
-  --primary-dark: #1e40af; /* $color-primary-dark */
-  --primary-light: #3b82f6; /* $color-primary-light */
-  --primary-rgb: 37,99,235;
+  --primary: #{$color-primary};
+  --secondary: #{$color-secondary};
+  --accent: #{$color-accent};
 
-  --error: #ef4444;
-  --error-rgb: 239,68,68;
-  --success: #10b981;
-  --success-rgb: 16,185,129;
-  --info: #3b82f6;
-  --info-rgb: 59,130,246;
+  --primary-rgb: 0, 102, 255;
+  --success: #{$color-success};
+  --error: #{$color-error};
+  --warning: #{$color-warning};
 
-  --diff-beginner: #10b981;
-  --diff-intermediate: #f59e0b;
-  --diff-advanced: #ef4444;
-  --diff-beginner-rgb: 16,185,129;
-  --diff-intermediate-rgb: 245,158,11;
-  --diff-advanced-rgb: 239,68,68;
-
-  transition: background-color 200ms ease, color 200ms ease;
-}
-
-.dark-theme {
-  --color-bg: #111827; /* $color-gray-900 */
-  --surface: #111827; /* slightly darker surface */
-  --surface-variant: #1f2937; /* $color-gray-800 */
-  --text-color: #f3f4f6; /* $color-gray-100 */
-  --muted-text: #cbd5e1; /* lighter muted */
-  --muted: #9ca3af;
-  --border-color: #374151; /* $color-gray-700 */
-
-  --primary: #3b82f6; /* use lighter primary on dark bg */
-  --primary-dark: #2563eb;
-  --primary-light: #60a5fa;
-  --primary-rgb: 59,130,246;
-
-  --error: #ef4444;
-  --error-rgb: 239,68,68;
-  --success: #10b981;
-  --info: #60a5fa;
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 // Reset and Base Styles
@@ -70,8 +40,13 @@ body {
   font-family: $font-family-base;
   font-size: $font-size-base;
   line-height: $line-height-normal;
-  color: var(--text-color);
+  color: var(--text-main);
   background-color: var(--color-bg);
+  // Dynamic gradient background
+  background: radial-gradient(circle at 15% 50%, rgba($color-secondary-dark, 0.15), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba($color-primary-dark, 0.15), transparent 25%);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 code {
@@ -82,23 +57,36 @@ code {
 .app {
   min-height: 100vh;
   @include flex-column;
+  position: relative;
+  overflow-x: hidden;
+
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
 }
 
 .app__loading {
   @include flex-center;
   min-height: 100vh;
   font-size: $font-size-lg;
-  color: var(--muted);
+  color: var(--text-muted);
 }
 
-// Header
+// Header - Glass Effect
 .app__header {
-  background-color: var(--surface);
-  border-bottom: $border-width solid var(--border-color);
-  box-shadow: $shadow-sm;
+  @include glass-panel($opacity: 0.7, $blur: 20px);
   position: sticky;
   top: 0;
   z-index: $z-index-sticky;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .app__header-content {
@@ -106,8 +94,6 @@ code {
   margin: 0 auto;
   padding: $spacing-md;
   @include flex-between;
-  flex-wrap: wrap;
-  gap: $spacing-md;
 
   @include respond-to(md) {
     padding: $spacing-md $spacing-lg;
@@ -117,12 +103,9 @@ code {
 .app__logo {
   font-size: $font-size-xl;
   font-weight: $font-weight-bold;
-  color: var(--primary);
+  @include gradient-text($color-primary-light, $color-accent);
   margin: 0;
-
-  @include respond-to(md) {
-    font-size: $font-size-2xl;
-  }
+  letter-spacing: -0.5px;
 }
 
 .app__nav {
@@ -131,49 +114,86 @@ code {
 }
 
 .app__user {
-  color: var(--muted-text);
+  color: var(--text-muted);
   font-size: $font-size-sm;
-
-  @include respond-to(md) {
-    font-size: $font-size-base;
-  }
+  padding: $spacing-xs $spacing-sm;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: $border-radius-lg;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .app__link {
-  color: var(--primary);
+  color: var(--text-muted);
   text-decoration: none;
   font-weight: $font-weight-medium;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $border-radius-sm;
-  transition: background-color $transition-base;
-  min-height: 44px;
-  @include flex-center;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  position: relative;
 
-  &:hover {
-    background-color: var(--surface-variant);
+  &:hover,
+  &.active {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 2px;
+    box-shadow: 0 0 10px var(--primary);
   }
 }
 
+// Buttons
 .app__btn {
   @include button-base;
 
   &--primary {
-    background-color: var(--primary);
-    color: var(--surface);
+    background: $color-primary;
+    color: white;
+    box-shadow: 0 0 15px rgba($color-primary, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 
     &:hover:not(:disabled) {
-      background-color: var(--primary-dark);
+      background: $color-primary-dark;
+      box-shadow: 0 0 25px rgba($color-primary, 0.5);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      background: $color-gray-700;
+      color: $color-gray-400;
+      box-shadow: none;
     }
   }
 
   &--secondary {
-    background-color: var(--surface);
-    color: var(--primary);
-    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 
     &:hover:not(:disabled) {
-      background-color: var(--primary);
-      color: var(--surface);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &--accent {
+    background: linear-gradient(135deg, $color-secondary, $color-primary);
+    color: white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 5px 15px rgba($color-secondary, 0.4);
     }
   }
 }
@@ -184,25 +204,35 @@ code {
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  padding: $spacing-md;
+  padding: $spacing-lg;
+  position: relative;
+  z-index: 1;
 
   @include respond-to(md) {
-    padding: $spacing-lg;
-  }
-
-  @include respond-to(lg) {
     padding: $spacing-xl;
   }
 }
 
 // Footer
 .app__footer {
-  background-color: var(--surface);
-  border-top: $border-width solid var(--border-color);
-  padding: $spacing-md;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: $spacing-lg;
   text-align: center;
-  color: var(--muted);
+  color: var(--text-muted);
   font-size: $font-size-sm;
-  margin-top: auto;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(10px);
 }
 
+// Utility Classes
+.glass-panel {
+  @include glass-panel;
+}
+
+.text-gradient {
+  @include gradient-text;
+}
+
+.text-neon {
+  @include neon-text;
+}
