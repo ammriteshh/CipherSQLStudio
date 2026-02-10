@@ -39,6 +39,12 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Log all incoming requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // Database connections
 const connectMongoDB = require('./db/mongodb');
 const { connectPostgreSQL } = require('./db/postgresql');
@@ -92,17 +98,31 @@ app.use((req, res) => {
 // Initialize database connections and start server
 async function startServer() {
   try {
+    console.log('[DEBUG] Connecting to MongoDB...');
     await connectMongoDB();
-    await connectPostgreSQL();
-    
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
+    console.log('[DEBUG] MongoDB connected.');
+  } catch (err) {
+    console.error('[DEBUG] MongoDB connection failed (continuing):', err);
   }
+
+  try {
+    console.log('[DEBUG] Connecting to PostgreSQL...');
+    await connectPostgreSQL();
+    console.log('[DEBUG] PostgreSQL connected.');
+  } catch (err) {
+    console.error('[DEBUG] PostgreSQL connection failed (continuing):', err);
+  }
+
+  console.log('[DEBUG] Starting Express server...');
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+} catch (error) {
+  console.error('Failed to start server:', error);
+  // Don't exit, just log
+}
 }
 
 startServer();
