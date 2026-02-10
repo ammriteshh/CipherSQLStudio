@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 const candidates = [];
-const envUrl = process.env.REACT_APP_API_URL
-  ? String(process.env.REACT_APP_API_URL).trim()
+const rawEnvUrl = process.env.REACT_APP_API_URL;
+const envUrl = (rawEnvUrl && rawEnvUrl.trim())
+  ? rawEnvUrl.trim()
   : "https://cipher-sql-backend.onrender.com/api";
 
 if (envUrl) candidates.push(envUrl.replace(/\/+$/, ''));
@@ -22,7 +23,7 @@ let API_BASE_URL = '';
 if (envUrl) {
   API_BASE_URL = normalize(envUrl);
 } else if (isProd && typeof window !== 'undefined' && window.location) {
-  API_BASE_URL = normalize(`${window.location.origin}/api`);
+  API_BASE_URL = normalize("https://cipher-sql-backend.onrender.com/api");
 } else if (!isProd) {
   API_BASE_URL = 'https://cipher-sql-studio-ui.onrender.com';
 }
