@@ -14,7 +14,9 @@ if (typeof window !== 'undefined' && window.location) {
   candidates.push(`${window.location.origin}`.replace(/\/+$/, ''));
 }
 if (!isProd) {
-  candidates.push('https://cipher-sql-studio-ui.onrender.com/api');
+  candidates.push('http://localhost:5000');
+  candidates.push('http://localhost:5000/api');
+  candidates.push('https://cipher-sql-backend.onrender.com/api');
 }
 
 const normalize = (s) => s ? s.replace(/\/+$/, '') : s;
@@ -25,7 +27,7 @@ if (envUrl) {
 } else if (isProd && typeof window !== 'undefined' && window.location) {
   API_BASE_URL = normalize("https://cipher-sql-backend.onrender.com/api");
 } else if (!isProd) {
-  API_BASE_URL = 'https://cipher-sql-studio-ui.onrender.com';
+  API_BASE_URL = 'http://localhost:5000/api';
 }
 
 const api = axios.create({

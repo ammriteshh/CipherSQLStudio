@@ -44,3 +44,20 @@ CipherSQLStudio/
 
 
 
+## Running Locally
+
+1.  **Backend Setup**:
+    ```bash
+    cd backend
+    npm install
+    npm run dev
+    ```
+    The server will start on port 5000 (default).
+
+2.  **Frontend Setup**:
+    ```bash
+    cd frontend
+    npm install
+    npm start
+    ```
+    The application will run on http://localhost:3000.
