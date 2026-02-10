@@ -17,7 +17,9 @@ if (_rawPort && !(Number.isInteger(_parsedPort) && _parsedPort > 0)) {
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
-  "https://cipher-sql-studio-ui.onrender.com"
+  "https://cipher-sql-studio-ui.onrender.com",
+  "https://ciphersqlstudio.onrender.com", // Add potential other frontend URL
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : [])
 ];
 
 app.use(
@@ -29,10 +31,12 @@ app.use(
         return callback(null, true);
       }
 
-      console.warn("Blocked CORS:", origin);
+      console.warn("Blocked CORS for origin:", origin);
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
 

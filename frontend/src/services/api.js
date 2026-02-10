@@ -1,32 +1,48 @@
 import axios from 'axios';
 
 const candidates = [];
-const rawEnvUrl = process.env.REACT_APP_API_URL;
-const envUrl = (rawEnvUrl && rawEnvUrl.trim())
-  ? rawEnvUrl.trim()
-  : "https://cipher-sql-backend.onrender.com/api";
 
-if (envUrl) candidates.push(envUrl.replace(/\/+$/, ''));
+// Check for environment variables (CRA uses REACT_APP_, Vite uses VITE_)
+const rawEnvUrl = process.env.REACT_APP_API_URL || process.env.VITE_API_URL;
+const envUrl = (rawEnvUrl && rawEnvUrl.trim()) ? rawEnvUrl.trim() : null;
+
+// If env var is set, it's the primary candidate
+if (envUrl) {
+  candidates.push(envUrl.replace(/\/+$/, ''));
+}
 
 const isProd = process.env.NODE_ENV === 'production';
+
+// Add current origin as candidate (for relative paths or same-domain hosting)
 if (typeof window !== 'undefined' && window.location) {
-  candidates.push(`${window.location.origin}/api`.replace(/\/+$/, ''));
-  candidates.push(`${window.location.origin}`.replace(/\/+$/, ''));
+  const origin = window.location.origin.replace(/\/+$/, '');
+  candidates.push(`${origin}/api`);
+  candidates.push(origin);
 }
+
+// Add hardcoded fallbacks for development or specific deployments
 if (!isProd) {
-  candidates.push('http://localhost:5000');
   candidates.push('http://localhost:5000/api');
-  candidates.push('https://cipher-sql-backend.onrender.com/api');
+  candidates.push('http://localhost:5000');
 }
+
+// Add Render fallback
+candidates.push('https://cipher-sql-backend.onrender.com/api');
+
 
 const normalize = (s) => s ? s.replace(/\/+$/, '') : s;
 
+// Default API_BASE_URL logic
 let API_BASE_URL = '';
 if (envUrl) {
   API_BASE_URL = normalize(envUrl);
-} else if (isProd && typeof window !== 'undefined' && window.location) {
+} else if (isProd) {
+  // In production, default to the relative /api if no env var is set, 
+  // assuming frontend/backend are on same domain or proxy is set up.
+  // However, for this specific user issue, we know it might be separate.
+  // So we'll trust the candidates probing or fall back to the likely render URL.
   API_BASE_URL = normalize("https://cipher-sql-backend.onrender.com/api");
-} else if (!isProd) {
+} else {
   API_BASE_URL = 'http://localhost:5000/api';
 }
 
