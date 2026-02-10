@@ -19,7 +19,11 @@ const AssignmentsPage = () => {
                 setError(null);
             } catch (err) {
                 console.error('Failed to fetch assignments:', err);
-                setError(err.customMessage || err.message || 'Failed to load assignments. Please check your connection.');
+                if (err.code === 'ECONNABORTED') {
+                    setError('Request timed out. Please check your internet connection or try again later.');
+                } else {
+                    setError(err.customMessage || err.message || 'Failed to load assignments. Please check your connection.');
+                }
             } finally {
                 setLoading(false);
             }

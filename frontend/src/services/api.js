@@ -46,8 +46,14 @@ if (envUrl) {
   API_BASE_URL = 'http://localhost:5000/api';
 }
 
+// Enforce /api suffix if not present (unless it's a root domain request which is unlikely for this API)
+if (API_BASE_URL && !API_BASE_URL.endsWith('/api')) {
+  API_BASE_URL += '/api';
+}
+
 const api = axios.create({
   baseURL: API_BASE_URL || undefined,
+  timeout: 20000, // 20 seconds timeout to prevent infinite loading
   withCredentials: true,
 });
 

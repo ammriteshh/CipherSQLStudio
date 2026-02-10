@@ -62,19 +62,35 @@ app.use('/api/assignments', assignmentRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/progress', progressRoutes);
 
+// Root route for health check / monitoring
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'CipherSQL Backend is running. Access API at /api' });
+});
+
 // Health check endpoint
 const { isPostgresAvailable } = require('./db/postgresql');
+const Assignment = require('./models/Assignment');
 
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
   const mongoEnvDefined = !!process.env.MONGODB_URI;
   const mongoState = mongoose.connection.readyState === 1 ? 'connected' : (mongoEnvDefined ? 'disconnected' : 'missing_env');
+
+  let assignmentsCount = 'unknown';
+  if (mongoState === 'connected') {
+    try {
+      assignmentsCount = await Assignment.countDocuments();
+    } catch (e) {
+      assignmentsCount = 'error';
+    }
+  }
 
   res.json({
     status: 'ok',
     mongodb: {
       envConfigured: mongoEnvDefined,
       state: mongoState,
-      readyState: mongoose.connection.readyState
+      readyState: mongoose.connection.readyState,
+      assignmentsCount
     },
     postgresql: {
       available: isPostgresAvailable()
@@ -96,7 +112,7 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+  res.status(404).json({ error: 'Route not found', path: req.originalUrl });
 });
 
 // Initialize database connections and start server
