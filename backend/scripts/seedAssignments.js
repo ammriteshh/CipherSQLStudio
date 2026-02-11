@@ -8,28 +8,28 @@ dotenv.config();
 const sampleAssignments = [
   {
     title: 'Select All Cities',
-    description: 'Retrieve all columns from the Citiest table.',
+    description: 'Retrieve all columns from the city table.',
     difficulty: 'Beginner',
     question: `
 **Problem**
 
-Query all columns for all American cities in the **City** table with populations larger than 100,000. The CountryCode for America is USA.
+Query all columns for all American cities in the **city** table with populations larger than 100,000. The countrycode for America is USA.
 
 **Input Format**
 
-The **City** table is described as follows:
+The **city** table is described as follows:
 
 | Field | Type |
 | :--- | :--- |
-| ID | NUMBER |
-| Name | VARCHAR(17) |
-| CountryCode | VARCHAR(3) |
-| District | VARCHAR(20) |
-| Population | NUMBER |
+| id | NUMBER |
+| name | VARCHAR(17) |
+| countrycode | VARCHAR(3) |
+| district | VARCHAR(20) |
+| population | NUMBER |
 
 **Sample Input**
 
-| ID | Name | CountryCode | District | Population |
+| id | name | countrycode | district | population |
 | :--- | :--- | :--- | :--- | :--- |
 | 1 | New York | USA | New York | 8398748 |
 | 2 | Los Angeles | USA | California | 3990456 |
@@ -39,7 +39,7 @@ The **City** table is described as follows:
 
 **Sample Output**
 
-| ID | Name | CountryCode | District | Population |
+| id | name | countrycode | district | population |
 | :--- | :--- | :--- | :--- | :--- |
 | 1 | New York | USA | New York | 8398748 |
 | 2 | Los Angeles | USA | California | 3990456 |
@@ -48,23 +48,23 @@ The **City** table is described as follows:
 `,
     tableDefinitions: [
       {
-        name: 'City',
+        name: 'city',
         description: 'City information',
         createTableSQL: `
-          CREATE TABLE City (
-            ID INT PRIMARY KEY,
-            Name VARCHAR(17),
-            CountryCode VARCHAR(3),
-            District VARCHAR(20),
-            Population INT
+          CREATE TABLE city (
+            id INT PRIMARY KEY,
+            name VARCHAR(17),
+            countrycode VARCHAR(3),
+            district VARCHAR(20),
+            population INT
           )
         `,
         sampleData: [
-          { ID: 1, Name: 'New York', CountryCode: 'USA', District: 'New York', Population: 8398748 },
-          { ID: 2, Name: 'Los Angeles', CountryCode: 'USA', District: 'California', Population: 3990456 },
-          { ID: 3, Name: 'Chicago', CountryCode: 'USA', District: 'Illinois', Population: 2705994 },
-          { ID: 4, Name: 'Tokyo', CountryCode: 'JPN', District: 'Tokyo', Population: 13929286 },
-          { ID: 5, Name: 'Smallville', CountryCode: 'USA', District: 'Kansas', Population: 45000 }
+          { id: 1, name: 'New York', countrycode: 'USA', district: 'New York', population: 8398748 },
+          { id: 2, name: 'Los Angeles', countrycode: 'USA', district: 'California', population: 3990456 },
+          { id: 3, name: 'Chicago', countrycode: 'USA', district: 'Illinois', population: 2705994 },
+          { id: 4, name: 'Tokyo', countrycode: 'JPN', district: 'Tokyo', population: 13929286 },
+          { id: 5, name: 'Smallville', countrycode: 'USA', district: 'Kansas', population: 45000 }
         ]
       }
     ]
@@ -79,7 +79,7 @@ Write a SQL query to retrieve the **patient_id**, **patient_name**, and **condit
 
 **Input Format**
 
-The **Patients** table is described as follows:
+The **patients** table is described as follows:
 
 | Column Name | Type |
 | :--- | :--- |
@@ -107,10 +107,10 @@ The **Patients** table is described as follows:
 `,
     tableDefinitions: [
       {
-        name: 'Patients',
+        name: 'patients',
         description: 'Patient health records',
         createTableSQL: `
-          CREATE TABLE Patients (
+          CREATE TABLE patients (
             patient_id INT PRIMARY KEY,
             patient_name VARCHAR(30),
             conditions VARCHAR(100)
@@ -136,7 +136,7 @@ Write a SQL query to find the average rating of each movie. Round the average ra
 
 **Input Format**
 
-The **Cinema** table:
+The **cinema** table:
 
 | Column Name | Type |
 | :--- | :--- |
@@ -165,10 +165,10 @@ The **Cinema** table:
 `,
     tableDefinitions: [
       {
-        name: 'Cinema',
+        name: 'cinema',
         description: 'Movie ratings data',
         createTableSQL: `
-          CREATE TABLE Cinema (
+          CREATE TABLE cinema (
             id INT PRIMARY KEY,
             movie_name VARCHAR(50),
             rating DECIMAL(3, 1)
@@ -194,7 +194,7 @@ Write a SQL query to find the number of orders placed by each customer. Return t
 
 **Input Format**
 
-The **Orders** table:
+The **orders** table:
 
 | Column Name | Type |
 | :--- | :--- |
@@ -221,10 +221,10 @@ The **Orders** table:
 `,
     tableDefinitions: [
       {
-        name: 'Orders',
+        name: 'orders',
         description: 'Order records',
         createTableSQL: `
-          CREATE TABLE Orders (
+          CREATE TABLE orders (
             order_number INT PRIMARY KEY,
             customer_number INT
           )
@@ -248,7 +248,7 @@ Write a SQL query to find the **customer_id** and total amount spent for custome
 
 **Input Format**
 
-The **Purchases** table:
+The **purchases** table:
 
 | Column Name | Type |
 | :--- | :--- |
@@ -276,10 +276,10 @@ The **Purchases** table:
 `,
     tableDefinitions: [
       {
-        name: 'Purchases',
+        name: 'purchases',
         description: 'Customer purchase history',
         createTableSQL: `
-          CREATE TABLE Purchases (
+          CREATE TABLE purchases (
             id INT PRIMARY KEY,
             customer_id INT,
             amount INT
@@ -305,14 +305,14 @@ Write a SQL query to report the name and department of each employee.
 
 **Input Format**
 
-**Employee** table:
+**employee** table:
 | id | name | department_id |
 | :--- | :--- | :--- |
 | 1 | Alice | 1 |
 | 2 | Bob | 2 |
 | 3 | Charlie | 1 |
 
-**Department** table:
+**department** table:
 | id | dept_name |
 | :--- | :--- |
 | 1 | HR |
@@ -329,10 +329,10 @@ Write a SQL query to report the name and department of each employee.
 `,
     tableDefinitions: [
       {
-        name: 'Employee',
+        name: 'employee',
         description: 'Employees',
         createTableSQL: `
-          CREATE TABLE Employee (
+          CREATE TABLE employee (
             id INT PRIMARY KEY,
             name VARCHAR(50),
             department_id INT
@@ -345,10 +345,10 @@ Write a SQL query to report the name and department of each employee.
         ]
       },
       {
-        name: 'Department',
+        name: 'department',
         description: 'Departments',
         createTableSQL: `
-          CREATE TABLE Department (
+          CREATE TABLE department (
             id INT PRIMARY KEY,
             dept_name VARCHAR(50)
           )
@@ -370,7 +370,7 @@ Write a SQL query to find the names of employees who have a salary greater than 
 
 **Input Format**
 
-**Salaries** table:
+**salaries** table:
 | id | name | salary |
 | :--- | :--- | :--- |
 | 1 | Joe | 70000 |
@@ -390,10 +390,10 @@ Write a SQL query to find the names of employees who have a salary greater than 
 `,
     tableDefinitions: [
       {
-        name: 'Salaries',
+        name: 'salaries',
         description: 'Employee Salary Records',
         createTableSQL: `
-          CREATE TABLE Salaries (
+          CREATE TABLE salaries (
             id INT PRIMARY KEY,
             name VARCHAR(50),
             salary INT
@@ -415,12 +415,12 @@ Write a SQL query to find the names of employees who have a salary greater than 
     difficulty: 'Advanced',
     question: `
 **Problem**
-Write a SQL query to delete all duplicate emails in the **Person** table, keeping only the one with the smallest **Id**.
+Write a SQL query to delete all duplicate emails in the **person** table, keeping only the one with the smallest **id**.
 
 **Input Format**
 
-**Person** table:
-| Id | Email |
+**person** table:
+| id | email |
 | :--- | :--- |
 | 1 | john@example.com |
 | 2 | bob@example.com |
@@ -428,7 +428,7 @@ Write a SQL query to delete all duplicate emails in the **Person** table, keepin
 
 **Sample Output**
 
-| Id | Email |
+| id | email |
 | :--- | :--- |
 | 1 | john@example.com |
 | 2 | bob@example.com |
@@ -439,18 +439,18 @@ Id 3 is a duplicate of Id 1, so it is removed.
 `,
     tableDefinitions: [
       {
-        name: 'Person',
+        name: 'person',
         description: 'Email records',
         createTableSQL: `
-          CREATE TABLE Person (
-            Id INT PRIMARY KEY,
-            Email VARCHAR(255)
+          CREATE TABLE person (
+            id INT PRIMARY KEY,
+            email VARCHAR(255)
           )
         `,
         sampleData: [
-          { Id: 1, Email: 'john@example.com' },
-          { Id: 2, Email: 'bob@example.com' },
-          { Id: 3, Email: 'john@example.com' }
+          { id: 1, email: 'john@example.com' },
+          { id: 2, email: 'bob@example.com' },
+          { id: 3, email: 'john@example.com' }
         ]
       }
     ]
