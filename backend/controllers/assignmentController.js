@@ -7,7 +7,7 @@ const getAllAssignments = async (req, res, next) => {
       .sort({ createdAt: -1 });
 
     res.json(assignments.map(assignment => ({
-      id: assignment._id,
+      _id: assignment._id,
       title: assignment.title,
       description: assignment.description,
       difficulty: assignment.difficulty,
