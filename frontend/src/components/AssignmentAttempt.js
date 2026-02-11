@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 import api from '../services/api';
 import './AssignmentAttempt.scss';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const AssignmentAttempt = ({ user }) => {
   const { id } = useParams();
@@ -239,7 +241,26 @@ const AssignmentAttempt = ({ user }) => {
 
           <div className="problem-description glass-card">
             <h3>Task</h3>
-            {assignment && renderAssignmentDescription(assignment)}
+            <div className="markdown-content">
+              <ReactMarkdown
+                children={assignment.question}
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  table: ({ node, ...props }) => <div className="table-wrapper"><table {...props} /></div>,
+                  thead: ({ node, ...props }) => <thead {...props} />,
+                  tbody: ({ node, ...props }) => <tbody {...props} />,
+                  tr: ({ node, ...props }) => <tr {...props} />,
+                  th: ({ node, ...props }) => <th {...props} />,
+                  td: ({ node, ...props }) => <td {...props} />,
+                }}
+              />
+            </div>
+
+            {/* Keeping schema view as a separate tab or section if needed, but Markdown covers most */}
+            <div className="schema-section">
+              <h3>Database Schema</h3>
+              {assignment && renderAssignmentDescription(assignment)}
+            </div>
           </div>
         </div>
       </div>

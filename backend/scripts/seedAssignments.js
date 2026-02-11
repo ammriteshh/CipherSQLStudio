@@ -7,447 +7,450 @@ dotenv.config();
 
 const sampleAssignments = [
   {
-    title: 'Combine Two Tables',
-    description: 'Join data from Person and Address tables',
+    title: 'Select All Cities',
+    description: 'Retrieve all columns from the Citiest table.',
     difficulty: 'Beginner',
-    question: `Write a solution to report the first name, last name, city, and state of each person in the Person table. If the address of a personId is not present in the Address table, report null instead.
+    question: `
+**Problem**
 
-Return the result table in any order.
+Query all columns for all American cities in the **City** table with populations larger than 100,000. The CountryCode for America is USA.
 
-+----------+----------+-----------+
-| personId | lastName | firstName |
-+----------+----------+-----------+
-| 1        | Wang     | Allen     |
-| 2        | Alice    | Bob       |
-+----------+----------+-----------+
+**Input Format**
 
-Address table:
-+-----------+----------+---------------+------------+
-| addressId | personId | city          | state      |
-+-----------+----------+---------------+------------+
-| 1         | 2        | New York City | New York   |
-| 2         | 3        | Leetcode      | California |
-+-----------+----------+---------------+------------+
+The **City** table is described as follows:
 
-Output: 
-+-----------+----------+---------------+----------+
-| firstName | lastName | city          | state    |
-+-----------+----------+---------------+----------+
-| Allen     | Wang     | Null          | Null     |
-| Bob       | Alice    | New York City | New York |
-+-----------+----------+---------------+----------+
-Explanation: 
-There is no address in the address table for the personId = 1 so we return null in their city and state.
-addressId = 1 contains information about the address of personId = 2.`,
+| Field | Type |
+| :--- | :--- |
+| ID | NUMBER |
+| Name | VARCHAR(17) |
+| CountryCode | VARCHAR(3) |
+| District | VARCHAR(20) |
+| Population | NUMBER |
+
+**Sample Input**
+
+| ID | Name | CountryCode | District | Population |
+| :--- | :--- | :--- | :--- | :--- |
+| 1 | New York | USA | New York | 8398748 |
+| 2 | Los Angeles | USA | California | 3990456 |
+| 3 | Chicago | USA | Illinois | 2705994 |
+| 4 | Tokyo | JPN | Tokyo | 13929286 |
+| 5 | Smallville | USA | Kansas | 45000 |
+
+**Sample Output**
+
+| ID | Name | CountryCode | District | Population |
+| :--- | :--- | :--- | :--- | :--- |
+| 1 | New York | USA | New York | 8398748 |
+| 2 | Los Angeles | USA | California | 3990456 |
+| 3 | Chicago | USA | Illinois | 2705994 |
+
+`,
     tableDefinitions: [
       {
-        name: 'Person',
-        description: 'Person information',
+        name: 'City',
+        description: 'City information',
         createTableSQL: `
-          CREATE TABLE Person (
-            personId INT PRIMARY KEY,
-            lastName VARCHAR(255),
-            firstName VARCHAR(255)
+          CREATE TABLE City (
+            ID INT PRIMARY KEY,
+            Name VARCHAR(17),
+            CountryCode VARCHAR(3),
+            District VARCHAR(20),
+            Population INT
           )
         `,
         sampleData: [
-          { personId: 1, lastName: 'Wang', firstName: 'Allen' },
-          { personId: 2, lastName: 'Alice', firstName: 'Bob' }
-        ]
-      },
-      {
-        name: 'Address',
-        description: 'Address information',
-        createTableSQL: `
-          CREATE TABLE Address (
-            addressId INT PRIMARY KEY,
-            personId INT,
-            city VARCHAR(255),
-            state VARCHAR(255)
-          )
-        `,
-        sampleData: [
-          { addressId: 1, personId: 2, city: 'New York City', state: 'New York' },
-          { addressId: 2, personId: 3, city: 'Leetcode', state: 'California' }
+          { ID: 1, Name: 'New York', CountryCode: 'USA', District: 'New York', Population: 8398748 },
+          { ID: 2, Name: 'Los Angeles', CountryCode: 'USA', District: 'California', Population: 3990456 },
+          { ID: 3, Name: 'Chicago', CountryCode: 'USA', District: 'Illinois', Population: 2705994 },
+          { ID: 4, Name: 'Tokyo', CountryCode: 'JPN', District: 'Tokyo', Population: 13929286 },
+          { ID: 5, Name: 'Smallville', CountryCode: 'USA', District: 'Kansas', Population: 45000 }
         ]
       }
     ]
   },
   {
-    title: 'Find Engineering Employees',
-    description: 'Filter rows based on department',
+    title: 'Find Sick Patients',
+    description: 'Filter patients based on diagnosis.',
     difficulty: 'Beginner',
-    question: `Write a SQL query to find the names of all employees who work in the "Engineering" department.
+    question: `
+**Problem**
+Write a SQL query to retrieve the **patient_id**, **patient_name**, and **conditions** of patients who have Type I Diabetes. Type I Diabetes always starts with DIAB1 prefix.
 
-Return the result table in any order.
+**Input Format**
 
-The result format is in the following example.
+The **Patients** table is described as follows:
 
-Example 1:
+| Column Name | Type |
+| :--- | :--- |
+| patient_id | int |
+| patient_name | varchar |
+| conditions | varchar |
 
-Input: 
-Employees table:
-+----+-----------+----------+-------------+
-| id | firstName | lastName | department  |
-+----+-----------+----------+-------------+
-| 1  | Ravi      | Kant     | Engineering |
-| 2  | Desham    | Seth     | Marketing   |
-| 3  | Tushar    | Joshi    | Engineering |
-+----+-----------+----------+-------------+
+**Sample Input**
 
-Output: 
-+-----------+----------+
-| firstName | lastName |
-+-----------+----------+
-| Ravi      | Kant     |
-| Tushar    | Joshi    |
-+-----------+----------+
-Explanation: 
-Ravi and Tushar are in the Engineering department. Desham is in Marketing.`,
+| patient_id | patient_name | conditions |
+| :--- | :--- | :--- |
+| 1 | Daniel | YFEV COUGH |
+| 2 | Alice | |
+| 3 | Bob | DIAB100 MYOP |
+| 4 | George | ACNE DIAB100 |
+| 5 | Alain | DIAB201 |
+
+**Sample Output**
+
+| patient_id | patient_name | conditions |
+| :--- | :--- | :--- |
+| 3 | Bob | DIAB100 MYOP |
+| 4 | George | ACNE DIAB100 | 
+
+`,
     tableDefinitions: [
       {
-        name: 'Employees',
-        description: 'Employee information',
+        name: 'Patients',
+        description: 'Patient health records',
         createTableSQL: `
-          CREATE TABLE Employees (
-            id INT PRIMARY KEY,
-            firstName VARCHAR(50),
-            lastName VARCHAR(50),
-            department VARCHAR(50)
+          CREATE TABLE Patients (
+            patient_id INT PRIMARY KEY,
+            patient_name VARCHAR(30),
+            conditions VARCHAR(100)
           )
         `,
         sampleData: [
-          { id: 1, firstName: 'Ravi', lastName: 'Kant', department: 'Engineering' },
-          { id: 2, firstName: 'Desham', lastName: 'Seth', department: 'Marketing' },
-          { id: 3, firstName: 'Tushar', lastName: 'Joshi', department: 'Engineering' }
+          { patient_id: 1, patient_name: 'Daniel', conditions: 'YFEV COUGH' },
+          { patient_id: 2, patient_name: 'Alice', conditions: '' },
+          { patient_id: 3, patient_name: 'Bob', conditions: 'DIAB100 MYOP' },
+          { patient_id: 4, patient_name: 'George', conditions: 'ACNE DIAB100' },
+          { patient_id: 5, patient_name: 'Alain', conditions: 'DIAB201' }
         ]
       }
     ]
   },
   {
-    title: 'Customer Orders',
-    description: 'Combine data from Customers and Orders',
+    title: 'Average Movie Ratings',
+    description: 'Calculate average rating for movies.',
     difficulty: 'Intermediate',
-    question: `Write a SQL query to retrieve all orders with their corresponding customer names. 
-Return table with order_id, order_date, customer_name, and total_amount.
+    question: `
+**Problem**
+Write a SQL query to find the average rating of each movie. Round the average rating to 2 decimal places.
 
-The result format is in the following example.
+**Input Format**
 
-Example 1:
+The **Cinema** table:
 
-Input: 
-Customers table:
-+-------------+----------------+
-| customer_id | customer_name  |
-+-------------+----------------+
-| 1           | Abhinav Sharma |
-| 2           | Bobby Khan     |
-| 3           | Mukesh Sharma  |
-+-------------+----------------+
+| Column Name | Type |
+| :--- | :--- |
+| id | int |
+| movie_name | varchar |
+| rating | decimal |
 
-Orders table:
-+----------+-------------+------------+--------------+
-| order_id | customer_id | order_date | total_amount |
-+----------+-------------+------------+--------------+
-| 101      | 1           | 2024-01-15 | 150.00       |
-| 102      | 2           | 2024-01-16 | 275.50       |
-| 103      | 1           | 2024-01-17 | 89.99        |
-+----------+-------------+------------+--------------+
+**Sample Input**
 
-Output: 
-+----------+------------+----------------+--------------+
-| order_id | order_date | customer_name  | total_amount |
-+----------+------------+----------------+--------------+
-| 101      | 2024-01-15 | Abhinav Sharma | 150.00       |
-| 102      | 2024-01-16 | Bobby Khan     | 275.50       |
-| 103      | 2024-01-17 | Abhinav Sharma | 89.99        |
-+----------+------------+----------------+--------------+
-Explanation: 
-Orders 101 and 103 belong to Abhinav Sharma. Order 102 belongs to Bobby Khan.`,
+| id | movie_name | rating |
+| :--- | :--- | :--- |
+| 1 | Avengers | 4.5 |
+| 2 | Avengers | 4.8 |
+| 3 | Joker | 4.9 |
+| 4 | Joker | 4.2 |
+| 5 | Avatar | 3.5 |
+
+**Sample Output**
+
+| movie_name | avg_rating |
+| :--- | :--- |
+| Avengers | 4.65 |
+| Joker | 4.55 |
+| Avatar | 3.50 |
+
+`,
     tableDefinitions: [
       {
-        name: 'Customers',
-        description: 'Customer information',
+        name: 'Cinema',
+        description: 'Movie ratings data',
         createTableSQL: `
-          CREATE TABLE Customers (
-            customer_id INT PRIMARY KEY,
-            customer_name VARCHAR(100)
+          CREATE TABLE Cinema (
+            id INT PRIMARY KEY,
+            movie_name VARCHAR(50),
+            rating DECIMAL(3, 1)
           )
         `,
         sampleData: [
-          { customer_id: 1, customer_name: 'Abhinav Sharma' },
-          { customer_id: 2, customer_name: 'Bobby Khan' },
-          { customer_id: 3, customer_name: 'Mukesh Sharma' }
+          { id: 1, movie_name: 'Avengers', rating: 4.5 },
+          { id: 2, movie_name: 'Avengers', rating: 4.8 },
+          { id: 3, movie_name: 'Joker', rating: 4.9 },
+          { id: 4, movie_name: 'Joker', rating: 4.2 },
+          { id: 5, movie_name: 'Avatar', rating: 3.5 }
         ]
-      },
+      }
+    ]
+  },
+  {
+    title: 'Orders Per Customer',
+    description: 'Count orders for each customer.',
+    difficulty: 'Intermediate',
+    question: `
+**Problem**
+Write a SQL query to find the number of orders placed by each customer. Return the result table sorted by **number_of_orders** in descending order.
+
+**Input Format**
+
+The **Orders** table:
+
+| Column Name | Type |
+| :--- | :--- |
+| order_number | int |
+| customer_number | int |
+
+**Sample Input**
+
+| order_number | customer_number |
+| :--- | :--- |
+| 1 | 1 |
+| 2 | 2 |
+| 3 | 3 |
+| 4 | 3 |
+
+**Sample Output**
+
+| customer_number | number_of_orders |
+| :--- | :--- |
+| 3 | 2 |
+| 1 | 1 |
+| 2 | 1 |
+
+`,
+    tableDefinitions: [
       {
         name: 'Orders',
-        description: 'Order details',
+        description: 'Order records',
         createTableSQL: `
           CREATE TABLE Orders (
-            order_id INT PRIMARY KEY,
-            customer_id INT,
-            order_date DATE,
-            total_amount DECIMAL(10, 2)
+            order_number INT PRIMARY KEY,
+            customer_number INT
           )
         `,
         sampleData: [
-          { order_id: 101, customer_id: 1, order_date: '2024-01-15', total_amount: 150.00 },
-          { order_id: 102, customer_id: 2, order_date: '2024-01-16', total_amount: 275.50 },
-          { order_id: 103, customer_id: 1, order_date: '2024-01-17', total_amount: 89.99 }
+          { order_number: 1, customer_number: 1 },
+          { order_number: 2, customer_number: 2 },
+          { order_number: 3, customer_number: 3 },
+          { order_number: 4, customer_number: 3 }
         ]
       }
     ]
   },
   {
-    title: 'Highest Paid Employees',
-    description: 'Sort employees by salary',
-    difficulty: 'Beginner',
-    question: `Write a SQL query to retrieve all employees sorted by salary in descending order. 
-
-Return the result table in any order.
-
-The result format is in the following example.
-
-Example 1:
-
-Input: 
-Employees table:
-+----+-----------+--------+
-| id | firstName | salary |
-+----+-----------+--------+
-| 1  | Sresth    | 75000  |
-| 2  | Vinayak   | 65000  |
-| 3  | Harshit   | 80000  |
-+----+-----------+--------+
-
-Output: 
-+-----------+--------+
-| firstName | salary |
-+-----------+--------+
-| Harshit   | 80000  |
-| Sresth    | 75000  |
-| Vinayak   | 65000  |
-+-----------+--------+
-Explanation: 
-Harshit has the highest salary, followed by Sresth, then Vinayak.`,
-    tableDefinitions: [
-      {
-        name: 'Employees',
-        description: 'Employee salaries',
-        createTableSQL: `
-          CREATE TABLE Employees (
-            id INT PRIMARY KEY,
-            firstName VARCHAR(50),
-            salary INT
-          )
-        `,
-        sampleData: [
-          { id: 1, firstName: 'Sresth', salary: 75000 },
-          { id: 2, firstName: 'Vinayak', salary: 65000 },
-          { id: 3, firstName: 'Harshit', salary: 80000 }
-        ]
-      }
-    ]
-  },
-  {
-    title: 'Department Salary Stats',
-    description: 'Calculate average salary per department',
+    title: 'High Spending Customers',
+    description: 'Filter grouped data using HAVING.',
     difficulty: 'Intermediate',
-    question: `Write a SQL query to find the total number of employees, average salary, and total salary for each department.
+    question: `
+**Problem**
+Write a SQL query to find the **customer_id** and total amount spent for customers who have spent more than 3000 in total.
 
-Return the result table in any order.
+**Input Format**
 
-The result format is in the following example.
+The **Purchases** table:
 
-Example 1:
+| Column Name | Type |
+| :--- | :--- |
+| id | int |
+| customer_id | int |
+| amount | int |
 
-Input: 
-Employees table:
-+----+-----------+-------------+--------+
-| id | firstName | department  | salary |
-+----+-----------+-------------+--------+
-| 1  | Shabnam   | Engineering | 75000  |
-| 2  | Palak     | Marketing   | 65000  |
-| 3  | Jyoti     | Engineering | 80000  |
-| 4  | Prateek   | Marketing   | 70000  |
-+----+-----------+-------------+--------+
+**Sample Input**
 
-Output: 
-+-------------+-------+-----------+--------------+
-| department  | count | avg_salary| total_salary |
-+-------------+-------+-----------+--------------+
-| Engineering | 2     | 77500     | 155000       |
-| Marketing   | 2     | 67500     | 135000       |
-+-------------+-------+-----------+--------------+
-Explanation: 
-Engineering has 2 employees (75k + 80k = 155k total, 77.5k avg).
-Marketing has 2 employees (65k + 70k = 135k total, 67.5k avg).`,
+| id | customer_id | amount |
+| :--- | :--- | :--- |
+| 1 | 1 | 1000 |
+| 2 | 1 | 2500 |
+| 3 | 2 | 1500 |
+| 4 | 2 | 1000 |
+| 5 | 3 | 4000 |
+
+**Sample Output**
+
+| customer_id | total_spent |
+| :--- | :--- |
+| 1 | 3500 |
+| 3 | 4000 |
+
+`,
     tableDefinitions: [
       {
-        name: 'Employees',
-        description: 'Departmental data',
+        name: 'Purchases',
+        description: 'Customer purchase history',
         createTableSQL: `
-          CREATE TABLE Employees (
+          CREATE TABLE Purchases (
             id INT PRIMARY KEY,
-            firstName VARCHAR(50),
-            department VARCHAR(50),
-            salary INT
+            customer_id INT,
+            amount INT
           )
         `,
         sampleData: [
-          { id: 1, firstName: 'Shabnam', department: 'Engineering', salary: 75000 },
-          { id: 2, firstName: 'Palak', department: 'Marketing', salary: 65000 },
-          { id: 3, firstName: 'Jyoti', department: 'Engineering', salary: 80000 },
-          { id: 4, firstName: 'Prateek', department: 'Marketing', salary: 70000 }
+          { id: 1, customer_id: 1, amount: 1000 },
+          { id: 2, customer_id: 1, amount: 2500 },
+          { id: 3, customer_id: 2, amount: 1500 },
+          { id: 4, customer_id: 2, amount: 1000 },
+          { id: 5, customer_id: 3, amount: 4000 }
         ]
       }
     ]
   },
   {
-    title: 'High Earners',
-    description: 'Find employees earning above average',
+    title: 'Employee Departments',
+    description: 'INNER JOIN example.',
+    difficulty: 'Intermediate',
+    question: `
+**Problem**
+Write a SQL query to report the name and department of each employee.
+
+**Input Format**
+
+**Employee** table:
+| id | name | department_id |
+| :--- | :--- | :--- |
+| 1 | Alice | 1 |
+| 2 | Bob | 2 |
+| 3 | Charlie | 1 |
+
+**Department** table:
+| id | dept_name |
+| :--- | :--- |
+| 1 | HR |
+| 2 | Engineering |
+
+**Sample Output**
+
+| name | dept_name |
+| :--- | :--- |
+| Alice | HR |
+| Bob | Engineering |
+| Charlie | HR |
+
+`,
+    tableDefinitions: [
+      {
+        name: 'Employee',
+        description: 'Employees',
+        createTableSQL: `
+          CREATE TABLE Employee (
+            id INT PRIMARY KEY,
+            name VARCHAR(50),
+            department_id INT
+          )
+        `,
+        sampleData: [
+          { id: 1, name: 'Alice', department_id: 1 },
+          { id: 2, name: 'Bob', department_id: 2 },
+          { id: 3, name: 'Charlie', department_id: 1 }
+        ]
+      },
+      {
+        name: 'Department',
+        description: 'Departments',
+        createTableSQL: `
+          CREATE TABLE Department (
+            id INT PRIMARY KEY,
+            dept_name VARCHAR(50)
+          )
+        `,
+        sampleData: [
+          { id: 1, dept_name: 'HR' },
+          { id: 2, dept_name: 'Engineering' }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Above Average Salaries',
+    description: 'Using subqueries.',
     difficulty: 'Advanced',
-    question: `Write a SQL query to find all employees whose salary is greater than the average salary of all employees.
+    question: `
+**Problem**
+Write a SQL query to find the names of employees who have a salary greater than the average salary of all employees.
 
-Return the result table in any order.
+**Input Format**
 
-The result format is in the following example.
+**Salaries** table:
+| id | name | salary |
+| :--- | :--- | :--- |
+| 1 | Joe | 70000 |
+| 2 | Jim | 90000 |
+| 3 | Henry | 80000 |
+| 4 | Sam | 60000 |
+| 5 | Max | 90000 |
 
-Example 1:
+**Sample Output**
 
-Input: 
-Employees table:
-+----+----------+--------+
-| id | firstName| salary |
-+----+----------+--------+
-| 1  | Jayraj   | 75000  |
-| 2  | Varad    | 65000  |
-| 3  | Trishank | 80000  |
-| 4  | Aastha   | 70000  |
-+----+----------+--------+
+| name | salary |
+| :--- | :--- |
+| Jim | 90000 |
+| Henry | 80000 |
+| Max | 90000 |
 
-Output: 
-+-----------+--------+
-| firstName | salary |
-+-----------+--------+
-| Jayraj    | 75000  |
-| Trishank  | 80000  |
-+-----------+--------+
-Explanation: 
-The average salary is (75k+65k+80k+70k)/4 = 72,500.
-Jayraj (75k) and Trishank (80k) earn more than 72,500.`,
+`,
     tableDefinitions: [
       {
-        name: 'Employees',
-        description: 'Salary analysis',
+        name: 'Salaries',
+        description: 'Employee Salary Records',
         createTableSQL: `
-          CREATE TABLE Employees (
+          CREATE TABLE Salaries (
             id INT PRIMARY KEY,
-            firstName VARCHAR(50),
+            name VARCHAR(50),
             salary INT
           )
         `,
         sampleData: [
-          { id: 1, firstName: 'Jayraj', salary: 75000 },
-          { id: 2, firstName: 'Varad', salary: 65000 },
-          { id: 3, firstName: 'Trishank', salary: 80000 },
-          { id: 4, firstName: 'Aastha', salary: 70000 }
-        ]
-      }
-    ]
-  },
-  {
-    title: 'Duplicate Emails',
-    description: 'Find duplicate values',
-    difficulty: 'Beginner',
-    question: `Write a SQL query to report all the duplicate emails.
-
-Return the result table in any order.
-
-The result format is in the following example.
-
-Example 1:
-
-Input: 
-Person table:
-+----+---------+
-| id | email   |
-+----+---------+
-| 1  | a@b.com |
-| 2  | c@d.com |
-| 3  | a@b.com |
-+----+---------+
-
-Output: 
-+---------+
-| email   |
-+---------+
-| a@b.com |
-+---------+
-Explanation: a@b.com is repeated two times.`,
-    tableDefinitions: [
-      {
-        name: 'Person',
-        description: 'Email records',
-        createTableSQL: `
-          CREATE TABLE Person (
-            id INT PRIMARY KEY,
-            email VARCHAR(255)
-          )
-        `,
-        sampleData: [
-          { id: 1, email: 'a@b.com' },
-          { id: 2, email: 'c@d.com' },
-          { id: 3, email: 'a@b.com' }
+          { id: 1, name: 'Joe', salary: 70000 },
+          { id: 2, name: 'Jim', salary: 90000 },
+          { id: 3, name: 'Henry', salary: 80000 },
+          { id: 4, name: 'Sam', salary: 60000 },
+          { id: 5, name: 'Max', salary: 90000 }
         ]
       }
     ]
   },
   {
     title: 'Delete Duplicate Emails',
-    description: 'Delete duplicate rows',
-    difficulty: 'Beginner',
-    question: `Write a SQL query to delete all duplicate emails, keeping only one unique email with the smallest id.
+    description: 'Advanced duplicate handling.',
+    difficulty: 'Advanced',
+    question: `
+**Problem**
+Write a SQL query to delete all duplicate emails in the **Person** table, keeping only the one with the smallest **Id**.
 
-Return the result table in any order.
+**Input Format**
 
-The result format is in the following example.
+**Person** table:
+| Id | Email |
+| :--- | :--- |
+| 1 | john@example.com |
+| 2 | bob@example.com |
+| 3 | john@example.com |
 
-Example 1:
+**Sample Output**
 
-Input: 
-Person table:
-+----+------------------+
-| id | email            |
-+----+------------------+
-| 1  | john@example.com |
-| 2  | bob@example.com  |
-| 3  | john@example.com |
-+----+------------------+
+| Id | Email |
+| :--- | :--- |
+| 1 | john@example.com |
+| 2 | bob@example.com |
 
-Output: 
-+----+------------------+
-| id | email            |
-+----+------------------+
-| 1  | john@example.com |
-| 2  | bob@example.com  |
-+----+------------------+
-Explanation: john@example.com is repeated two times. We keep the row with the smallest Id = 1.`,
+**Explanation**
+Id 3 is a duplicate of Id 1, so it is removed.
+
+`,
     tableDefinitions: [
       {
         name: 'Person',
         description: 'Email records',
         createTableSQL: `
           CREATE TABLE Person (
-            id INT PRIMARY KEY,
-            email VARCHAR(255)
+            Id INT PRIMARY KEY,
+            Email VARCHAR(255)
           )
         `,
         sampleData: [
-          { id: 1, email: 'john@example.com' },
-          { id: 2, email: 'bob@example.com' },
-          { id: 3, email: 'john@example.com' }
+          { Id: 1, Email: 'john@example.com' },
+          { Id: 2, Email: 'bob@example.com' },
+          { Id: 3, Email: 'john@example.com' }
         ]
       }
     ]
@@ -473,4 +476,3 @@ async function seedAssignments() {
 }
 
 seedAssignments();
-
