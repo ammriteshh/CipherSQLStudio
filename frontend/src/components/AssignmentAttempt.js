@@ -22,7 +22,6 @@ const AssignmentAttempt = ({ user }) => {
   const [executionTime, setExecutionTime] = useState(null);
 
   // UI State
-  const [activeRightTab, setActiveRightTab] = useState('editor'); // 'editor' | 'results'
   const [leftPanelWidth, setLeftPanelWidth] = useState(40); // Percentage
   const [showHintModal, setShowHintModal] = useState(false);
 
@@ -272,38 +271,27 @@ const AssignmentAttempt = ({ user }) => {
 
       {/* RIGHT PANEL */}
       <div className="workspace-panel right-panel" style={{ width: `${100 - leftPanelWidth}%` }}>
-        <div className="panel-tabs">
-          <button
-            className={`tab-btn ${activeRightTab === 'editor' ? 'active' : ''}`}
-            onClick={() => setActiveRightTab('editor')}
-          >
-            SQL Editor
-          </button>
-          <button
-            className={`tab-btn ${activeRightTab === 'results' ? 'active' : ''}`}
-            onClick={() => setActiveRightTab('results')}
-          >
-            Query Results
-            {queryResult && <span className={`status-dot ${queryResult.success ? 'success' : 'error'}`} />}
-          </button>
-
-          <div className="panel-actions">
+        <div className="panel-actions-bar">
+          <div className="action-left">
+            <span className="lang-label">SQL (PostgreSQL)</span>
+          </div>
+          <div className="action-right">
             <button
               className="btn btn-secondary hint-btn"
               onClick={handleGetHint}
               title="Need help? Get a hint"
             >
-              <span className="icon">💡</span> {loadingHint ? 'Loading...' : 'Get Hint'}
+              <span className="icon">💡</span> {loadingHint ? 'Loading...' : 'Hint'}
             </button>
-            <div className="divider-vertical"></div>
             <button className="btn btn-primary run-btn" onClick={handleExecuteQuery} disabled={executing}>
-              {executing ? 'Running...' : '▶ Run Query'}
+              {executing ? 'running...' : '▶ Run Code'}
             </button>
           </div>
         </div>
 
-        <div className="panel-content">
-          <div className={`editor-container ${activeRightTab === 'editor' ? 'visible' : 'hidden'}`}>
+        <div className="panel-content-split">
+          {/* EDITOR (Top) */}
+          <div className="editor-section">
             <Editor
               height="100%"
               defaultLanguage="sql"
@@ -314,32 +302,40 @@ const AssignmentAttempt = ({ user }) => {
                 minimap: { enabled: false },
                 fontSize: 14,
                 fontFamily: 'JetBrains Mono, monospace',
-                padding: { top: 20 },
+                padding: { top: 16 },
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
+                lineNumbers: 'on',
+                glyphMargin: false,
+                folding: false,
+                lineDecorationsWidth: 0,
+                lineNumbersMinChars: 3
               }}
               onMount={(editor) => { editorRef.current = editor; }}
             />
           </div>
 
-          <div className={`results-container ${activeRightTab === 'results' ? 'visible' : 'hidden'}`}>
-            {executing ? (
-              <div className="empty-state">
-                <div className="spinner" />
-                <p>Executing Query...</p>
-              </div>
-            ) : queryResult ? (
-              <div className="query-results animate-slide-up">
-                <div className="results-meta">
-                  <span className={`status ${queryResult.success ? 'success' : 'error'}`}>
-                    {queryResult.success ? 'Success' : 'Error'}
-                  </span>
-                  {executionTime && <span className="time">⏱ {executionTime}ms</span>}
-                  {queryResult.rowCount !== undefined && <span className="rows">{queryResult.rowCount} rows</span>}
-                </div>
+          {/* RESULTS (Bottom) - Always visible or collapsible? Let's make it fill remaining space or fixed height */}
+          <div className="results-section">
+            <div className="results-header">
+              <span className="results-title">Output</span>
+              {queryResult && (
+                <span className={`status-badge ${queryResult.success ? 'success' : 'error'}`}>
+                  {queryResult.success ? 'Accepted' : 'Runtime Error'}
+                </span>
+              )}
+              {executionTime && <span className="time-badge">{executionTime}ms</span>}
+            </div>
 
-                {queryResult.success ? (
-                  <div className="results-table-wrapper custom-scrollbar">
+            <div className="results-body custom-scrollbar">
+              {executing ? (
+                <div className="empty-state">
+                  <div className="spinner-small" />
+                  <span>Running query...</span>
+                </div>
+              ) : queryResult ? (
+                queryResult.success ? (
+                  <div className="table-responsive">
                     <table className="results-table">
                       <thead>
                         <tr>
@@ -356,17 +352,16 @@ const AssignmentAttempt = ({ user }) => {
                     </table>
                   </div>
                 ) : (
-                  <div className="error-display">
-                    <pre>{queryResult.error}</pre>
+                  <div className="error-message">
+                    {queryResult.error}
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="empty-state">
-                <div className="empty-icon">⌨️</div>
-                <p>Run a query to see results here</p>
-              </div>
-            )}
+                )
+              ) : (
+                <div className="empty-state-text">
+                  Run a query to see results.
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
