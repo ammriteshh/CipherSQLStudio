@@ -73,7 +73,6 @@ const AssignmentAttempt = ({ user }) => {
     setExecuting(true);
     setQueryResult(null);
     const startTime = performance.now();
-    setActiveRightTab('results');
 
     try {
       const response = await api.post(`/assignments/${id}/execute`, {
