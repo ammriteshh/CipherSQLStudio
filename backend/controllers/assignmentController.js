@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const Assignment = require('../models/Assignment');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
