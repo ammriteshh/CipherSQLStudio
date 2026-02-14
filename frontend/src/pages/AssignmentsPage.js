@@ -47,8 +47,8 @@ const AssignmentsPage = () => {
     return (
         <div className="assignments-page">
             <div className="assignments-page__header">
-                <h1 className="page-title">Practice SQL</h1>
-                <p className="page-subtitle">Master database queries with interactive challenges.</p>
+                <h1 className="page-title">Level up your database game!</h1>
+                <p className="page-subtitle">Master queries, solve challenges, turn data into decisions.</p>
             </div>
 
             <div className="assignments-page__controls">
