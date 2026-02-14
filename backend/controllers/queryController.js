@@ -1,5 +1,5 @@
 const { executeQueryInSchema, setupAssignmentSchema } = require('../db/postgresql');
-const { validateQuery, sanitizeQuery } = require('./queryValidator');
+const { validateQuery, sanitizeQuery } = require('../utils/queryValidator');
 const Assignment = require('../models/Assignment');
 
 /**
@@ -45,7 +45,7 @@ const executeQuery = async (req, res, next) => {
     // Execute query in isolated schema
     try {
       const result = await executeQueryInSchema(schemaName, sanitizedQuery);
-      
+
       res.json({
         success: true,
         data: result.rows,
@@ -71,7 +71,7 @@ const executeQuery = async (req, res, next) => {
 const getAssignment = async (req, res, next) => {
   try {
     const { id } = req.params;
-    
+
     const assignment = await Assignment.findById(id);
     if (!assignment) {
       return res.status(404).json({ error: 'Assignment not found' });
