@@ -50,7 +50,7 @@
       display: block;
       width: 8px;
       height: 8px;
-      background-color: #336791; // PostgreSQL Blue
+      background-color: var(--info); // Use semantic color or keep hardcoded if brand specific
       border-radius: 50%;
     }
   }
@@ -354,16 +354,16 @@
     }
 
     code {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: var(--code-bg);
       padding: 2px 6px;
       border-radius: $radius-sm;
       font-family: var(--font-mono);
       font-size: 0.9em;
-      color: #e2e8f0;
+      color: var(--text-main);
     }
 
     pre {
-      background-color: var(--bg-card);
+      background-color: var(--code-bg);
       padding: $space-4;
       border-radius: $radius-md;
       overflow-x: auto;

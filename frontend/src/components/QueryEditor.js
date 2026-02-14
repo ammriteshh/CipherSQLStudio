@@ -1,8 +1,10 @@
 import React, { useRef } from 'react';
 import Editor from '@monaco-editor/react';
+import { useTheme } from '../context/ThemeContext';
 
 const QueryEditor = ({ value, onChange }) => {
     const editorRef = useRef(null);
+    const { theme } = useTheme();
 
     const handleEditorDidMount = (editor) => {
         editorRef.current = editor;
@@ -15,7 +17,7 @@ const QueryEditor = ({ value, onChange }) => {
                 defaultLanguage="sql"
                 value={value}
                 onChange={onChange}
-                theme="vs-dark"
+                theme={theme === 'dark' ? 'vs-dark' : 'light'}
                 options={{
                     minimap: { enabled: false },
                     fontSize: 14,

@@ -15,8 +15,8 @@
     top: 0;
     z-index: 100;
     height: 64px;
+    background: var(--bg-card);
     border-bottom: 1px solid var(--border);
-    background: rgba(var(--bg-main), 0.8); // Fallback
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 
@@ -138,7 +138,7 @@
 
     &-primary {
         background-color: var(--primary);
-        color: white;
+        color: var(--primary-fg);
         border: 1px solid transparent; // for consistency
         box-shadow: var(--shadow-sm);
 

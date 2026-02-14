@@ -11,6 +11,7 @@
 }
 
 :root {
+  // Default to Dark Mode (Matches original look)
   --bg-main: #{$gray-900};
   --bg-card: #{$gray-800};
   --bg-hover: #{$gray-700};
@@ -18,11 +19,19 @@
   --text-main: #{$gray-50};
   --text-muted: #{$gray-400};
 
+  --border: #{$gray-700}; // Darker border for dark mode
+  --border-highlight: #{$primary};
+
   --primary: #{$primary};
   --primary-hover: #{$primary-hover};
+  --primary-fg: #ffffff;
 
-  --border: #{$gray-800}; // Subtle border
-  --border-highlight: #{$gray-700};
+  --success: #{$success};
+  --warning: #{$warning};
+  --danger: #{$danger};
+  --info: #{$info};
+
+  --code-bg: #{$gray-950};
 
   --font-sans: #{$font-sans};
   --font-mono: #{$font-mono};
@@ -32,6 +41,24 @@
 
   --shadow-sm: #{$shadow-sm};
   --shadow-md: #{$shadow-md};
+}
+
+[data-theme='light'] {
+  --bg-main: #{$gray-50};
+  --bg-card: #ffffff;
+  --bg-hover: #{$gray-200};
+
+  --text-main: #{$gray-900};
+  --text-muted: #{$gray-600};
+
+  --border: #{$gray-300}; // Lighter border for light mode
+  --border-highlight: #{$primary};
+
+  --code-bg: #{$gray-100};
+
+  // Keep primary same, or adjust if needed
+  --primary: #{$primary};
+  --primary-hover: #{$primary-hover};
 }
 
 body {

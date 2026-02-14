@@ -50,10 +50,10 @@
 
   &__error {
     padding: $space-3;
-    background-color: rgba($danger, 0.1);
-    border: 1px solid rgba($danger, 0.2);
+    background-color: color-mix(in srgb, var(--danger), transparent 90%);
+    border: 1px solid color-mix(in srgb, var(--danger), transparent 80%);
     border-radius: $radius-md;
-    color: $danger;
+    color: var(--danger);
     font-size: $font-sm;
   }
 
