@@ -1,57 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import AssignmentCard from '../components/AssignmentCard';
-import api from '../services/api'; // Import API service
+import api from '../services/api';
 import './AssignmentsPage.scss';
 
 const AssignmentsPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterDifficulty, setFilterDifficulty] = useState('All');
+    const [difficultyFilter, setDifficultyFilter] = useState('All');
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchAssignments = async () => {
+        const loadAssignments = async () => {
             try {
                 setLoading(true);
-                const response = await api.get('/assignments');
-                setAssignments(response.data);
+                const { data } = await api.get('/assignments');
+                setAssignments(data);
                 setError(null);
             } catch (err) {
-                console.error('Failed to fetch assignments:', err);
-                if (err.code === 'ECONNABORTED') {
-                    setError('Request timed out. Please check your internet connection or try again later.');
-                } else {
-                    setError(err.customMessage || err.message || 'Failed to load assignments. Please check your connection.');
-                }
+                console.error('Assignments fetch error:', err);
+                const message = err.code === 'ECONNABORTED'
+                    ? 'Request timed out. Check connection.'
+                    : (err.customMessage || 'Failed to load assignments.');
+                setError(message);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchAssignments();
+        loadAssignments();
     }, []);
 
-    const filteredAssignments = assignments.filter(assignment => {
-        const title = assignment.title || '';
-        const tags = assignment.tags || []; // Backend might not send tags yet
+    const filteredAssignments = useMemo(() => {
+        return assignments.filter(assignment => {
+            const title = (assignment.title || '').toLowerCase();
+            const tags = (assignment.tags || []).map(t => t.toLowerCase());
+            const term = searchTerm.toLowerCase();
 
-        const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+            const matchesSearch = title.includes(term) || tags.some(tag => tag.includes(term));
+            const matchesDifficulty = difficultyFilter === 'All' || assignment.difficulty === difficultyFilter;
 
-        const matchesDifficulty = filterDifficulty === 'All' || assignment.difficulty === filterDifficulty;
+            return matchesSearch && matchesDifficulty;
+        });
+    }, [assignments, searchTerm, difficultyFilter]);
 
-        return matchesSearch && matchesDifficulty;
-    });
+    if (error) {
+        return (
+            <div className="assignments-page error-container">
+                <div className="error-state text-center p-10">
+                    <p className="text-danger mb-4">{error}</p>
+                    <button className="btn-primary px-6 py-2" onClick={() => window.location.reload()}>
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="assignments-page">
-            <div className="assignments-page__header">
+            <header className="assignments-page__header">
                 <h1 className="page-title">Level up your database game!</h1>
                 <p className="page-subtitle">Master queries, solve challenges, turn data into decisions.</p>
-            </div>
+            </header>
 
-            <div className="assignments-page__controls">
+            <section className="assignments-page__controls">
                 <div className="search-bar">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -63,6 +76,7 @@ const AssignmentsPage = () => {
                         placeholder="Search assignments..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        aria-label="Search assignments"
                     />
                 </div>
 
@@ -70,29 +84,18 @@ const AssignmentsPage = () => {
                     {['All', 'Beginner', 'Intermediate', 'Advanced'].map(level => (
                         <button
                             key={level}
-                            className={`filter-tab ${filterDifficulty === level ? 'active' : ''}`}
-                            onClick={() => setFilterDifficulty(level)}
+                            className={`filter-tab ${difficultyFilter === level ? 'active' : ''}`}
+                            onClick={() => setDifficultyFilter(level)}
                         >
                             {level}
                         </button>
                     ))}
                 </div>
-            </div>
+            </section>
 
-            <div className="assignments-grid">
+            <section className="assignments-grid">
                 {loading ? (
-                    <div className="loading-state">Loading assignments...</div>
-                ) : error ? (
-                    <div className="error-state" style={{ textAlign: 'center', padding: '40px' }}>
-                        <p style={{ color: '#ef4444', marginBottom: '16px' }}>{error}</p>
-                        <button
-                            className="btn-primary"
-                            onClick={() => window.location.reload()}
-                            style={{ padding: '8px 24px' }}
-                        >
-                            Retry Connection
-                        </button>
-                    </div>
+                    <div className="loading-state col-span-full text-center text-muted">Loading assignments...</div>
                 ) : filteredAssignments.length > 0 ? (
                     filteredAssignments.map((assignment, index) => (
                         <div
@@ -102,10 +105,9 @@ const AssignmentsPage = () => {
                         >
                             <AssignmentCard assignment={{
                                 ...assignment,
-                                // Default values if missing from backend
-                                completionCurrent: 0,
-                                completionTotal: 10,
-                                locked: false, // Explicitly unlock everything
+                                completionCurrent: assignment.completionCurrent ?? 0,
+                                completionTotal: assignment.completionTotal ?? 10,
+                                locked: false,
                                 tags: assignment.tags || ['SQL'],
                                 estimatedTime: assignment.estimatedTime || '10 min'
                             }} />
@@ -116,13 +118,13 @@ const AssignmentsPage = () => {
                         <p>No assignments found matching your criteria.</p>
                         <button
                             className="btn-reset"
-                            onClick={() => { setSearchTerm(''); setFilterDifficulty('All'); }}
+                            onClick={() => { setSearchTerm(''); setDifficultyFilter('All'); }}
                         >
                             Reset Filters
                         </button>
                     </div>
                 )}
-            </div>
+            </section>
         </div>
     );
 };
