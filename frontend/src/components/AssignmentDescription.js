@@ -27,27 +27,27 @@ const AssignmentDescription = ({ assignment }) => {
             const columns = extractColumnsFromSQL(table.createTableSQL);
 
             return (
-                <div key={index} className="schema-table-container" style={{ marginBottom: '25px' }}>
-                    <h4 style={{ marginBottom: '10px', color: '#e2e8f0' }}>Table: {table.name}</h4>
-                    <div className="table-wrapper" style={{ overflowX: 'auto', border: '1px solid #334155', borderRadius: '6px' }}>
-                        <table className="schema-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem', textAlign: 'left' }}>
+                <div key={index} className="schema-table-container">
+                    <h4 className="schema-table-title">Table: <span className="entity-name">{table.name}</span></h4>
+                    <div className="table-responsive">
+                        <table className="schema-table">
                             <thead>
-                                <tr style={{ backgroundColor: '#1e293b', borderBottom: '1px solid #334155' }}>
-                                    <th style={{ padding: '12px 16px', color: '#94a3b8', fontWeight: '600' }}>Column Name</th>
-                                    <th style={{ padding: '12px 16px', color: '#94a3b8', fontWeight: '600' }}>Type</th>
+                                <tr>
+                                    <th>Column Name</th>
+                                    <th>Type</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {columns.map((col, i) => (
-                                    <tr key={i} style={{ borderBottom: i === columns.length - 1 ? 'none' : '1px solid #1e293b', backgroundColor: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
-                                        <td style={{ padding: '10px 16px', color: '#e2e8f0', fontFamily: 'monospace' }}>{col.name}</td>
-                                        <td style={{ padding: '10px 16px', color: '#94a3b8', fontFamily: 'monospace' }}>{col.type}</td>
+                                    <tr key={i}>
+                                        <td className="col-name">{col.name}</td>
+                                        <td className="col-type">{col.type}</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
-                    <p style={{ marginTop: '8px', fontSize: '0.9em', color: '#64748b', fontStyle: 'italic' }}>
+                    <p className="schema-table-description">
                         {table.description}
                     </p>
                 </div>

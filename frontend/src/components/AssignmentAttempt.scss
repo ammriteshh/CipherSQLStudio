@@ -417,8 +417,91 @@
     h3 {
       font-size: $font-lg;
       font-weight: $font-bold;
-      margin-bottom: $space-4;
+      margin-bottom: $space-6;
       color: var(--text-main);
+    }
+
+    .schema-table-container {
+      margin-bottom: $space-6;
+
+      .schema-table-title {
+        margin-bottom: $space-3;
+        font-size: $font-base;
+        color: var(--text-muted);
+        font-weight: $font-medium;
+
+        .entity-name {
+          color: var(--primary-light);
+          font-family: var(--font-mono);
+          font-weight: $font-bold;
+        }
+      }
+
+      .table-responsive {
+        border: 1px solid var(--border);
+        border-radius: $radius-md;
+        overflow-x: auto;
+        background-color: var(--bg-main);
+      }
+
+      .schema-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: $font-sm;
+        text-align: left;
+
+        th,
+        td {
+          padding: $space-3 $space-4;
+        }
+
+        thead {
+          background-color: var(--bg-card);
+          border-bottom: 1px solid var(--border);
+
+          th {
+            color: var(--text-muted);
+            font-weight: $font-bold;
+            white-space: nowrap;
+          }
+        }
+
+        tbody {
+          tr {
+            border-bottom: 1px solid var(--border);
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            &:nth-child(even) {
+              background-color: var(--bg-hover);
+            }
+
+            &:hover {
+              background-color: rgba($primary, 0.05);
+            }
+          }
+
+          .col-name {
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-weight: $font-medium;
+          }
+
+          .col-type {
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+          }
+        }
+      }
+
+      .schema-table-description {
+        margin-top: $space-2;
+        font-size: $font-xs;
+        color: var(--text-muted);
+        font-style: italic;
+      }
     }
   }
 }

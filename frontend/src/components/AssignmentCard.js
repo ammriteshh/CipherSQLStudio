@@ -18,12 +18,12 @@ const AssignmentCard = ({ assignment }) => {
 
     // Difficulty Icon Helper
     const getDifficultyIcon = (level) => {
-        switch (level.toLowerCase()) {
-            case 'beginner': return '🌱';
-            case 'intermediate': return '⚡';
-            case 'advanced': return '🔥';
-            default: return '📚';
-        }
+        const icons = {
+            beginner: '🌱',
+            intermediate: '⚡',
+            advanced: '🔥'
+        };
+        return icons[level?.toLowerCase()] || '📚';
     };
 
     return (
