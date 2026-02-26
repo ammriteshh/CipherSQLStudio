@@ -1,91 +1,74 @@
 @import '../styles/variables';
-@import '../styles/mixins';
 
-.auth {
+.auth-page {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - 128px);
   padding: $space-6;
 
-  &__container {
+  .auth-card {
     width: 100%;
-    max-width: 400px;
-    background-color: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: $radius-lg;
-    padding: $space-8;
-    box-shadow: var(--shadow-lg);
-  }
-
-  &__title {
-    font-size: $font-2xl;
-    font-weight: $font-bold;
-    color: var(--text-main);
+    max-width: 420px;
+    padding: $space-10;
     text-align: center;
-    margin-bottom: $space-6;
   }
 
-  &__form {
+  .auth-title {
+    margin-bottom: $space-8;
+    font-size: $font-2xl;
+  }
+
+  .auth-form {
     display: flex;
     flex-direction: column;
-    gap: $space-4;
-  }
+    gap: $space-6;
+    text-align: left;
 
-  &__field {
-    display: flex;
-    flex-direction: column;
-    gap: $space-2;
-  }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: $space-2;
 
-  &__label {
-    font-size: $font-sm;
-    font-weight: $font-medium;
-    color: var(--text-muted);
-  }
-
-  &__input {
-    @include input-base;
-  }
-
-  &__error {
-    padding: $space-3;
-    background-color: color-mix(in srgb, var(--danger), transparent 90%);
-    border: 1px solid color-mix(in srgb, var(--danger), transparent 80%);
-    border-radius: $radius-md;
-    color: var(--danger);
-    font-size: $font-sm;
-  }
-
-  &__btn {
-    @include button-base;
-    width: 100%;
-
-    &--primary {
-      background-color: var(--primary);
-      color: white;
-
-      &:hover:not(:disabled) {
-        background-color: var(--primary-hover);
+      label {
+        font-size: $font-sm;
+        color: var(--text-muted);
+        font-weight: $font-medium;
       }
+
+      input {
+        padding: $space-3 $space-4;
+        background: var(--bg-main);
+        border: 1px solid var(--border);
+        border-radius: $radius-md;
+        color: var(--text-main);
+
+        &:focus {
+          border-color: var(--primary);
+          outline: none;
+          box-shadow: 0 0 0 2px var(--primary-glow);
+        }
+      }
+    }
+
+    .auth-error {
+      padding: $space-3 $space-4;
+      background: rgba($danger, 0.1);
+      border: 1px solid rgba($danger, 0.2);
+      border-radius: $radius-md;
+      color: var(--danger);
+      font-size: $font-sm;
     }
   }
 
-  &__footer {
-    margin-top: $space-6;
-    text-align: center;
+  .auth-footer {
+    margin-top: $space-8;
     font-size: $font-sm;
     color: var(--text-muted);
-  }
 
-  &__link {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: $font-medium;
-    margin-left: $space-1;
-
-    &:hover {
-      text-decoration: underline;
+    a {
+      color: var(--primary);
+      font-weight: $font-medium;
     }
   }
 }
