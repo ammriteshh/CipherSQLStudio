@@ -1,13 +1,14 @@
 const { Pool } = require('pg');
 const Assignment = require('../models/Assignment');
+const aiService = require('../services/aiService');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  //   ssl: {
-  //     rejectUnauthorized: false
-  //   }
 });
 
+/**
+ * Fetch all assignments with basic info
+ */
 const getAllAssignments = async (req, res, next) => {
   try {
     const assignments = await Assignment.find({})
@@ -26,14 +27,18 @@ const getAllAssignments = async (req, res, next) => {
   }
 };
 
+/**
+ * Fetch a single assignment by ID with necessary details for the workspace
+ */
 const getAssignmentById = async (req, res, next) => {
   try {
     const assignment = await Assignment.findById(req.params.id);
     if (!assignment) {
-      return res.status(404).json({ error: 'Assignment not found' });
+      const error = new Error('Assignment not found');
+      error.status = 404;
+      throw error;
     }
 
-    // Only return what's needed for the frontend
     res.json({
       _id: assignment._id,
       title: assignment.title,
@@ -53,39 +58,41 @@ const getAssignmentById = async (req, res, next) => {
   }
 };
 
+/**
+ * Execute user query in a temporary isolated schema
+ */
 const executeAssignmentQuery = async (req, res, next) => {
   const client = await pool.connect();
   try {
-    const { query, userId, sessionId } = req.body;
+    const { query, sessionId } = req.body;
     const { id } = req.params;
 
     const assignment = await Assignment.findById(id);
     if (!assignment) {
-      return res.status(404).json({ error: 'Assignment not found' });
+      const error = new Error('Assignment not found');
+      error.status = 404;
+      throw error;
     }
 
-    // 1. Sanitize Session ID (Schema Name)
+    // Sanitize Session ID to create a safe schema name
     const safeSessionId = sessionId.replace(/[^a-zA-Z0-9_]/g, '').substring(0, 50);
-    const userSchema = `workspace_${safeSessionId}`;
+    const workspaceSchema = `workspace_${safeSessionId}`;
 
-    // 2. Start Transaction
     await client.query('BEGIN');
 
-    // 3. Create Schema
-    await client.query(`CREATE SCHEMA IF NOT EXISTS "${userSchema}"`);
-    await client.query(`SET search_path TO "${userSchema}"`);
+    // Isolate user execution in their own schema
+    await client.query(`CREATE SCHEMA IF NOT EXISTS "${workspaceSchema}"`);
+    await client.query(`SET search_path TO "${workspaceSchema}"`);
 
-    // 4. Create Tables and Insert Data (Lowercase enforced)
+    // Setup assignment tables and data
     for (const table of assignment.tableDefinitions) {
-      // Create Table
       await client.query(table.createTableSQL);
 
-      // Insert Data
       if (table.sampleData && table.sampleData.length > 0) {
         const columns = Object.keys(table.sampleData[0]).join(', ');
         const values = table.sampleData.map(row => {
           const rowValues = Object.values(row).map(val => {
-            if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`; // Escape single quotes
+            if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`;
             return val;
           }).join(', ');
           return `(${rowValues})`;
@@ -95,12 +102,11 @@ const executeAssignmentQuery = async (req, res, next) => {
       }
     }
 
-    // 5. Execute User Query
+    // Execute the user's SQL query
     const result = await client.query(query);
 
     await client.query('COMMIT');
 
-    // 6. Return Results
     res.json({
       success: true,
       data: result.rows,
@@ -110,21 +116,53 @@ const executeAssignmentQuery = async (req, res, next) => {
 
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error('Query execution error:', error);
+    console.error('[DATABASE ERROR]', error.message);
     res.status(400).json({
       success: false,
       error: error.message
     });
   } finally {
-    // Ideally drop schema here to clean up, or use a cleanup job
-    // await client.query(`DROP SCHEMA IF EXISTS "${userSchema}" CASCADE`);
     client.release();
+  }
+};
+
+/**
+ * Generate an AI-powered hint for the assignment
+ */
+const getAssignmentHint = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { userQuery } = req.body;
+
+    const assignment = await Assignment.findById(id);
+    if (!assignment) {
+      const error = new Error('Assignment not found');
+      error.status = 404;
+      throw error;
+    }
+
+    const tableSchemaInfo = assignment.tableDefinitions
+      .map(td => `Table "${td.name}": ${td.description}`)
+      .join('\n');
+
+    const hint = await aiService.generateHint(
+      assignment.question,
+      tableSchemaInfo,
+      userQuery
+    );
+
+    res.json({ success: true, hint });
+  } catch (error) {
+    next(error);
   }
 };
 
 module.exports = {
   getAllAssignments,
   getAssignmentById,
-  executeAssignmentQuery
+  executeAssignmentQuery,
+  getAssignmentHint
 };
+
+
 

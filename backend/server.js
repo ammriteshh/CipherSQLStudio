@@ -3,106 +3,91 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 
+// Load environment variables
 dotenv.config();
 
-const app = express();
-// Ensure PORT is a valid numeric port (sometimes envs may mistakenly contain a URL)
-const _rawPort = process.env.PORT;
-const _parsedPort = _rawPort ? parseInt(_rawPort, 10) : NaN;
-const PORT = Number.isInteger(_parsedPort) && _parsedPort > 0 ? _parsedPort : 5000;
-if (_rawPort && !(Number.isInteger(_parsedPort) && _parsedPort > 0)) {
-  console.warn(`Invalid PORT environment variable (${_rawPort}), falling back to ${PORT}`);
-}
+// Database connections
+const connectMongoDB = require('./db/mongodb');
+const { connectPostgreSQL, isPostgresAvailable } = require('./db/postgresql');
 
+// Route imports
+const assignmentRoutes = require('./routes/assignment.routes');
+const authRoutes = require('./routes/auth.routes');
+const progressRoutes = require('./routes/progress.routes');
+
+const app = express();
+
+// Port configuration
+const PORT = parseInt(process.env.PORT, 10) || 5000;
+
+// CORS configuration
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
   "https://cipher-sql-studio-ui.onrender.com",
-  "https://ciphersqlstudio.onrender.com", // Add potential other frontend URL
+  "https://ciphersqlstudio.onrender.com",
   ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : [])
 ];
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // Postman / server-to-server
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      console.warn("Blocked CORS for origin:", origin);
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  })
-);
-
+// Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Log all incoming requests
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.originalUrl}`);
-  next();
-});
+// Request logging (Only in development)
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+    next();
+  });
+}
 
-// Database connections
-const connectMongoDB = require('./db/mongodb');
-const { connectPostgreSQL } = require('./db/postgresql');
-
-// Routes
-const assignmentRoutes = require('./routes/assignments');
-const authRoutes = require('./routes/auth');
-const progressRoutes = require('./routes/progress');
-
+// API Routes
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/progress', progressRoutes);
 
-// Root route for health check / monitoring
-app.get('/', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'CipherSQL Backend is running. Access API at /api' });
-});
-
 // Health check endpoint
-const { isPostgresAvailable } = require('./db/postgresql');
-const Assignment = require('./models/Assignment');
-
 app.get('/api/health', async (req, res) => {
-  const mongoEnvDefined = !!process.env.MONGODB_URI;
-  const mongoState = mongoose.connection.readyState === 1 ? 'connected' : (mongoEnvDefined ? 'disconnected' : 'missing_env');
-
-  let assignmentsCount = 'unknown';
-  if (mongoState === 'connected') {
-    try {
-      assignmentsCount = await Assignment.countDocuments();
-    } catch (e) {
-      assignmentsCount = 'error';
-    }
-  }
-
+  const mongoState = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  
   res.json({
     status: 'ok',
-    mongodb: {
-      envConfigured: mongoEnvDefined,
-      state: mongoState,
-      readyState: mongoose.connection.readyState,
-      assignmentsCount
-    },
-    postgresql: {
-      available: isPostgresAvailable()
-    },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    services: {
+      mongodb: mongoState,
+      postgresql: isPostgresAvailable() ? 'available' : 'unavailable'
+    }
   });
 });
 
-// Error handling middleware
+// Root route
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'CipherSQL API is operational' });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// Global error handler
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
+  const status = err.status || 500;
+  console.error(`[ERROR] ${status}: ${err.message}`);
+  
+  res.status(status).json({
     error: {
       message: err.message || 'Internal server error',
       ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
@@ -110,37 +95,24 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found', path: req.originalUrl });
-});
-
-// Initialize database connections and start server
-async function startServer() {
+// Bootstrap server
+async function bootstrap() {
   try {
-    console.log('[DEBUG] Connecting to MongoDB...');
-    await connectMongoDB();
-    console.log('[DEBUG] MongoDB connected.');
+    await Promise.all([
+      connectMongoDB(),
+      connectPostgreSQL()
+    ]);
+    
+    app.listen(PORT, () => {
+      console.log(`\n🚀 Server running on port ${PORT}`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}\n`);
+    });
   } catch (err) {
-    console.error('[DEBUG] MongoDB connection failed (continuing):', err);
+    console.error('Fatal error during bootstrap:', err);
+    process.exit(1);
   }
-
-  try {
-    console.log('[DEBUG] Connecting to PostgreSQL...');
-    await connectPostgreSQL();
-    console.log('[DEBUG] PostgreSQL connected.');
-  } catch (err) {
-    console.error('[DEBUG] PostgreSQL connection failed (continuing):', err);
-  }
-
-  console.log('[DEBUG] Starting Express server...');
-
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  });
 }
 
-startServer();
+bootstrap();
 
 module.exports = app;
