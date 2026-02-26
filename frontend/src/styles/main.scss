@@ -1,7 +1,5 @@
 @import './variables';
 
-// --- Reset & Base ---
-
 *,
 *::before,
 *::after {
@@ -11,251 +9,84 @@
 }
 
 :root {
-  // Default to Dark Mode (Matches original look)
   --bg-main: #{$gray-900};
   --bg-card: #{$gray-800};
   --bg-hover: #{$gray-700};
-
   --text-main: #{$gray-50};
   --text-muted: #{$gray-400};
-
-  --border: #{$gray-700}; // Darker border for dark mode
-  --border-highlight: #{$primary};
-
+  --border: #{$gray-700};
   --primary: #{$primary};
-  --primary-hover: #{$primary-hover};
-  --primary-fg: #ffffff;
-
+  --primary-glow: rgba(#{$primary}, 0.3);
   --success: #{$success};
   --warning: #{$warning};
   --danger: #{$danger};
-  --info: #{$info};
-
-  --code-bg: #{$gray-950};
-
-  --font-sans: #{$font-sans};
-  --font-mono: #{$font-mono};
-
-  --radius-sm: #{$radius-sm};
-  --radius-md: #{$radius-md};
-
-  --shadow-sm: #{$shadow-sm};
-  --shadow-md: #{$shadow-md};
-}
-
-[data-theme='light'] {
-  --bg-main: #{$gray-50};
-  --bg-card: #ffffff;
-  --bg-hover: #{$gray-200};
-
-  --text-main: #{$gray-900};
-  --text-muted: #{$gray-600};
-
-  --border: #{$gray-300}; // Lighter border for light mode
-  --border-highlight: #{$primary};
-
-  --code-bg: #{$gray-100};
-
-  // Keep primary same, or adjust if needed
-  --primary: #{$primary};
-  --primary-hover: #{$primary-hover};
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: $font-sans;
   background-color: var(--bg-main);
   color: var(--text-main);
-  line-height: $line-height-normal;
-  font-size: $font-base;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-code,
-pre {
-  font-family: var(--font-mono);
-}
-
-// --- Typography Utility Classes ---
-
-.text-xs {
-  font-size: $font-xs;
-}
-
-.text-sm {
-  font-size: $font-sm;
-}
-
-.text-base {
-  font-size: $font-base;
-}
-
-.text-lg {
-  font-size: $font-lg;
-}
-
-.text-xl {
-  font-size: $font-xl;
-}
-
-.text-2xl {
-  font-size: $font-2xl;
-}
-
-.font-medium {
-  font-weight: $font-medium;
-}
-
-.font-bold {
-  font-weight: $font-bold;
-}
-
-.text-muted {
-  color: var(--text-muted);
-}
-
-.text-primary {
-  color: var(--primary);
-}
-
-// --- Layout Utilities ---
-
-.container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 $space-6;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.items-center {
+// Global Components
+.btn {
+  display: inline-flex;
   align-items: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.gap-2 {
   gap: $space-2;
-}
-
-.gap-4 {
-  gap: $space-4;
-}
-
-// --- Component Base Styles ---
-
-button {
+  padding: $space-2 $space-4;
+  border-radius: $radius-md;
+  font-weight: $font-medium;
   cursor: pointer;
-  font-family: inherit;
-  border: none;
-  background: none;
   transition: $transition;
+  border: 1px solid transparent;
+
+  &.btn-primary {
+    background: var(--primary);
+    color: white;
+
+    &:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+  }
+
+  &.btn-secondary {
+    background: var(--bg-card);
+    border-color: var(--border);
+    color: var(--text-main);
+
+    &:hover {
+      background: var(--bg-hover);
+    }
+  }
 
   &:disabled {
+    opacity: 0.6;
     cursor: not-allowed;
-    opacity: 0.6;
   }
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-  transition: $transition;
+.glass-card {
+  background: $glass-bg;
+  backdrop-filter: blur(12px);
+  border: 1px solid $glass-border;
+  border-radius: $radius-lg;
 }
 
-// --- Glass/Premium Effect Helpers ---
-
-.premium-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: $transition;
-
-  &:hover {
-    border-color: var(--border-highlight);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
-  }
-}
-
-.premium-input {
-  background: var(--bg-main);
-  border: 1px solid var(--border);
-  color: var(--text-main);
-  padding: $space-2 $space-3;
-  border-radius: var(--radius-sm);
-  font-size: $font-sm;
-  width: 100%;
-  transition: $transition;
-
-  &:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba($primary, 0.2);
-  }
-}
-
-// --- Loading Screen ---
-
-.app__loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  width: 100vw;
-  background-color: var(--bg-main);
-  color: var(--text-main);
-  font-family: var(--font-mono);
-  font-size: $font-lg;
-  gap: $space-4;
-
-  &::before {
-    content: '';
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--bg-card);
-    border-top-color: var(--primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+.custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
 
-  &::after {
-    content: 'Igniting Workspace...';
-    animation: pulse 2s ease-in-out infinite;
-    font-size: $font-base;
-    color: var(--text-muted);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 0.6;
+  &::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
   }
 
-  50% {
-    opacity: 1;
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
   }
 }
