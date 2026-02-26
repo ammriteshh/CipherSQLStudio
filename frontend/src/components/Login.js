@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../services/api';
+import { useAuth } from '../hooks/useAuth';
 import './Auth.scss';
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -16,69 +17,53 @@ const Login = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/login', {
-        email,
-        password,
-      });
-
-      if (response.data.success) {
-        onLogin(response.data.user, response.data.token);
-        navigate('/');
-      }
+      await login(email, password);
+      navigate('/');
     } catch (err) {
-      const msg = err?.customMessage || (!err?.response ? 'Cannot reach server / backend is down. Please check the backend and CORS settings.' : `Error ${err.response.status}: ${err.response.data?.message || 'Request failed'}`);
-      setError(msg);
+      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth">
-      <div className="auth__container">
-        <h2 className="auth__title">Login</h2>
-        <form className="auth__form" onSubmit={handleSubmit}>
-          {error && <div className="auth__error">{error}</div>}
-          
-          <div className="auth__field">
-            <label className="auth__label" htmlFor="email">
-              Email
-            </label>
+    <div className="auth-page">
+      <div className="auth-card glass-card">
+        <h2 className="auth-title">Welcome Back</h2>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          {error && <div className="auth-error">{error}</div>}
+
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
             <input
-              className="auth__input"
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
               required
             />
           </div>
 
-          <div className="auth__field">
-            <label className="auth__label" htmlFor="password">
-              Password
-            </label>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
             <input
-              className="auth__input"
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
               required
             />
           </div>
 
-          <button
-            className="auth__btn auth__btn--primary"
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? 'Logging in...' : 'Login'}
+          <button className="btn btn-primary w-full" type="submit" disabled={loading}>
+            {loading ? 'Authenticating...' : 'Sign In'}
           </button>
         </form>
 
-        <p className="auth__footer">
-          Don't have an account? <Link to="/signup" className="auth__link">Sign up</Link>
+        <p className="auth-footer">
+          New here? <Link to="/signup">Create an account</Link>
         </p>
       </div>
     </div>
@@ -86,4 +71,5 @@ const Login = ({ onLogin }) => {
 };
 
 export default Login;
+
 
