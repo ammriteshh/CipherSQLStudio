@@ -3,618 +3,191 @@
 .assignment-workspace {
   display: flex;
   height: calc(100vh - 64px);
-  width: 100%;
+  background: var(--bg-main);
   overflow: hidden;
-  background-color: var(--bg-main);
-}
 
-// --- Common Panel Styles ---
-.workspace-panel {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
-  background-color: var(--bg-main);
-}
-
-.left-panel {
-  border-right: 1px solid var(--border);
-}
-
-// --- Actions Bar (New Toolbar) ---
-.panel-actions-bar {
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 $space-4;
-  background-color: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-
-  .action-left {
+  .workspace-panel {
     display: flex;
-    align-items: center;
-    gap: $space-3;
-  }
+    flex-direction: column;
+    height: 100%;
 
-  .lang-label {
-    font-size: $font-sm;
-    color: var(--text-muted);
-    font-weight: $font-medium;
-    display: flex;
-    align-items: center;
-    gap: $space-2;
-
-    &::before {
-      content: '';
-      display: block;
-      width: 8px;
-      height: 8px;
-      background-color: var(--info); // Use semantic color or keep hardcoded if brand specific
-      border-radius: 50%;
+    &.left-panel {
+      border-right: 1px solid var(--border);
     }
   }
 
-  .action-right {
+  .panel-actions-bar {
+    height: 48px;
     display: flex;
     align-items: center;
-    gap: $space-3;
-  }
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: $space-2;
-  padding: 4px 12px;
-  border-radius: $radius-sm;
-  font-size: $font-sm;
-  font-weight: $font-medium;
-  cursor: pointer;
-  transition: $transition;
-  border: 1px solid transparent;
-
-  &-primary {
-    background-color: var(--success); // Execute is usually green (Play)
-    color: white;
-
-    &:hover:not(:disabled) {
-      background-color: darken(#10b981, 5%);
-      transform: translateY(-1px);
-    }
-  }
-
-  &-secondary {
-    background-color: transparent;
-    border-color: var(--border);
-    color: var(--text-muted);
-
-    &:hover {
-      border-color: var(--text-main);
-      color: var(--text-main);
-      background-color: var(--bg-hover);
-    }
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: wait;
-  }
-}
-
-// --- Split Content Area ---
-.panel-content-split {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
-  background-color: var(--bg-main);
-}
-
-// 1. Editor Section (Top)
-.editor-section {
-  flex: 1; // Takes remaining space
-  min-height: 200px;
-  position: relative;
-  border-bottom: 1px solid var(--border);
-}
-
-// 2. Results Section (Bottom)
-.results-section {
-  height: 40%; // Fixed percentage for now, ideally resizable
-  display: flex;
-  flex-direction: column;
-  background-color: var(--bg-main);
-  border-top: 4px solid var(--bg-card); // Separator visual
-
-  .results-header {
-    height: 40px;
-    display: flex;
-    align-items: center;
+    justify-content: space-between;
     padding: 0 $space-4;
-    background-color: var(--bg-card);
+    background: var(--bg-card);
     border-bottom: 1px solid var(--border);
-    gap: $space-4;
 
-    .results-title {
+    .lang-label {
       font-size: $font-sm;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: $space-2;
+
+      &::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: $info;
+        border-radius: 50%;
+      }
+    }
+
+    .action-right {
+      display: flex;
+      gap: $space-3;
+    }
+  }
+
+  .panel-content-split {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .results-section {
+    height: 40%;
+    background: var(--bg-main);
+    border-top: 4px solid var(--bg-card);
+
+    .results-header {
+      height: 40px;
+      padding: 0 $space-4;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      gap: $space-4;
+      font-size: $font-xs;
       font-weight: $font-bold;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
-    .status-badge {
-      font-size: $font-xs;
-      padding: 2px 8px;
-      border-radius: $radius-full;
-      font-weight: $font-medium;
-      text-transform: uppercase;
-
-      &.success {
-        background-color: rgba(16, 185, 129, 0.1);
-        color: var(--success);
-      }
-
-      &.error {
-        background-color: rgba(239, 68, 68, 0.1);
-        color: var(--danger);
-      }
-    }
-
-    .time-badge {
-      margin-left: auto;
-      font-size: $font-xs;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-    }
-  }
-
-  .results-body {
-    flex: 1;
-    overflow: auto;
-    padding: 0;
-    position: relative;
-    background-color: var(--bg-main);
-
-    .empty-state {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      gap: $space-2;
-      font-size: $font-sm;
-    }
-
-    .empty-state-text {
-      padding: $space-6;
-      color: var(--text-muted);
-      font-style: italic;
-      text-align: center;
-      margin-top: $space-4;
-    }
-
-    .error-message {
-      padding: $space-4;
-      color: var(--danger);
-      font-family: var(--font-mono);
-      font-size: $font-sm;
-      white-space: pre-wrap;
-    }
-
-    .table-responsive {
-      width: 100%;
+    .results-body {
+      flex: 1;
       overflow: auto;
-    }
+      font-family: $font-mono;
 
-    .results-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: var(--font-mono);
-      font-size: $font-sm;
+      .results-table {
+        width: 100%;
+        border-collapse: collapse;
 
-      th,
-      td {
-        padding: $space-2 $space-4;
-        text-align: left;
-        border-bottom: 1px solid var(--border);
-        white-space: nowrap;
-      }
+        th,
+        td {
+          padding: $space-2 $space-4;
+          border-bottom: 1px solid var(--border);
+          text-align: left;
+        }
 
-      th {
-        background-color: var(--bg-card);
-        color: var(--text-muted);
-        position: sticky;
-        top: 0;
-        z-index: 10;
-      }
+        th {
+          position: sticky;
+          top: 0;
+          background: var(--bg-card);
+          z-index: 5;
+        }
 
-      td {
-        color: var(--text-main);
-      }
-
-      tbody tr:hover {
-        background-color: var(--bg-hover);
+        tbody tr:hover {
+          background: var(--bg-hover);
+        }
       }
     }
   }
-}
 
-.custom-scrollbar {
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
+  .workspace-resizer {
+    width: 4px;
+    cursor: col-resize;
     background: var(--border);
-    border-radius: 3px;
+    transition: background 0.2s;
 
     &:hover {
-      background: var(--text-muted);
+      background: var(--primary);
     }
   }
 }
 
-// --- Problem View ---
+// Problem View (Left Panel)
 .problem-view {
   padding: $space-6;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.problem-header {
-  margin-bottom: $space-6;
-  padding-bottom: $space-4;
-  border-bottom: 1px solid var(--border);
+  overflow-y: auto;
 
   .title {
     font-size: $font-xl;
-    font-weight: $font-bold;
-    color: var(--text-main);
     margin-bottom: $space-2;
   }
 
   .difficulty-badge {
-    display: inline-block;
     padding: 2px 8px;
     border-radius: $radius-full;
     font-size: $font-xs;
-    font-weight: $font-medium;
     text-transform: uppercase;
 
     &.beginner {
       color: var(--success);
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.2);
+      background: rgba($success, 0.1);
     }
 
     &.intermediate {
       color: var(--warning);
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.2);
+      background: rgba($warning, 0.1);
     }
 
     &.advanced {
       color: var(--danger);
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-  }
-}
-
-.problem-description {
-  margin-bottom: $space-8;
-  line-height: $line-height-relaxed;
-  color: var(--text-main);
-  font-size: $font-base;
-
-  // --- Markdown Content ---
-  .markdown-content {
-    color: var(--text-main);
-    line-height: $line-height-relaxed;
-    font-size: $font-base;
-
-    p {
-      margin-bottom: $space-4;
-    }
-
-    strong {
-      color: var(--primary-light);
-      font-weight: $font-bold;
-    }
-
-    ul,
-    ol {
-      margin-bottom: $space-4;
-      padding-left: $space-6;
-    }
-
-    li {
-      margin-bottom: $space-1;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4 {
-      margin-top: $space-6;
-      margin-bottom: $space-3;
-      color: var(--text-main);
-      font-weight: $font-bold;
-    }
-
-    code {
-      background-color: var(--code-bg);
-      padding: 2px 6px;
-      border-radius: $radius-sm;
-      font-family: var(--font-mono);
-      font-size: 0.9em;
-      color: var(--text-main);
-    }
-
-    pre {
-      background-color: var(--code-bg);
-      padding: $space-4;
-      border-radius: $radius-md;
-      overflow-x: auto;
-      margin-bottom: $space-4;
-      border: 1px solid var(--border);
-
-      code {
-        background-color: transparent;
-        padding: 0;
-        color: inherit;
-      }
-    }
-
-    // Markdown Tables
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: $space-6;
-      font-size: $font-sm;
-
-      th,
-      td {
-        border: 1px solid var(--border);
-        padding: $space-2 $space-4;
-        text-align: left;
-      }
-
-      th {
-        background-color: var(--bg-card);
-        font-weight: $font-bold;
-        color: var(--text-muted);
-      }
-
-      td {
-        background-color: transparent;
-        font-family: var(--font-mono);
-      }
-
-      tr:nth-child(even) {
-        background-color: rgba(255, 255, 255, 0.02);
-      }
+      background: rgba($danger, 0.1);
     }
   }
 
-  // --- Schema Section ---
-  .schema-section {
-    margin-top: $space-8;
-    padding-top: $space-6;
-    border-top: 1px solid var(--border);
+  .problem-description {
+    margin-top: $space-6;
+
+    section {
+      margin-bottom: $space-8;
+    }
 
     h3 {
-      font-size: $font-lg;
-      font-weight: $font-bold;
-      margin-bottom: $space-6;
-      color: var(--text-main);
-    }
-
-    .schema-table-container {
-      margin-bottom: $space-6;
-
-      .schema-table-title {
-        margin-bottom: $space-3;
-        font-size: $font-base;
-        color: var(--text-muted);
-        font-weight: $font-medium;
-
-        .entity-name {
-          color: var(--primary-light);
-          font-family: var(--font-mono);
-          font-weight: $font-bold;
-        }
-      }
-
-      .table-responsive {
-        border: 1px solid var(--border);
-        border-radius: $radius-md;
-        overflow-x: auto;
-        background-color: var(--bg-main);
-      }
-
-      .schema-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: $font-sm;
-        text-align: left;
-
-        th,
-        td {
-          padding: $space-3 $space-4;
-        }
-
-        thead {
-          background-color: var(--bg-card);
-          border-bottom: 1px solid var(--border);
-
-          th {
-            color: var(--text-muted);
-            font-weight: $font-bold;
-            white-space: nowrap;
-          }
-        }
-
-        tbody {
-          tr {
-            border-bottom: 1px solid var(--border);
-
-            &:last-child {
-              border-bottom: none;
-            }
-
-            &:nth-child(even) {
-              background-color: var(--bg-hover);
-            }
-
-            &:hover {
-              background-color: rgba($primary, 0.05);
-            }
-          }
-
-          .col-name {
-            color: var(--text-main);
-            font-family: var(--font-mono);
-            font-weight: $font-medium;
-          }
-
-          .col-type {
-            color: var(--text-muted);
-            font-family: var(--font-mono);
-          }
-        }
-      }
-
-      .schema-table-description {
-        margin-top: $space-2;
-        font-size: $font-xs;
-        color: var(--text-muted);
-        font-style: italic;
-      }
+      font-size: $font-base;
+      color: var(--text-muted);
+      margin-bottom: $space-4;
     }
   }
 }
 
-// End problem-description
-
-// --- Modal ---
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: fadeIn 0.2s ease-out;
-}
 
-.modal-content {
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: $radius-lg;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  animation: slideUp 0.3s ease-out;
+  .modal-content {
+    width: 90%;
+    max-width: 500px;
+    background: var(--bg-card);
+    border-radius: $radius-lg;
+    padding: $space-6;
+    border: 1px solid var(--border);
 
-  .modal-header {
-    padding: $space-4 $space-6;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: $space-4;
 
-    h3 {
-      font-size: $font-lg;
-      font-weight: $font-bold;
-      color: var(--text-main);
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 0;
-      line-height: 1;
-
-      &:hover {
-        color: var(--danger);
+      .close-btn {
+        color: var(--text-muted);
+        font-size: 1.5rem;
+        cursor: pointer;
       }
     }
-  }
-
-  .modal-body {
-    padding: $space-6;
-    overflow-y: auto;
-    font-size: $font-base;
-    color: var(--text-main);
-    line-height: $line-height-relaxed;
-  }
-
-  .modal-footer {
-    padding: $space-4 $space-6;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: flex-end;
-  }
-}
-
-// --- Keyframes ---
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// --- Resizer ---
-.workspace-resizer {
-  width: 4px;
-  cursor: col-resize;
-  background-color: var(--bg-main);
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  position: relative;
-  z-index: 50;
-
-  &:hover,
-  &:active {
-    background-color: var(--primary);
   }
 }
