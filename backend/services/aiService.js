@@ -1,8 +1,13 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
+/**
+ * Service for AI-powered SQL hints using Google Gemini
+ */
 class AIService {
     constructor() {
         this.client = null;
+        this.modelName = 'gemini-1.5-flash';
+
         if (process.env.GOOGLE_AI_API_KEY) {
             this.client = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
         }
@@ -13,42 +18,42 @@ class AIService {
     }
 
     /**
-     * Generate a hint for a SQL assignment
-     * @param {string} question - Usage question
-     * @param {string} tableSchemas - Schema definitions
-     * @param {string} userQuery - Current user query (optional)
-     * @returns {Promise<string>} - Generated hint
+     * Generate a helpful hint for a SQL assignment
+     * @param {string} question - The assignment task
+     * @param {string} schema - Table definitions
+     * @param {string} userQuery - The student's current query attempts
+     * @returns {Promise<string>}
      */
-    async generateHint(question, tableSchemas, userQuery) {
+    async generateHint(question, schema, userQuery) {
         if (!this.client) {
-            throw new Error('LLM service is not configured. Please set GOOGLE_AI_API_KEY.');
+            throw new Error('AI Service not configured. Set GOOGLE_AI_API_KEY.');
         }
 
-        const prompt = `You are a helpful SQL tutor.
-ASSIGNMENT: ${question}
+        const prompt = `
+      Context: SQL Tutor for students.
+      Assignment: "${question}"
+      Table Schema: ${schema}
+      Current User Query: "${userQuery || 'None'}"
 
-TABLES:
-${tableSchemas}
-
-${userQuery ? `STUDENT QUERY:\n${userQuery}\n` : ''}
-
-TASK: Provide a helpful hint to solve this problem.
-- Explain the logic briefly.
-- Suggest SQL keywords or concepts to use (e.g., "Use JOIN", "GROUP BY").
-- Show a skeleton of the query if helpful, but DO NOT give the exact full answer.
-- Keep it under 3 sentences.
-
-Provide ONLY the hint text. No headers, no markdown blocks.`;
+      Task: Provide a concise, helpful hint.
+      - Don't give the full solution.
+      - Focus on SQL concepts (e.g., JOIN, WHERE, GROUP BY).
+      - Max 2-3 sentences.
+      - Return ONLY the hint text.
+    `.trim();
 
         try {
-            const model = this.client.getGenerativeModel({ model: 'gemini-flash-latest' });
+            const model = this.client.getGenerativeModel({ model: this.modelName });
             const result = await model.generateContent(prompt);
-            return result.response.text().trim();
+            const text = result.response.text().trim();
+
+            return text || "Try reviewing the table schema and column names.";
         } catch (error) {
-            console.error('LLM API error:', error);
-            throw new Error('Failed to generate hint.');
+            console.error('[AI SERVICE ERROR]', error.message);
+            throw new Error('AI hint generation failed.');
         }
     }
 }
 
 module.exports = new AIService();
+
