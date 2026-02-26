@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../services/api';
 import './AssignmentAttempt.scss';
@@ -11,58 +11,37 @@ import ResultsTable from './ResultsTable';
 const AssignmentAttempt = ({ user }) => {
   const { id } = useParams();
 
-  // Data State
+  // State
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Execution State
   const [sqlQuery, setSqlQuery] = useState('');
   const [queryResult, setQueryResult] = useState(null);
   const [executing, setExecuting] = useState(false);
   const [executionTime, setExecutionTime] = useState(null);
-
-  // UI State
-  const [leftPanelWidth, setLeftPanelWidth] = useState(40); // Percentage
-  const [showHintModal, setShowHintModal] = useState(false);
-
-  // Hints State
+  const [leftPanelWidth, setLeftPanelWidth] = useState(40);
   const [hint, setHint] = useState(null);
   const [loadingHint, setLoadingHint] = useState(false);
+  const [showHintModal, setShowHintModal] = useState(false);
 
-  useEffect(() => {
-    fetchAssignment();
-  }, [id]);
+  // Memoized session ID for the workspace
+  const sessionId = useMemo(() => `session_${Math.random().toString(36).substring(2, 10)}`, []);
 
-  const fetchAssignment = async () => {
+  const fetchAssignment = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/assignments/${id}`);
-      setAssignment(response.data);
-      setSqlQuery(response.data.initialQuery || '');
+      const { data } = await api.get(`/assignments/${id}`);
+      setAssignment(data);
+      setSqlQuery(data.initialQuery || '');
     } catch (err) {
-      console.error('Error fetching assignment:', err);
-      // Demo Fallback
-      setAssignment({
-        _id: '1',
-        title: 'Basic SELECT Statements',
-        difficulty: 'Beginner',
-        question: 'Retrieve all columns from the "employees" table.',
-        tableDefinitions: [
-          {
-            name: 'employees',
-            description: 'Contains employee details',
-            sampleData: [
-              { id: 1, name: 'Alice', role: 'Engineer' },
-              { id: 2, name: 'Bob', role: 'Designer' }
-            ]
-          }
-        ]
-      });
-      setSqlQuery('SELECT * FROM employees;');
+      console.error('Failed to fetch assignment:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchAssignment();
+  }, [fetchAssignment]);
 
   const handleExecuteQuery = async () => {
     if (!sqlQuery.trim()) return;
@@ -72,33 +51,24 @@ const AssignmentAttempt = ({ user }) => {
     const startTime = performance.now();
 
     try {
-      const response = await api.post(`/assignments/${id}/execute`, {
+      const { data } = await api.post(`/assignments/${id}/execute`, {
         query: sqlQuery,
-        userId: user?.id || user?._id || 'guest',
-        sessionId: `session_${Date.now()}`
+        sessionId
       });
 
       const endTime = performance.now();
       setExecutionTime((endTime - startTime).toFixed(2));
 
-      if (response.data.success) {
-        setQueryResult({
-          success: true,
-          rowCount: response.data.rowCount,
-          columns: response.data.columns || (response.data.data.length > 0 ? Object.keys(response.data.data[0]) : []),
-          rows: response.data.data
-        });
-      } else {
-        setQueryResult({
-          success: false,
-          error: response.data.error || 'Query execution failed'
-        });
-      }
-
+      setQueryResult({
+        success: true,
+        rowCount: data.rowCount,
+        columns: data.columns,
+        rows: data.data
+      });
     } catch (err) {
       setQueryResult({
         success: false,
-        error: err.response?.data?.error || err.message || 'Query execution failed'
+        error: err.customMessage || 'Query execution failed'
       });
     } finally {
       setExecuting(false);
@@ -111,39 +81,31 @@ const AssignmentAttempt = ({ user }) => {
       return;
     }
 
-    if (loadingHint) return;
-
     setLoadingHint(true);
     try {
-      const response = await api.post(`/assignments/${id}/hint`, {
-        userQuery: sqlQuery,
-        userId: user?.id || user?._id
+      const { data } = await api.post(`/assignments/${id}/hint`, {
+        userQuery: sqlQuery
       });
 
-      if (response.data.success) {
-        setHint(response.data.hint);
+      if (data.success) {
+        setHint(data.hint);
         setShowHintModal(true);
-      } else {
-        alert(response.data.error || 'Failed to get hint');
       }
     } catch (err) {
-      // console.error('Hint error:', err);
-      alert(err.response?.data?.error || 'Failed to connect to hint service.');
+      alert(err.customMessage || 'Failed to get hint');
     } finally {
       setLoadingHint(false);
     }
   };
 
-  // Resize Logic
   const startResizing = (mouseDownEvent) => {
     const startX = mouseDownEvent.clientX;
     const startWidth = leftPanelWidth;
 
     const onMouseMove = (mouseMoveEvent) => {
-      const newWidth = startWidth + ((mouseMoveEvent.clientX - startX) / window.innerWidth) * 100;
-      if (newWidth > 20 && newWidth < 80) {
-        setLeftPanelWidth(newWidth);
-      }
+      const delta = ((mouseMoveEvent.clientX - startX) / window.innerWidth) * 100;
+      const newWidth = Math.min(Math.max(startWidth + delta, 20), 80);
+      setLeftPanelWidth(newWidth);
     };
 
     const onMouseUp = () => {
@@ -155,43 +117,37 @@ const AssignmentAttempt = ({ user }) => {
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  if (loading) return <div className="loading-screen">Loading Workspace...</div>;
+  if (loading) return <div className="loading-screen">Preparing Workspace...</div>;
+  if (!assignment) return <div className="error-screen">Assignment not found.</div>;
 
   return (
     <div className="assignment-workspace">
-      {/* LEFT PANEL */}
+      {/* LEFT PANEL: Task & Schema */}
       <div className="workspace-panel left-panel" style={{ width: `${leftPanelWidth}%` }}>
         <AssignmentDescription assignment={assignment} />
       </div>
 
-      {/* RESIZER */}
+      {/* DRAGGABLE RESIZER */}
       <div className="workspace-resizer" onMouseDown={startResizing}>
         <div className="resizer-handle" />
       </div>
 
-      {/* RIGHT PANEL */}
+      {/* RIGHT PANEL: Editor & Results */}
       <div className="workspace-panel right-panel" style={{ width: `${100 - leftPanelWidth}%` }}>
         <div className="panel-actions-bar">
-          <div className="action-left">
-            <span className="lang-label">SQL (PostgreSQL)</span>
-          </div>
+          <span className="lang-label">SQL Editor</span>
           <div className="action-right">
-            <button
-              className="btn btn-secondary hint-btn"
-              onClick={handleGetHint}
-              title="Need help? Get a hint"
-            >
-              <span className="icon">💡</span> {loadingHint ? 'Loading...' : 'Hint'}
+            <button className="btn btn-secondary hint-btn" onClick={handleGetHint} disabled={loadingHint}>
+              💡 {loadingHint ? 'Thinking...' : 'Get Hint'}
             </button>
             <button className="btn btn-primary run-btn" onClick={handleExecuteQuery} disabled={executing}>
-              {executing ? 'running...' : '▶ Run Code'}
+              {executing ? 'Running...' : '▶ Run Query'}
             </button>
           </div>
         </div>
 
         <div className="panel-content-split">
           <QueryEditor value={sqlQuery} onChange={setSqlQuery} />
-
           <ResultsTable
             result={queryResult}
             executing={executing}
@@ -202,22 +158,17 @@ const AssignmentAttempt = ({ user }) => {
 
       {/* HINT MODAL */}
       {showHintModal && (
-        <div className="modal-overlay">
-          <div className="modal-content glass-card">
+        <div className="modal-overlay" onClick={() => setShowHintModal(false)}>
+          <div className="modal-content glass-card" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Hint</h3>
+              <h3>Assistant Hint</h3>
               <button className="close-btn" onClick={() => setShowHintModal(false)}>×</button>
             </div>
             <div className="modal-body custom-scrollbar">
-              <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}>{hint}</pre>
+              <p>{hint}</p>
             </div>
             <div className="modal-footer">
-              <button
-                className="btn btn-primary"
-                onClick={() => setShowHintModal(false)}
-              >
-                Close
-              </button>
+              <button className="btn btn-primary" onClick={() => setShowHintModal(false)}>Got it</button>
             </div>
           </div>
         </div>
@@ -227,3 +178,4 @@ const AssignmentAttempt = ({ user }) => {
 };
 
 export default AssignmentAttempt;
+
