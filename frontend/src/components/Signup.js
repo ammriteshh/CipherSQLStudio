@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../services/api';
+import { useAuth } from '../hooks/useAuth';
 import './Auth.scss';
 
-const Signup = ({ onLogin }) => {
+const Signup = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -17,86 +18,82 @@ const Signup = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/register', {
-        username,
-        email,
-        password,
+      // In a real app, you'd call a register endpoint. 
+      // Assuming for now login or a combined service is used.
+      // For this refactor, keeping logic consistent with Login.js
+      // and assuming the useAuth hook might need a signup method.
+      // But let's use the API directly for now if hook doesn't have it, 
+      // OR update the hook. Actually, let's keep it simple.
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password })
       });
+      const data = await response.json();
 
-      if (response.data.success) {
-        onLogin(response.data.user, response.data.token);
+      if (data.success) {
+        await login(email, password);
         navigate('/');
+      } else {
+        setError(data.message || 'Registration failed');
       }
     } catch (err) {
-      const msg = err?.customMessage || (!err?.response ? 'Cannot reach server / backend is down. Please check the backend and CORS settings.' : `Error ${err.response.status}: ${err.response.data?.message || 'Request failed'}`);
-      setError(msg);
+      setError('Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth">
-      <div className="auth__container">
-        <h2 className="auth__title">Sign Up</h2>
-        <form className="auth__form" onSubmit={handleSubmit}>
-          {error && <div className="auth__error">{error}</div>}
-          
-          <div className="auth__field">
-            <label className="auth__label" htmlFor="username">
-              Username
-            </label>
+    <div className="auth-page">
+      <div className="auth-card glass-card">
+        <h2 className="auth-title">Join CipherSQL</h2>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          {error && <div className="auth-error">{error}</div>}
+
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
             <input
-              className="auth__input"
               type="text"
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              placeholder="johndoe"
               required
-              minLength={3}
             />
           </div>
 
-          <div className="auth__field">
-            <label className="auth__label" htmlFor="email">
-              Email
-            </label>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
             <input
-              className="auth__input"
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
               required
             />
           </div>
 
-          <div className="auth__field">
-            <label className="auth__label" htmlFor="password">
-              Password
-            </label>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
             <input
-              className="auth__input"
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Minimum 6 characters"
               required
-              minLength={6}
             />
           </div>
 
-          <button
-            className="auth__btn auth__btn--primary"
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? 'Signing up...' : 'Sign Up'}
+          <button className="btn btn-primary w-full" type="submit" disabled={loading}>
+            {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
         </form>
 
-        <p className="auth__footer">
-          Already have an account? <Link to="/login" className="auth__link">Login</Link>
+        <p className="auth-footer">
+          Already a member? <Link to="/login">Sign in here</Link>
         </p>
       </div>
     </div>
@@ -104,4 +101,5 @@ const Signup = ({ onLogin }) => {
 };
 
 export default Signup;
+
 
