@@ -17,13 +17,12 @@ class AIService {
         return !!this.client;
     }
 
-    /**
-     * Generate a helpful hint for a SQL assignment
-     * @param {string} question 
-     * @param {string} schema 
-     * @param {string} userQuery 
-     * @returns {Promise<string>}
-     */
+    
+       @param {string} question 
+       @param {string} schema 
+       @param {string} userQuery 
+       @returns {Promise<string>}
+     
     async generateHint(question, schema, userQuery) {
         if (!this.client) {
             throw new Error('AI Service not configured. Set GOOGLE_AI_API_KEY.');
