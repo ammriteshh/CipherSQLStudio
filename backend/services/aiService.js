@@ -21,7 +21,7 @@ class AIService {
      * Generate a helpful hint for a SQL assignment
      * @param {string} question - The assignment task
      * @param {string} schema - Table definitions
-     * @param {string} userQuery - The student's current query attempts
+     * @param {string} userQuery 
      * @returns {Promise<string>}
      */
     async generateHint(question, schema, userQuery) {
