@@ -19,7 +19,7 @@ class AIService {
 
     /**
      * Generate a helpful hint for a SQL assignment
-     * @param {string} question - The assignment task
+     * @param {string} question 
      * @param {string} schema 
      * @param {string} userQuery 
      * @returns {Promise<string>}
