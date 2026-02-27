@@ -17,7 +17,6 @@ class AIService {
         return !!this.client;
     }
 
-    
        @param {string} question 
        @param {string} schema 
        @param {string} userQuery 
