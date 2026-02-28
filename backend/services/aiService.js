@@ -1,6 +1,5 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-
 class AIService {
     constructor() {
         this.client = null;
