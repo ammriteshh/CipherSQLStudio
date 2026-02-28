@@ -1,8 +1,6 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-/**
- * Service for AI-powered SQL hints using Google Gemini
- */
+
 class AIService {
     constructor() {
         this.client = null;
