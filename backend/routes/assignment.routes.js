@@ -13,7 +13,6 @@ router.get('/', getAllAssignments);
 // Assignment details
 router.get('/:id', getAssignmentById);
 
-// Execution and feedback
 router.post('/:id/execute', executeAssignmentQuery);
 router.post('/:id/hint', getAssignmentHint);
 
