@@ -10,7 +10,6 @@ const {
 // List assignments
 router.get('/', getAllAssignments);
 
-// Assignment details
 router.get('/:id', getAssignmentById);
 
 router.post('/:id/execute', executeAssignmentQuery);
