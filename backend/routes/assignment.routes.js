@@ -7,7 +7,6 @@ const {
     getAssignmentHint
 } = require('../controllers/assignmentController');
 
-// List assignments
 router.get('/', getAllAssignments);
 
 router.get('/:id', getAssignmentById);
