@@ -9,7 +9,7 @@ const getBaseURL = () => {
   }
 
   if (process.env.NODE_ENV === 'production') {
-    return 'https://cipher-sql-backend.onrender.com/api';
+    return 'https://ciphersqlstudio.onrender.com/api';
   }
 
   return 'http://localhost:5000/api';
