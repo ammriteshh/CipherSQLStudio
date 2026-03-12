@@ -15,9 +15,9 @@ class AIService {
     }
 
     /**
-     * @param {string} question 
-     * @param {string} schema 
-     * @param {string} userQuery 
+     * @param {string} question
+     * @param {string} schema
+     * @param {string} userQuery
      * @returns {Promise<string>}
      */
     async generateHint(question, schema, userQuery) {
