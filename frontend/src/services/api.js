@@ -3,20 +3,15 @@ import axios from 'axios';
 /**
  * Configure API base URL based on environment
  */
-const getBaseURL = () => {
-  if (process.env.REACT_APP_API_URL) {
-    return process.env.REACT_APP_API_URL;
-  }
+const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-  if (process.env.NODE_ENV === 'production') {
-    return 'https://ciphersqlstudio.onrender.com/api';
-  }
-
-  return 'http://localhost:5000/api';
-};
+// Log the API URL in development mode
+if (process.env.NODE_ENV !== 'production') {
+  console.log(`[API INITIALIZED] Base URL: ${baseURL}`);
+}
 
 const api = axios.create({
-  baseURL: getBaseURL(),
+  baseURL,
   timeout: 30000,
   withCredentials: true,
 });
