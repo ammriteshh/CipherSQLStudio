@@ -17,7 +17,7 @@ const getBaseURL = () => {
 
 const api = axios.create({
   baseURL: getBaseURL(),
-  timeout: 10000,
+  timeout: 30000,
   withCredentials: true,
 });
 
@@ -25,11 +25,20 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message = error.response?.data?.error || error.message || 'An unexpected error occurred';
+    let message = 'An unexpected error occurred';
+    
+    if (error.code === 'ECONNABORTED') {
+      message = 'Request timed out. The server might be waking up or busy.';
+    } else if (error.message === 'Network Error') {
+      message = 'Network error. Please check your connection or ensure the server is running.';
+    } else {
+      message = error.response?.data?.error || error.response?.data?.message || error.message || message;
+    }
 
     console.error('[API ERROR]', {
       url: error.config?.url,
       status: error.response?.status,
+      code: error.code,
       message
     });
 

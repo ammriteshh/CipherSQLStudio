@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import AssignmentCard from '../components/AssignmentCard';
 import api from '../services/api';
+import healthService from '../services/healthService';
 import './AssignmentsPage.scss';
 
 const AssignmentsPage = () => {
@@ -13,11 +13,18 @@ const AssignmentsPage = () => {
     const fetchAssignments = useCallback(async () => {
         try {
             setLoading(true);
+            
+            // First ensure backend is awake
+            const isReady = await healthService.waitForReady(3, 5000);
+            if (!isReady) {
+                throw new Error('The server is taking too long to wake up. Please try again in a moment.');
+            }
+
             const { data } = await api.get('/assignments');
             setAssignments(data);
             setError(null);
         } catch (err) {
-            setError(err.customMessage || 'Failed to connect to the SQL Studio service.');
+            setError(err.customMessage || err.message || 'Failed to connect to the SQL Studio service.');
         } finally {
             setLoading(false);
         }

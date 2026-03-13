@@ -26,6 +26,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://cipher-sql-studio-ui.onrender.com",
   "https://ciphersqlstudio.onrender.com",
+  "https://cipher-sql-studio-0zlp.onrender.com",
   ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : [])
 ];
 
