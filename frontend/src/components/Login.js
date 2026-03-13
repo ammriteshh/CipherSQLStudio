@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import api from '../services/api';
 import './Auth.scss';
 
 const Login = () => {
@@ -17,10 +18,14 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate('/');
+      const { data } = await api.post('/auth/login', { email, password });
+      
+      if (data.success) {
+        login(data.user, data.token);
+        navigate('/');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      setError(err.customMessage || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import api from '../services/api';
 import './Auth.scss';
 
 const Signup = () => {
@@ -18,27 +19,16 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      // In a real app, you'd call a register endpoint. 
-      // Assuming for now login or a combined service is used.
-      // For this refactor, keeping logic consistent with Login.js
-      // and assuming the useAuth hook might need a signup method.
-      // But let's use the API directly for now if hook doesn't have it, 
-      // OR update the hook. Actually, let's keep it simple.
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
-      });
-      const data = await response.json();
+      const { data } = await api.post('/auth/register', { username, email, password });
 
       if (data.success) {
-        await login(email, password);
+        login(data.user, data.token);
         navigate('/');
       } else {
-        setError(data.message || 'Registration failed');
+        setError(data.error || 'Registration failed');
       }
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError(err.customMessage || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
