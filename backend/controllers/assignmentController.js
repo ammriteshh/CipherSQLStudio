@@ -1,6 +1,7 @@
 const { Pool } = require('pg');
 const Assignment = require('../models/Assignment');
 const aiService = require('../services/aiService');
+const mongoose = require('mongoose');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -11,6 +12,10 @@ const pool = new Pool({
  */
 const getAllAssignments = async (req, res, next) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database service is currently missing or unavailable. Please verify MONGODB_URI.' });
+    }
+
     const assignments = await Assignment.find({})
       .select('title description difficulty createdAt')
       .sort({ createdAt: -1 });

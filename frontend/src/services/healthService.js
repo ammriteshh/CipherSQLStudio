@@ -16,9 +16,13 @@ const healthService = {
         // Avoid interceptor error handling for quiet checks if needed
         headers: { 'X-Quiet-Request': 'true' } 
       });
-      return response.status === 200;
+      if (response.status === 200) {
+        console.log('[HEALTH] Backend is reachable and healthy.');
+        return true;
+      }
+      return false;
     } catch (error) {
-      console.warn('Backend health check failed', error.message);
+      console.warn(`[HEALTH] Backend health check failed: ${error.message}`);
       return false;
     }
   },
@@ -34,9 +38,10 @@ const healthService = {
       const isReady = await healthService.checkHealth();
       if (isReady) return true;
       
-      console.log(`Waiting for backend... attempt ${i + 1}/${maxRetries}`);
+      console.warn(`[HEALTH] Waiting for backend... attempt ${i + 1}/${maxRetries}. Will retry in ${interval}ms`);
       await new Promise(resolve => setTimeout(resolve, interval));
     }
+    console.error(`[HEALTH] Backend failed to become ready after ${maxRetries} attempts.`);
     return false;
   }
 };

@@ -5,10 +5,8 @@ import axios from 'axios';
  */
 const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-// Log the API URL in development mode
-if (process.env.NODE_ENV !== 'production') {
-  console.log(`[API INITIALIZED] Base URL: ${baseURL}`);
-}
+// Always log the API URL so developers can verify it in the production browser console
+console.log(`[API INITIALIZED] Base URL is currently resolving to: ${baseURL}`);
 
 const api = axios.create({
   baseURL,
