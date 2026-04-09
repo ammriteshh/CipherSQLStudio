@@ -3,18 +3,22 @@ const { Pool } = require('pg');
 let pool = null;
 
 const connectPostgreSQL = async () => {
+  if (!process.env.DATABASE_URL) {
+    console.error('[DATABASE ERROR] DATABASE_URL is not defined in environment variables. Starting without PostgreSQL (degraded mode).');
+    return;
+  }
+
   try {
     pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    require: true,
-    rejectUnauthorized: false,
-  },
-  connectionTimeoutMillis: 20000,
-  idleTimeoutMillis: 30000,
-  keepAlive: true,
-});
-
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+      connectionTimeoutMillis: 30000,
+      idleTimeoutMillis: 60000,
+      keepAlive: true,
+    });
 
     const client = await pool.connect();
     await client.query('SELECT 1');
@@ -23,10 +27,10 @@ const connectPostgreSQL = async () => {
     console.log('PostgreSQL connected successfully');
 
     pool.on('error', (err) => {
-      console.error('Unexpected PostgreSQL error', err);
+      console.error('[DATABASE ERROR] Unexpected PostgreSQL error:', err.message || err, err.stack);
     });
   } catch (error) {
-    console.error('PostgreSQL connection failed:', error.message || error);
+    console.error('[DATABASE ERROR] PostgreSQL connection failed:', error.message || error, error.stack);
     pool = null;
   }
 };

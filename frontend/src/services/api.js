@@ -12,18 +12,47 @@ if (process.env.NODE_ENV !== 'production') {
 
 const api = axios.create({
   baseURL,
-  timeout: 30000,
+  timeout: 60000,
   withCredentials: true,
 });
 
 // Response interceptor for consistent error handling
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const config = error.config;
+    
+    // Avoid retrying if no config is present
+    if (!config) {
+      return Promise.reject(error);
+    }
+
+    // Setup retry count. Max retries = 3
+    config.retryCount = config.retryCount || 0;
+    const maxRetries = 3;
+
+    // Retry on timeouts (ECONNABORTED), Network Errors, or 5xx Server Errors
+    const shouldRetry = error.code === 'ECONNABORTED' || 
+                        error.message === 'Network Error' || 
+                        (error.response && error.response.status >= 500);
+
+    if (shouldRetry && config.retryCount < maxRetries) {
+      config.retryCount += 1;
+      
+      // Calculate exponential backoff delay (e.g., 2000, 4000, 8000 + random jitter)
+      const baseDelay = 2000;
+      const delay = (baseDelay * Math.pow(2, config.retryCount - 1)) + (Math.random() * 500);
+      
+      console.warn(`[API] Request failed, retrying (${config.retryCount}/${maxRetries}) in ${Math.round(delay)}ms... -> ${config.url}`);
+      
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return api(config);
+    }
+
     let message = 'An unexpected error occurred';
     
     if (error.code === 'ECONNABORTED') {
-      message = 'Request timed out. The server might be waking up or busy.';
+      message = 'Request timed out after maximum retries. The server might be waking up or busy.';
     } else if (error.message === 'Network Error') {
       message = 'Network error. Please check your connection or ensure the server is running.';
     } else {
