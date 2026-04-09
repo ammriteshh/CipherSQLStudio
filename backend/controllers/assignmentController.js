@@ -7,9 +7,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-/**
- * Fetch all assignments with basic info
- */
 const getAllAssignments = async (req, res, next) => {
   try {
     if (mongoose.connection.readyState !== 1) {
