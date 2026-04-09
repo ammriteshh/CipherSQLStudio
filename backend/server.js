@@ -35,6 +35,7 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
+    console.warn(`[CORS Blocked] Origin not allowed: ${origin}`);
     return callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
@@ -89,7 +90,10 @@ app.use((req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   const status = err.status || 500;
-  console.error(`[ERROR] ${status}: ${err.message}`);
+  console.error(`[ERROR] ${status} at ${req.method} ${req.originalUrl}: ${err.message}`);
+  if (status >= 500) {
+    console.error(err.stack); // Log full stack for server errors
+  }
   
   res.status(status).json({
     error: {
@@ -101,6 +105,14 @@ app.use((err, req, res, next) => {
 
 // Bootstrap server
 async function bootstrap() {
+  // Check essential environment variables
+  const requiredEnvVars = ['DATABASE_URL', 'NODE_ENV'];
+  const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+  
+  if (missingEnvVars.length > 0) {
+    console.warn(`[CRITICAL WARNING] Missing essential environment variables: ${missingEnvVars.join(', ')}`);
+  }
+
   try {
     await Promise.all([
       connectMongoDB(),
