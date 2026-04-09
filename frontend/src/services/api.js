@@ -8,9 +8,13 @@ const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 // Always log the API URL so developers can verify it in the production browser console
 console.log(`[API INITIALIZED] Base URL is currently resolving to: ${baseURL}`);
 
+if (process.env.NODE_ENV === 'production' && baseURL.includes('localhost')) {
+  console.error('[CRITICAL WARNING] You are running in production but the API baseURL is pointing to localhost. API calls will fail due to Mixed Content or unreachable host! Please set REACT_APP_API_URL in your deployment dashboard!');
+}
+
 const api = axios.create({
   baseURL,
-  timeout: 60000,
+  timeout: 30000,
   withCredentials: true,
 });
 

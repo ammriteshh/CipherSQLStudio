@@ -9,13 +9,19 @@ const pool = new Pool({
 
 const getAllAssignments = async (req, res, next) => {
   try {
+    console.log(`[API ROUTE] GET /assignments accessed. Checking connection...`);
+
     if (mongoose.connection.readyState !== 1) {
+      console.error('[DATABASE ERROR] Mongoose not connected during GET /assignments');
       return res.status(503).json({ error: 'Database service is currently missing or unavailable. Please verify MONGODB_URI.' });
     }
 
+    console.log(`[API ROUTE] Database connected. Executing Assignment.find()...`);
     const assignments = await Assignment.find({})
       .select('title description difficulty createdAt')
       .sort({ createdAt: -1 });
+
+    console.log(`[API ROUTE] Successfully retrieved ${assignments.length} assignments. Sending JSON response.`);
 
     res.json(assignments.map(assignment => ({
       _id: assignment._id,
