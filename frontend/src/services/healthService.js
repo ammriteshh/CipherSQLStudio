@@ -11,8 +11,8 @@ const healthService = {
   checkHealth: async () => {
     try {
       const response = await api.get('/health', {
-        // Shorter timeout for quick checks, but enough for a slow start
-        timeout: 15000, 
+        // Keep health probes short so the UI can fail fast instead of waiting through long retry chains
+        timeout: 8000,
         // Avoid interceptor error handling for quiet checks if needed
         headers: { 'X-Quiet-Request': 'true' } 
       });
@@ -39,7 +39,9 @@ const healthService = {
       if (isReady) return true;
       
       console.warn(`[HEALTH] Waiting for backend... attempt ${i + 1}/${maxRetries}. Will retry in ${interval}ms`);
-      await new Promise(resolve => setTimeout(resolve, interval));
+      if (i < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, interval));
+      }
     }
     console.error(`[HEALTH] Backend failed to become ready after ${maxRetries} attempts.`);
     return false;

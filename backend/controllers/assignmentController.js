@@ -9,10 +9,10 @@ const pool = new Pool({
 
 const getAllAssignments = async (req, res, next) => {
   try {
-    console.log(`[API ROUTE] GET /assignments accessed. Checking connection...`);
+    console.log(`[API ROUTE] GET /api/assignments accessed. Checking MongoDB connection...`);
 
     if (mongoose.connection.readyState !== 1) {
-      console.error('[DATABASE ERROR] Mongoose not connected during GET /assignments');
+      console.error('[DATABASE ERROR] Mongoose not connected during GET /api/assignments');
       return res.status(503).json({ error: 'Database service is currently missing or unavailable. Please verify MONGODB_URI.' });
     }
 

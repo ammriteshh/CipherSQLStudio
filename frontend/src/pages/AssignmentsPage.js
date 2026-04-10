@@ -14,6 +14,8 @@ const AssignmentsPage = () => {
     const fetchAssignments = useCallback(async () => {
         try {
             setLoading(true);
+            setError(null);
+            console.log('[AssignmentsPage] Starting assignments fetch');
             
             // First ensure backend is awake
             const isReady = await healthService.waitForReady(3, 5000);
@@ -22,10 +24,18 @@ const AssignmentsPage = () => {
             }
 
             const { data } = await api.get('/assignments');
+            console.log('[AssignmentsPage] Assignments fetch succeeded', {
+                count: Array.isArray(data) ? data.length : 0
+            });
             setAssignments(data);
-            setError(null);
         } catch (err) {
+            console.error('[AssignmentsPage] Failed to fetch assignments', {
+                message: err.customMessage || err.message,
+                code: err.code,
+                status: err.response?.status
+            });
             setError(err.customMessage || err.message || 'Failed to connect to the SQL Studio service.');
+            setAssignments([]);
         } finally {
             setLoading(false);
         }

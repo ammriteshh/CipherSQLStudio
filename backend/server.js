@@ -47,13 +47,11 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Request logging (Only in development)
-if (process.env.NODE_ENV !== 'production') {
-  app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
-    next();
-  });
-}
+// Request logging for assignment APIs to help debug production fetch issues
+app.use('/api/assignments', (req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  next();
+});
 
 // API Routes
 app.use('/api/assignments', assignmentRoutes);
