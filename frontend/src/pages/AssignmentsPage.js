@@ -18,7 +18,7 @@ const AssignmentsPage = () => {
             console.log('[AssignmentsPage] Starting assignments fetch');
             
             // First ensure backend is awake
-            const isReady = await healthService.waitForReady(3, 5000);
+            const isReady = await healthService.waitForReady();
             if (!isReady) {
                 throw new Error('The server is taking too long to wake up. Please try again in a moment.');
             }

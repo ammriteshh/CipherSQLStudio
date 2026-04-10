@@ -35,8 +35,8 @@ const healthService = {
    * @param {number} interval
    * @returns {Promise<boolean>}
    */
-  waitForReady: async (maxRetries = 10, interval = 6000) => {
-    const maxWaitTime = 60000;
+  waitForReady: async (maxRetries = 24, interval = 5000) => {
+    const maxWaitTime = 120000;
     const startedAt = Date.now();
 
     for (let i = 0; i < maxRetries; i++) {
@@ -44,7 +44,7 @@ const healthService = {
       const elapsed = Date.now() - startedAt;
 
       if (elapsed >= maxWaitTime) {
-        console.error(`[HEALTH] Stopping health checks after ${elapsed}ms because the 60000ms limit was reached.`);
+        console.error(`[HEALTH] Stopping health checks after ${elapsed}ms because the limit was reached.`);
         return false;
       }
 
@@ -61,8 +61,7 @@ const healthService = {
         break;
       }
 
-      const backoffDelay = interval * Math.pow(2, i);
-      const delay = Math.min(backoffDelay, remainingTime);
+      const delay = Math.min(interval, remainingTime);
 
       console.warn(
         `[HEALTH] Attempt ${attempt} failed. Retrying in ${delay}ms. Remaining wait budget: ${remainingTime}ms.`
