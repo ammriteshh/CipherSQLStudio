@@ -11,8 +11,8 @@ const healthService = {
   checkHealth: async () => {
     try {
       const response = await api.get('/health', {
-        // Keep health probes short so the UI can fail fast instead of waiting through long retry chains
-        timeout: 8000,
+        // Allow enough time for a single cold-start probe while still failing cleanly.
+        timeout: 10000,
         // Avoid interceptor error handling for quiet checks if needed
         headers: { 'X-Quiet-Request': 'true' } 
       });
@@ -30,20 +30,46 @@ const healthService = {
   /**
    * Wait for backend to be ready
    * @param {number} maxRetries 
-   * @param {number} interval 
+   * @param {number} interval
    * @returns {Promise<boolean>}
    */
-  waitForReady: async (maxRetries = 5, interval = 3000) => {
+  waitForReady: async (maxRetries = 10, interval = 6000) => {
+    const maxWaitTime = 60000;
+    const startedAt = Date.now();
+
     for (let i = 0; i < maxRetries; i++) {
-      const isReady = await healthService.checkHealth();
-      if (isReady) return true;
-      
-      console.warn(`[HEALTH] Waiting for backend... attempt ${i + 1}/${maxRetries}. Will retry in ${interval}ms`);
-      if (i < maxRetries - 1) {
-        await new Promise(resolve => setTimeout(resolve, interval));
+      const attempt = i + 1;
+      const elapsed = Date.now() - startedAt;
+
+      if (elapsed >= maxWaitTime) {
+        console.error(`[HEALTH] Stopping health checks after ${elapsed}ms because the 60000ms limit was reached.`);
+        return false;
       }
+
+      console.log(`[HEALTH] Attempt ${attempt}/${maxRetries} starting after ${elapsed}ms elapsed.`);
+
+      const isReady = await healthService.checkHealth();
+      if (isReady) {
+        console.log(`[HEALTH] Backend became ready on attempt ${attempt}.`);
+        return true;
+      }
+
+      const remainingTime = maxWaitTime - (Date.now() - startedAt);
+      if (attempt >= maxRetries || remainingTime <= 0) {
+        break;
+      }
+
+      const backoffDelay = interval * Math.pow(2, i);
+      const delay = Math.min(backoffDelay, remainingTime);
+
+      console.warn(
+        `[HEALTH] Attempt ${attempt} failed. Retrying in ${delay}ms. Remaining wait budget: ${remainingTime}ms.`
+      );
+
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
-    console.error(`[HEALTH] Backend failed to become ready after ${maxRetries} attempts.`);
+
+    console.error(`[HEALTH] Backend failed to become ready within ${maxWaitTime}ms.`);
     return false;
   }
 };
