@@ -9,11 +9,13 @@ const AssignmentsPage = () => {
     const [difficultyFilter, setDifficultyFilter] = useState('All');
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMessage, setLoadingMessage] = useState('Fetching challenges...');
     const [error, setError] = useState(null);
 
     const fetchAssignments = useCallback(async () => {
         try {
             setLoading(true);
+            setLoadingMessage('Fetching challenges...');
             setError(null);
             console.log('[AssignmentsPage] Starting assignments fetch');
             
@@ -45,6 +47,18 @@ const AssignmentsPage = () => {
         fetchAssignments();
     }, [fetchAssignments]);
 
+    useEffect(() => {
+        if (!loading) {
+            return undefined;
+        }
+
+        const timeoutId = setTimeout(() => {
+            setLoadingMessage('Server is starting, please wait...');
+        }, 60000);
+
+        return () => clearTimeout(timeoutId);
+    }, [loading]);
+
     const filteredAssignments = useMemo(() => {
         return assignments.filter(item => {
             const matchesSearch = item.title?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -54,7 +68,7 @@ const AssignmentsPage = () => {
     }, [assignments, searchTerm, difficultyFilter]);
 
     if (loading) {
-        return <div className="assignments-loading">Fetching challenges...</div>;
+        return <div className="assignments-loading">{loadingMessage}</div>;
     }
 
     if (error) {

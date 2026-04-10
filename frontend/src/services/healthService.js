@@ -10,12 +10,13 @@ const healthService = {
    */
   checkHealth: async () => {
     try {
+      console.log("API test started");
       const response = await api.get('/health', {
-        // Allow enough time for a single cold-start probe while still failing cleanly.
-        timeout: 10000,
-        // Avoid interceptor error handling for quiet checks if needed
-        headers: { 'X-Quiet-Request': 'true' }
+        timeout: 15000
       });
+
+      console.log('[HEALTH] Response status:', response.status);
+      console.log('[HEALTH] Response data:', response.data);
 
       if (response.status === 200) {
         console.log('[HEALTH] Backend is reachable and healthy.');
@@ -24,7 +25,7 @@ const healthService = {
 
       return false;
     } catch (error) {
-      console.warn(`[HEALTH] Backend health check failed: ${error.message}`);
+      console.error('[HEALTH] Error message:', error.message);
       return false;
     }
   },
@@ -35,8 +36,8 @@ const healthService = {
    * @param {number} interval
    * @returns {Promise<boolean>}
    */
-  waitForReady: async (maxRetries = 24, interval = 5000) => {
-    const maxWaitTime = 120000;
+  waitForReady: async (maxRetries = 10, interval = 6000) => {
+    const maxWaitTime = 60000;
     const startedAt = Date.now();
 
     for (let i = 0; i < maxRetries; i++) {
@@ -61,11 +62,9 @@ const healthService = {
         break;
       }
 
-      const delay = Math.min(interval, remainingTime);
+      const delay = Math.min(interval * Math.pow(2, i), remainingTime);
 
-      console.warn(
-        `[HEALTH] Attempt ${attempt} failed. Retrying in ${delay}ms. Remaining wait budget: ${remainingTime}ms.`
-      );
+      console.log(`[HEALTH] Retry attempt ${attempt} failed. Waiting ${delay}ms before retrying.`);
 
       await new Promise(resolve => setTimeout(resolve, delay));
     }
