@@ -13,6 +13,7 @@ const { connectPostgreSQL, isPostgresAvailable } = require('./db/postgresql');
 // Route imports
 const assignmentRoutes = require('./routes/assignment.routes');
 const authRoutes = require('./routes/auth.routes');
+const hintRoutes = require('./routes/hint.routes');
 const progressRoutes = require('./routes/progress.routes');
 
 const app = express();
@@ -63,6 +64,7 @@ app.use('/api/assignments', (req, res, next) => {
 // API Routes
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/hint', hintRoutes);
 app.use('/api/progress', progressRoutes);
 
 // Health check endpoint
