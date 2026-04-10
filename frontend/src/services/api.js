@@ -4,8 +4,16 @@ import axios from 'axios';
  * Configure API base URL based on environment
  */
 const rawApiUrl = process.env.REACT_APP_API_URL?.trim();
+const renderBackendFallback =
+  typeof window !== 'undefined' &&
+  window.location.hostname === 'cipher-sql-studio-ui.onrender.com'
+    ? 'https://cipher-sql-studio-0zlp.onrender.com/api'
+    : null;
+
 const fallbackBaseURL =
-  process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api';
+  process.env.NODE_ENV === 'production'
+    ? renderBackendFallback || '/api'
+    : 'http://localhost:5000/api';
 
 const normalizeBaseURL = (url) => {
   if (!url) {
