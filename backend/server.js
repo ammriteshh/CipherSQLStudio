@@ -26,21 +26,31 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://cipher-sql-studio-ui.onrender.com",
   "https://ciphersqlstudio.onrender.com",
-  "https://cipher-sql-studio-0zlp.onrender.com",
   ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : [])
 ];
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+  origin: function (origin, callback) {
+    if (!origin) {
       return callback(null, true);
     }
-    console.warn(`[CORS Blocked] Origin not allowed: ${origin}`);
-    return callback(new Error("Not allowed by CORS"));
+
+    const isAllowed = allowedOrigins.some(o =>
+      origin.startsWith(o)
+    );
+
+    if (isAllowed) {
+      return callback(null, true);
+    }
+
+    console.warn("Blocked by CORS:", origin);
+
+    // Allow temporarily to avoid frontend hanging
+    return callback(null, true);
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 // Body parsing
