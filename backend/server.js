@@ -16,6 +16,8 @@ const authRoutes = require('./routes/auth.routes');
 const hintRoutes = require('./routes/hint.routes');
 const progressRoutes = require('./routes/progress.routes');
 
+console.log('[ROUTES] Registering /api/hint');
+
 const app = express();
 
 // Port configuration
