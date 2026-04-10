@@ -24,16 +24,14 @@ const PORT = parseInt(process.env.PORT, 10) || 5000;
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
-  "https://cipher-sql-studio-ui.onrender.com",
-  "https://ciphersqlstudio.onrender.com",
-  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : [])
+  ...(process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(",")
+    : [])
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) {
-      return callback(null, true);
-    }
+    if (!origin) return callback(null, true);
 
     const isAllowed = allowedOrigins.some(o =>
       origin.startsWith(o)
@@ -45,7 +43,6 @@ app.use(cors({
 
     console.warn("Blocked by CORS:", origin);
 
-    // Allow temporarily to avoid frontend hanging
     return callback(null, true);
   },
   credentials: true,
