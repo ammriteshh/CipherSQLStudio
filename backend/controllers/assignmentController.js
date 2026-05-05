@@ -35,9 +35,6 @@ const getAllAssignments = async (req, res, next) => {
   }
 };
 
-/**
- * Fetch a single assignment by ID with necessary details for the workspace
- */
 const getAssignmentById = async (req, res, next) => {
   try {
     const assignment = await Assignment.findById(req.params.id);
