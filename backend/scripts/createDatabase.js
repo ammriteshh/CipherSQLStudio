@@ -24,9 +24,9 @@ async function createDatabase() {
     if (checkResult.rows.length === 0) {
       console.log(`Creating database: ${dbName}...`);
       await adminClient.query(`CREATE DATABASE ${dbName}`);
-      console.log(`✅ Database '${dbName}' created successfully!`);
+      console.log(`Database '${dbName}' created successfully!`);
     } else {
-      console.log(`✅ Database '${dbName}' already exists`);
+      console.log(`Database '${dbName}' already exists`);
     }
 
     await adminClient.end();
