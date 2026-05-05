@@ -37,7 +37,6 @@ const connectMongoDB = async () => {
 
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    // don't throw - allow the server to start in degraded mode
     return;
   }
 };
