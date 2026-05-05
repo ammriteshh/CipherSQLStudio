@@ -16,7 +16,6 @@ async function createDatabase() {
 
     const dbName = process.env.POSTGRES_DATABASE || 'cipher_sql_studio';
 
-    // Check if database exists
     const checkResult = await adminClient.query(
       'SELECT 1 FROM pg_database WHERE datname = $1',
       [dbName]
