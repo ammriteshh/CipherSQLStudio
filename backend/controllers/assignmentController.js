@@ -63,9 +63,6 @@ const getAssignmentById = async (req, res, next) => {
   }
 };
 
-/**
- * Execute user query in a temporary isolated schema
- */
 const executeAssignmentQuery = async (req, res, next) => {
   const client = await pool.connect();
   try {
