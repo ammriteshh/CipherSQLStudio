@@ -1,26 +1,24 @@
 const mongoose = require('mongoose');
 
-// Disable query buffering globally. If the database is not connected, queries
-// will immediately throw an error instead of hanging indefinitely.
 mongoose.set('bufferCommands', false);
 
 const connectMongoDB = async () => {
   try {
     const mongoURI = process.env.MONGODB_URI;
-    
+
     if (!mongoURI) {
       console.error('[DATABASE ERROR] MONGODB_URI is not defined in environment variables. Valid MongoDB connection is required.');
-      return; 
+      return;
     }
 
     await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // Don't spend 30 seconds failing to connect during startup
+      serverSelectionTimeoutMS: 5000,
     });
 
     console.log('MongoDB connected successfully');
-    
+
     mongoose.connection.on('error', (err) => {
       console.error('MongoDB connection error:', err);
     });
