@@ -40,12 +40,12 @@ async function createDatabase() {
     });
 
     await testClient.connect();
-    console.log(`✅ Successfully connected to '${dbName}' database`);
+    console.log(`Successfully connected to '${dbName}' database`);
     await testClient.end();
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.error('Error:', error.message);
     process.exit(1);
   }
 }
