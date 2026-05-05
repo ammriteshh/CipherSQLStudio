@@ -76,17 +76,14 @@ const executeAssignmentQuery = async (req, res, next) => {
       throw error;
     }
 
-    // Sanitize Session ID to create a safe schema name
     const safeSessionId = sessionId.replace(/[^a-zA-Z0-9_]/g, '').substring(0, 50);
     const workspaceSchema = `workspace_${safeSessionId}`;
 
     await client.query('BEGIN');
 
-    // Isolate user execution in their own schema
     await client.query(`CREATE SCHEMA IF NOT EXISTS "${workspaceSchema}"`);
     await client.query(`SET search_path TO "${workspaceSchema}"`);
 
-    // Setup assignment tables and data
     for (const table of assignment.tableDefinitions) {
       await client.query(table.createTableSQL);
 
@@ -104,7 +101,6 @@ const executeAssignmentQuery = async (req, res, next) => {
       }
     }
 
-    // Execute the user's SQL query
     const result = await client.query(query);
 
     await client.query('COMMIT');
@@ -128,9 +124,6 @@ const executeAssignmentQuery = async (req, res, next) => {
   }
 };
 
-/**
- * Generate an AI-powered hint for the assignment
- */
 const getAssignmentHint = async (req, res, next) => {
   try {
     const { id } = req.params;
