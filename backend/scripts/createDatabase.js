@@ -31,7 +31,6 @@ async function createDatabase() {
 
     await adminClient.end();
 
-    // Test connection to the new database
     const testClient = new Client({
       host: process.env.POSTGRES_HOST || 'localhost',
       port: process.env.POSTGRES_PORT || 5432,
