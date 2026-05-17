@@ -11,21 +11,16 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-    // Initialize theme from localStorage or default to 'dark' (developer preference)
+
     const [theme, setTheme] = useState(() => {
         return localStorage.getItem('theme') || 'dark';
     });
-
-    // We can remove the loading state if we initialize synchronously from localStorage
-    // promoting a faster first paint without flash of wrong theme.
 
     useEffect(() => {
         const root = document.documentElement;
         root.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
 
-        // Optional: Add class to body if strictly needed by some external libs, 
-        // but data-attribute on root is usually sufficient and cleaner.
         if (theme === 'dark') {
             document.body.classList.add('dark-theme');
         } else {

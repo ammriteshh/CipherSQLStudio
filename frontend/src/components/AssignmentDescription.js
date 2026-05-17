@@ -5,9 +5,6 @@ import remarkGfm from 'remark-gfm';
 const AssignmentDescription = ({ assignment }) => {
     if (!assignment) return null;
 
-    /**
-     * Extract column names and types from CREATE TABLE SQL
-     */
     const getColumnsFromSQL = (table) => {
         try {
             const match = table.createTableSQL.match(/\(([\s\S]*)\)/);
@@ -21,7 +18,7 @@ const AssignmentDescription = ({ assignment }) => {
                 })
                 .filter(c => c && !['KEY', 'CONSTRAINT', 'PRIMARY', 'FOREIGN'].some(k => c.name.toUpperCase().includes(k)));
         } catch (e) {
-            // Fallback to sample data keys if SQL parsing fails
+
             const sample = table.sampleData?.[0] || {};
             return Object.keys(sample).map(key => ({ name: key, type: typeof sample[key] }));
         }
