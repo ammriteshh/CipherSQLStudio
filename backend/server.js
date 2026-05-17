@@ -123,15 +123,19 @@ async function bootstrap() {
   }
 
   try {
-    await Promise.all([
-      connectMongoDB(),
-      connectPostgreSQL()
-    ]);
+    
     
     app.listen(PORT, () => {
       console.log(`\n🚀 Server running on port ${PORT}`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}\n`);
     });
+
+    Promise.all([
+      connectMongoDB(),
+      connectPostgreSQL()
+    ])
+    .then(() => console.log('✅ All databases connected successfully.'))
+    .catch(err => console.error('⚠️ Warning: Some database connections failed on startup:', err));
   } catch (err) {
     console.error('Fatal error during bootstrap:', err);
     process.exit(1);
