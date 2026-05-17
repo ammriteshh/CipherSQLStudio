@@ -33,8 +33,8 @@ const healthService = {
    * @param {number} interval
    * @returns {Promise<boolean>}
    */
-  waitForReady: async (maxRetries = 10, interval = 6000) => {
-    const maxWaitTime = 60000;
+  waitForReady: async (maxRetries = 30, interval = 4000) => {
+    const maxWaitTime = 180000; // 3 minutes max wait for free tier spin up
     const startedAt = Date.now();
 
     for (let i = 0; i < maxRetries; i++) {
@@ -59,7 +59,8 @@ const healthService = {
         break;
       }
 
-      const delay = Math.min(interval * Math.pow(2, i), remainingTime);
+      // Cap the retry delay to a maximum of 10 seconds, so we check frequently once it's close
+      const delay = Math.min(Math.min(interval * Math.pow(1.5, i), 10000), remainingTime);
 
       console.log(`[HEALTH] Retry attempt ${attempt} failed. Waiting ${delay}ms before retrying.`);
 
