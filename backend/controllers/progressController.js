@@ -1,8 +1,5 @@
 const UserProgress = require('../models/UserProgress');
 
-/**
- * Fetch progress for a specific user
- */
 const getUserProgress = async (req, res, next) => {
     try {
         const { userId } = req.params;
@@ -17,9 +14,6 @@ const getUserProgress = async (req, res, next) => {
     }
 };
 
-/**
- * Save or update user progress for an assignment
- */
 const updateUserProgress = async (req, res, next) => {
     try {
         const { userId, assignmentId, lastQuery, completed } = req.body;

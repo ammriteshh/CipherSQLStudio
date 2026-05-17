@@ -117,7 +117,7 @@ const AssignmentsPage = () => {
                             key={item._id}
                             assignment={{
                                 ...item,
-                                progress: 0, // In production this would come from UserProgress
+                                progress: 0, 
                                 locked: false
                             }}
                         />
