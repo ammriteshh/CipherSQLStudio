@@ -23,7 +23,6 @@ const AssignmentAttempt = ({ user }) => {
   const [loadingHint, setLoadingHint] = useState(false);
   const [showHintModal, setShowHintModal] = useState(false);
 
-  // Memoized session ID for the workspace
   const sessionId = useMemo(() => `session_${Math.random().toString(36).substring(2, 10)}`, []);
 
   const fetchAssignment = useCallback(async () => {

@@ -56,6 +56,5 @@ const AssignmentCard = ({ assignment }) => {
     );
 };
 
-// Optimization: skip re-render if assignment hasn't changed
 export default React.memo(AssignmentCard);
 

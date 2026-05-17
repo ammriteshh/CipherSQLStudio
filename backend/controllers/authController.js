@@ -1,9 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-/**
- * Register a new user
- */
 const register = async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
@@ -12,7 +9,6 @@ const register = async (req, res, next) => {
             return res.status(400).json({ error: 'Username, email, and password are required' });
         }
 
-        // Check if user already exists
         const existingUser = await User.findOne({
             $or: [{ email }, { username }]
         });
@@ -21,11 +17,9 @@ const register = async (req, res, next) => {
             return res.status(400).json({ error: 'User with this email or username already exists' });
         }
 
-        // Create new user
         const user = new User({ username, email, password });
         await user.save();
 
-        // Generate JWT token
         const token = jwt.sign(
             { userId: user._id, username: user.username },
             process.env.JWT_SECRET || 'fallback_secret_change_in_production',
@@ -46,9 +40,6 @@ const register = async (req, res, next) => {
     }
 };
 
-/**
- * Login user
- */
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -57,19 +48,16 @@ const login = async (req, res, next) => {
             return res.status(400).json({ error: 'Email and password are required' });
         }
 
-        // Find user
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Verify password
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Generate JWT token
         const token = jwt.sign(
             { userId: user._id, username: user.username },
             process.env.JWT_SECRET || 'fallback_secret_change_in_production',
