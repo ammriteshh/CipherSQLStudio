@@ -1,8 +1,5 @@
 import api from './api';
 
-/**
- * Service to check backend health and handle wake-from-sleep logic
- */
 const healthService = {
   /**
    * Check if backend is alive

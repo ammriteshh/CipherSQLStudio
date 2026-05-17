@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
 
-/**
- * Hook to manage authentication state and token
- */
 export const useAuth = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check for existing token on mount
         const token = localStorage.getItem('authToken');
         const storedUser = localStorage.getItem('user');
 
